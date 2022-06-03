@@ -34,9 +34,9 @@ namespace WpfUI
 
         public FlightLogDB FlightLogDB { get => m_flightLogDB; set => m_flightLogDB = value; }
 
-        private void FlightListButton_MouseDown(object sender, MouseButtonEventArgs e)
+        private void FlightListButton_Click(object sender, MouseButtonEventArgs e)
         {
-
+            MainCanvas.Children.Clear();
         }
     }
 }

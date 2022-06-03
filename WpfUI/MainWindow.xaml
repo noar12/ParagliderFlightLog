@@ -23,8 +23,9 @@
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
 
-        <TextBlock x:Name="FlightListButton" TextWrapping="Wrap" Text="TextBlock" Grid.Row="1" Grid.Column="1" MouseDown="FlightListButton_MouseDown"/>
-        <controls:FlightListControl x:Name="x_FlightListControl" Grid.Row="1" Grid.Column="2" Source="{Binding SelectedItem, Mode=OneWay}" />
+        <Button x:Name="FlightListButton" Content="Flight List" Grid.Row="1" Grid.Column="1" Click="FlightListButton_Click"/>
+        <Button x:Name="SiteListButton" Content="Site List" Grid.Row="2" Grid.Column="1" Click="SiteListButton_Click"/>
+        <Canvas x:Name="MainCanvas" Grid.Row="1" Grid.Column="2" Grid.RowSpan="2"/>
     </Grid>
     
 </Window>
