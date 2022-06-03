@@ -9,7 +9,10 @@ using Dapper;
 
 namespace ParagliderFlightLog.DataModels
 {
-    class LogFlyDB
+    /// <summary>
+    /// Provide a data model to read and convert SQLite database from LogFly 5.
+    /// </summary>
+    public class LogFlyDB
     {
         private List<LogFlyVol> m_LogFlyVolCollection = new List<LogFlyVol>();
         private List<LogFlySite> m_LogFlySiteCollection = new List<LogFlySite>();

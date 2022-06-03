@@ -1,0 +1,18 @@
+﻿@page "/"
+@using ParagliderFlightLog.DataModels
+<PageTitle>List of flights</PageTitle>
+
+<h1>Here is the flights in the data base</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code{
+    
+    FlightLogDB db = new FlightLogDB();
+            LogFlyDB logFlyDB = new LogFlyDB();
+
+            logFlyDB.LoadLogFlyDB("Logfly.db");
+            db = logFlyDB.BuildFlightLogDB();
+}
