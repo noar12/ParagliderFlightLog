@@ -30,13 +30,11 @@ namespace WpfUI
             l_logFlyDB.LoadLogFlyDB("Logfly.db");
             FlightLogDB = l_logFlyDB.BuildFlightLogDB();
             
+            
         }
 
         public FlightLogDB FlightLogDB { get => m_flightLogDB; set => m_flightLogDB = value; }
 
-        private void FlightListButton_Click(object sender, MouseButtonEventArgs e)
-        {
-            MainCanvas.Children.Clear();
-        }
+
     }
 }

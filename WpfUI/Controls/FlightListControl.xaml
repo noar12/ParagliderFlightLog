@@ -5,10 +5,28 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfUI.Controls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    <DataGrid ItemsSource="{Binding FlightLogDB.Flights}" AutoGenerateColumns="False">
-        <DataGrid.Columns>
-            <DataGridTextColumn Header = "Duration" Binding = "{Binding FlightDuration}" />
-        </DataGrid.Columns>
-    </DataGrid>
+             d:DesignHeight="450" d:DesignWidth="800" Name="x_Control">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <DataGrid ItemsSource="{Binding Path=Source.Flights, ElementName=x_Control}" AutoGenerateColumns="False" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" SelectedItem="{Binding SelectedItem}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header = "Flight Date/Time" Binding = "{Binding TakeOffDateTime}" />
+                <DataGridTextColumn Header = "Take off site" Binding = "{Binding REF_TakeOffSite_ID}" /><!--To be done: translate REF to human readable string-->
+                <DataGridTextColumn Header = "Duration" Binding = "{Binding FlightDuration}" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <WrapPanel Orientation="Horizontal" DataContext="">
+            <TextBlock Text="{Binding SelectedItem.Comment, ElementName=x_Control}"/>
+            
+        </WrapPanel>
+    </Grid>
+
 </UserControl>

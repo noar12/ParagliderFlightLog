@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ParagliderFlightLog.DataModels;
 
 namespace WpfUI.Controls
 {
@@ -23,6 +24,18 @@ namespace WpfUI.Controls
         public FlightListControl()
         {
             InitializeComponent();
+            
         }
+
+
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(FlightLogDB), typeof(FlightListControl), new PropertyMetadata(null));
+
+        public FlightLogDB Source
+        {
+            get { return (FlightLogDB)GetValue(SourceProperty); }
+            set { SetValue(SourceProperty, value); }
+        }
+        
+        public Flight SelectedItem { get; set; }
     }
 }
