@@ -17,19 +17,16 @@ using ParagliderFlightLog.DataModels;
 namespace WpfUI.Controls
 {
     /// <summary>
-    /// Interaction logic for FlightListControl.xaml
+    /// Interaction logic for SiteListControl.xaml
     /// </summary>
-    public partial class FlightListControl : UserControl
+    public partial class SiteListControl : UserControl
     {
-        public FlightListControl()
+        public SiteListControl()
         {
             InitializeComponent();
-            
         }
-
-
-        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(FlightLogDB), typeof(FlightListControl), new PropertyMetadata(null));
-        public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedItem", typeof(Flight), typeof(FlightListControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(FlightLogDB), typeof(SiteListControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedItem", typeof(Site), typeof(SiteListControl), new PropertyMetadata(null));
 
         //private static void OnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         //{
@@ -40,10 +37,10 @@ namespace WpfUI.Controls
             get { return (FlightLogDB)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
-        
-        public Flight SelectedItem
+
+        public Site SelectedItem
         {
-            get { return (Flight)GetValue(SelectedItemProperty); }
+            get { return (Site)GetValue(SelectedItemProperty); }
             set { SetValue(SelectedItemProperty, value); }
         }
     }

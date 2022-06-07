@@ -7,7 +7,7 @@
         xmlns:controls="clr-namespace:WpfUI.Controls"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Name="x_MainWindow">
-    <Grid DataContext="{Binding ., ElementName=x_MainWindow}">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
             <ColumnDefinition Width="auto"/>
@@ -23,9 +23,12 @@
             <RowDefinition Height="10"/>
         </Grid.RowDefinitions>
 
-        <Button x:Name="FlightListButton" Content="Flight List" Grid.Row="1" Grid.Column="1" />
-        <Button x:Name="SiteListButton" Content="Site List" Grid.Row="2" Grid.Column="1" />
-        <controls:FlightListControl Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="3" Source="{Binding FlightLogDB, Mode=OneWay}"/>
+        <Button x:Name="FlightListButton" Content="Flight List" Grid.Row="1" Grid.Column="1" Click="FlightListButton_Click" />
+        <Button x:Name="SiteListButton" Content="Site List" Grid.Row="2" Grid.Column="1" Click="SiteListButton_Click" />
+        <ContentControl x:Name="MainContent" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="3">
+            <!--<controls:FlightListControl Source="{Binding FlightLogDB, ElementName=x_MainWindow}"/>-->
+        </ContentControl>
+        
 
 
     </Grid>
