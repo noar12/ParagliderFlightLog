@@ -34,6 +34,7 @@ namespace WpfUI
             flc.Source = mainViewModel.FlightListViewModel;
             slc.DataContext = x_MainWindow;
             slc.Source = mainViewModel.SiteListViewModel;
+            Status.DataContext = mainViewModel;
 
 
         }

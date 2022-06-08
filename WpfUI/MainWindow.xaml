@@ -20,7 +20,7 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="10"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
 
         <Button x:Name="FlightListButton" Content="Flight List" Grid.Row="1" Grid.Column="1" Click="FlightListButton_Click" />
@@ -28,9 +28,24 @@
         <ContentControl x:Name="MainContent" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="3">
             <!--<controls:FlightListControl Source="{Binding FlightLogDB, ElementName=x_MainWindow}"/>-->
         </ContentControl>
-        
 
 
+        <StatusBar x:Name="Status" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="5">
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Sites" Margin="4,0,4,0" VerticalAlignment="Center"  />
+                    <TextBlock Text="{Binding SiteListViewModel.Count, Mode=OneWay}" 
+                               Background="Black" Foreground="White" Padding="2" Margin="0,0,1,0" />
+                </StackPanel>
+            </StatusBarItem>
+            <StatusBarItem>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Flights" Margin="4,0,4,0" VerticalAlignment="Center"  />
+                    <TextBlock Text="{Binding FlightListViewModel.Count, Mode=OneWay}" 
+                               Background="Black" Foreground="White" Padding="2" Margin="0,0,1,0" />
+                </StackPanel>
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
     
 </Window>

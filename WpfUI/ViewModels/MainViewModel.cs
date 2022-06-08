@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ParagliderFlightLog.DataModels;
+
 namespace WpfUI.ViewModels
 {
     internal class MainViewModel
@@ -16,8 +17,9 @@ namespace WpfUI.ViewModels
             l_logFlyDB.LoadLogFlyDB("Logfly.db");
             m_flightLog = l_logFlyDB.BuildFlightLogDB();
 
-            BuildFlightListViewModel();
+            
             BuildSiteListViewModel();
+            BuildFlightListViewModel();
 
         }
 
@@ -28,19 +30,20 @@ namespace WpfUI.ViewModels
                 SiteListViewModel.Add(new SiteViewModel() {
                 Name = site.Name,
                  Altitude = site.Altitude,
-                 WindOrientation = "to be generated from data"
+                 WindOrientation = $"{site.WindOrientationBegin} - {site.WindOrientationEnd}"
                 });
             }
         }
 
         private void BuildFlightListViewModel()
         {
+            
             foreach (Flight flight in m_flightLog.Flights)
             {
-
+                
                 FlightListViewModel.Add(new FlightViewModel() {
                     TakeOffDateTime = flight.TakeOffDateTime,
-                    TakeOffSiteName = "to be find based on ref",
+                    TakeOffSiteName = m_flightLog.Sites.Where(site => site.Site_ID == flight.REF_TakeOffSite_ID).First().Name,
                     FlightDuration = flight.FlightDuration,
                     Comment = flight.Comment
                 });
