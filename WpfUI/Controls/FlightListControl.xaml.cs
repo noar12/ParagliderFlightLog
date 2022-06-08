@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ParagliderFlightLog.DataModels;
+using WpfUI.ViewModels;
 
 namespace WpfUI.Controls
 {
@@ -28,22 +28,22 @@ namespace WpfUI.Controls
         }
 
 
-        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(FlightLogDB), typeof(FlightListControl), new PropertyMetadata(null));
-        public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedItem", typeof(Flight), typeof(FlightListControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(ICollection<FlightViewModel>), typeof(FlightListControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedItem", typeof(FlightViewModel), typeof(FlightListControl), new PropertyMetadata(null));
 
         //private static void OnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         //{
 
         //}
-        public FlightLogDB Source
+        public ICollection<FlightViewModel> Source
         {
-            get { return (FlightLogDB)GetValue(SourceProperty); }
+            get { return (ICollection<FlightViewModel>)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
         
-        public Flight SelectedItem
+        public FlightViewModel SelectedItem
         {
-            get { return (Flight)GetValue(SelectedItemProperty); }
+            get { return (FlightViewModel)GetValue(SelectedItemProperty); }
             set { SetValue(SelectedItemProperty, value); }
         }
     }

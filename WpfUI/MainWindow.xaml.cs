@@ -12,9 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ParagliderFlightLog.DataModels;
+//using ParagliderFlightLog.DataModels;
 using WpfUI.Controls;
-
+using WpfUI.ViewModels;
 namespace WpfUI
 {
     /// <summary>
@@ -28,24 +28,17 @@ namespace WpfUI
         public MainWindow()
         {
             InitializeComponent();
+            MainViewModel mainViewModel = new MainViewModel();
 
-            LogFlyDB l_logFlyDB = new LogFlyDB();
-            l_logFlyDB.LoadLogFlyDB("Logfly.db");
-            FlightLogDB = l_logFlyDB.BuildFlightLogDB();
             flc.DataContext = x_MainWindow;
-            flc.Source = FlightLogDB;
+            flc.Source = mainViewModel.FlightListViewModel;
             slc.DataContext = x_MainWindow;
-            slc.Source = FlightLogDB;
+            slc.Source = mainViewModel.SiteListViewModel;
 
 
         }
 
-        public static readonly DependencyProperty FlightLogDBProperty = DependencyProperty.Register("FlightLogDB", typeof(FlightLogDB), typeof(MainWindow), new PropertyMetadata(null));
-        public FlightLogDB FlightLogDB
-        {
-            get { return (FlightLogDB)GetValue(FlightLogDBProperty); }
-            set { SetValue(FlightLogDBProperty, value); } 
-        }
+
 
         private void FlightListButton_Click(object sender, RoutedEventArgs e)
         {

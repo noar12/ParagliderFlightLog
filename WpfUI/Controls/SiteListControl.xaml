@@ -16,16 +16,16 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid ItemsSource="{Binding Path=Source.Sites, ElementName=x_Control}" AutoGenerateColumns="False" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" SelectedItem="{Binding SelectedItem,ElementName=x_Control}">
+        <DataGrid ItemsSource="{Binding Path=Source, ElementName=x_Control}" AutoGenerateColumns="False" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" SelectedItem="{Binding SelectedItem,ElementName=x_Control}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Site name" Binding = "{Binding Name}" />
                 <DataGridTextColumn Header = "Site altitude" Binding = "{Binding Altitude}" />
                 <!--To be done: translate REF to human readable string-->
-                <DataGridTextColumn Header = "Site orientation" Binding = "{Binding WindOrientationBegin}" />
+                <DataGridTextColumn Header = "Site orientation" Binding = "{Binding WindOrientation}" />
             </DataGrid.Columns>
         </DataGrid>
         <WrapPanel Orientation="Horizontal" DataContext="" Grid.Row="1" Grid.Column="2" Grid.RowSpan="3">
-            <TextBlock Text="{Binding SelectedItem.Comment, ElementName=x_Control}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
+            <TextBlock Text="{Binding SelectedItem.Name, ElementName=x_Control}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
 
         </WrapPanel>
     </Grid>
