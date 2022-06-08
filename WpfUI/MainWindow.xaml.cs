@@ -12,7 +12,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-//using ParagliderFlightLog.DataModels;
 using WpfUI.Controls;
 using WpfUI.ViewModels;
 namespace WpfUI
