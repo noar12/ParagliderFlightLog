@@ -40,10 +40,13 @@ namespace WpfUI.ViewModels
             
             foreach (Flight flight in m_flightLog.Flights)
             {
-                
+                Site? l_site = (from s in m_flightLog.Sites where s.Site_ID == flight.REF_TakeOffSite_ID select s).FirstOrDefault();
+                string l_siteName = l_site != null ? l_site.Name : "Site not found";
                 FlightListViewModel.Add(new FlightViewModel() {
                     TakeOffDateTime = flight.TakeOffDateTime,
-                    TakeOffSiteName = m_flightLog.Sites.Where(site => site.Site_ID == flight.REF_TakeOffSite_ID).First().Name,
+                    //TakeOffSiteName = m_flightLog.Sites.Where(site => site.Site_ID == flight.REF_TakeOffSite_ID).First().Name,
+                    //TakeOffSiteName = (from s in m_flightLog.Sites where s.Site_ID == flight.REF_TakeOffSite_ID select s).FirstOrDefault().Name,
+                    TakeOffSiteName = l_siteName,
                     FlightDuration = flight.FlightDuration,
                     Comment = flight.Comment
                 });
