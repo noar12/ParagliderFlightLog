@@ -29,9 +29,9 @@ namespace WpfUI
             InitializeComponent();
             MainViewModel mainViewModel = new MainViewModel();
 
-            flc.DataContext = x_MainWindow;
+            
             flc.Source = mainViewModel.FlightListViewModel;
-            slc.DataContext = x_MainWindow;
+            
             slc.Source = mainViewModel.SiteListViewModel;
             Status.DataContext = mainViewModel;
 

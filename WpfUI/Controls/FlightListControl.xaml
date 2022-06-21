@@ -19,7 +19,7 @@
         <DataGrid ItemsSource="{Binding Path=Source, ElementName=x_Control}" AutoGenerateColumns="False" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" SelectedItem="{Binding SelectedItem,ElementName=x_Control}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Flight Date/Time" Binding = "{Binding TakeOffDateTime}" />
-                <DataGridTextColumn Header = "Take off site" Binding = "{Binding TakeOffSiteName}" /><!--To be done: translate REF to human readable string-->
+                <DataGridTextColumn Header = "Take off site" Binding = "{Binding TakeOffSiteName}" />
                 <DataGridTextColumn Header = "Duration" Binding = "{Binding FlightDuration}" />
             </DataGrid.Columns>
         </DataGrid>

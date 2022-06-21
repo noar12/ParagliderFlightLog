@@ -17,6 +17,23 @@ namespace ParagliderFlightLog.DataModels
         public ObservableCollection<Site> Sites { get => m_sites; set => m_sites = value; }
         public ObservableCollection<Glider> Gliders { get => m_gliders; set => m_gliders = value; }
 
+        public TimeSpan GetTotalFlightDuration(DateTime? analyzePeriodStart = null, DateTime? analyzePeriodEnd = null)
+        {
+            if (analyzePeriodStart == null)
+            {
+                analyzePeriodStart = DateTime.MinValue;
+            }
+            if (analyzePeriodEnd == null)
+            {
+                analyzePeriodEnd = DateTime.Now;
+            }
+            TimeSpan l_totalFlightDuration = new TimeSpan(0, 0, 0, 0);
+
+            l_totalFlightDuration = Flights.Where(flight => flight.TakeOffDateTime > analyzePeriodStart && flight.TakeOffDateTime < analyzePeriodEnd)
+                .Aggregate(TimeSpan.Zero, (subtotal, flight) => subtotal.Add(flight.FlightDuration));
+
+            return l_totalFlightDuration;
+        }
 
     }
   
