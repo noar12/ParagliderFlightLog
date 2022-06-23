@@ -22,9 +22,13 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
+        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1" Grid.RowSpan="3">
+            <Button x:Name="FlightListButton" Content="Flight List"  Click="FlightListButton_Click" />
+            <Button x:Name="SiteListButton" Content="Site List"  Click="SiteListButton_Click" />
+            <Button x:Name="FlightStatButton" Content="Flight Statistic"  Click="FlightStatButton_Click" />
 
-        <Button x:Name="FlightListButton" Content="Flight List" Grid.Row="1" Grid.Column="1" Click="FlightListButton_Click" />
-        <Button x:Name="SiteListButton" Content="Site List" Grid.Row="2" Grid.Column="1" Click="SiteListButton_Click" />
+        </StackPanel>
+         
         <ContentControl x:Name="MainContent" Grid.Column="2" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="3">
             <!--<controls:FlightListControl Source="{Binding FlightLogDB, ElementName=x_MainWindow}"/>-->
         </ContentControl>

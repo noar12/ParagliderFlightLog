@@ -23,6 +23,7 @@ namespace WpfUI
     {
         FlightListControl flc = new FlightListControl();
         SiteListControl slc = new SiteListControl();
+        FlightsStatisticControl fsc = new FlightsStatisticControl();
 
         public MainWindow()
         {
@@ -35,6 +36,7 @@ namespace WpfUI
             slc.Source = mainViewModel.SiteListViewModel;
             Status.DataContext = mainViewModel;
 
+            fsc.Source = mainViewModel;
 
         }
 
@@ -48,6 +50,10 @@ namespace WpfUI
         private void SiteListButton_Click(object sender, RoutedEventArgs e)
         {
             MainContent.Content = slc;
+        }
+        private void FlightStatButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainContent.Content = fsc;
         }
     }
 }

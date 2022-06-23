@@ -4,11 +4,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OxyPlot;
 using ParagliderFlightLog.DataModels;
 
 namespace WpfUI.ViewModels
 {
-    internal class MainViewModel
+    public class MainViewModel
     {
         FlightLogDB m_flightLog = new FlightLogDB();
 
@@ -21,6 +22,8 @@ namespace WpfUI.ViewModels
             
             BuildSiteListViewModel();
             BuildFlightListViewModel();
+
+            
 
         }
 
@@ -59,8 +62,19 @@ namespace WpfUI.ViewModels
         public TimeSpan TotalFlightDuration { get {
                 return m_flightLog.GetTotalFlightDuration();
                     } }
-
+        public List<int> YearsOfFlying
+        {
+            get
+            {
+                List <int> l_yearsOfFlying = FlightListViewModel.Select(f => f.TakeOffDateTime.Year).Distinct().ToList();
+                l_yearsOfFlying.Sort();
+                return l_yearsOfFlying;
+                
+            }
+        }
         public ObservableCollection<FlightViewModel> FlightListViewModel { get; set; } = new ObservableCollection<FlightViewModel>();
         public ObservableCollection<SiteViewModel> SiteListViewModel { get; set; } = new ObservableCollection<SiteViewModel>();
+
+        
     }
 }
