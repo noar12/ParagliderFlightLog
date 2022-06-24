@@ -121,6 +121,7 @@ namespace ParagliderFlightLog.DataModels
             l_FlightLogDB.Flights = l_flights;
             l_FlightLogDB.Sites = l_sites;
             l_FlightLogDB.Gliders = new System.Collections.ObjectModel.ObservableCollection<Glider>(m_LogFlyGliderCollection);
+            
             return l_FlightLogDB;
         }
 

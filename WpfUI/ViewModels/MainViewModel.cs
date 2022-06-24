@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,11 +17,14 @@ namespace WpfUI.ViewModels
         {
             LogFlyDB l_logFlyDB = new LogFlyDB();
             l_logFlyDB.LoadLogFlyDB("Logfly.db");
+            //m_flightLog.Flights.CollectionChanged += BuildFlightListViewModel; It does not work so i am calling the method manually for now
             m_flightLog = l_logFlyDB.BuildFlightLogDB();
 
-            
+
+
+            BuildFlightListViewModel(null , null); //jsut to call it until i understand how to trigger it through collectionchanged
             BuildSiteListViewModel();
-            BuildFlightListViewModel();
+            
 
             
 
@@ -39,7 +43,7 @@ namespace WpfUI.ViewModels
             }
         }
 
-        private void BuildFlightListViewModel()
+        private void BuildFlightListViewModel(object sender, NotifyCollectionChangedEventArgs e)
         {
             
             foreach (Flight flight in m_flightLog.Flights)
