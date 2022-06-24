@@ -72,6 +72,14 @@ namespace WpfUI.ViewModels
                 
             }
         }
+        public TimeSpan FlightDurationInPeriod(DateTime start, DateTime end)
+        {
+            return m_flightLog.GetTotalFlightDuration(start, end);
+        }
+        public List<FlightViewModel> FlightsInPeriod(DateTime start, DateTime end)
+        {
+            return FlightListViewModel.Where(f => f.TakeOffDateTime > start && f.TakeOffDateTime < end).ToList();
+        }
         public ObservableCollection<FlightViewModel> FlightListViewModel { get; set; } = new ObservableCollection<FlightViewModel>();
         public ObservableCollection<SiteViewModel> SiteListViewModel { get; set; } = new ObservableCollection<SiteViewModel>();
 

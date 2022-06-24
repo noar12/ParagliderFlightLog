@@ -18,13 +18,32 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <ComboBox ItemsSource="{Binding Path=Source.YearsOfFlying, ElementName=x_Control}">
+        <ComboBox Name="AnalyzeYear" ItemsSource="{Binding Path=Source.YearsOfFlying, ElementName=x_Control}" DropDownClosed="AnalyzeYear_DropDownClosed">
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding .}"/>
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+        <StackPanel Orientation="Vertical" Grid.Row="1" >
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Flights count"/>
+                <TextBlock Name="FlightsCountText"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Flights duration"/>
+                <TextBlock Name="FlightsDurationText"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Flights mean duration"/>
+                <TextBlock Name="FlightsMeanDurationText"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Flights median duration"/>
+                <TextBlock Name="FlightsMedianDurationText"/>
+            </StackPanel>
+        </StackPanel>
+        
         <!--<TextBlock Text="{Binding Path=Source.FlightListViewModel.Count, ElementName=x_Control}"/>-->
         <!--<plt:PlotView/>-->
     </Grid>

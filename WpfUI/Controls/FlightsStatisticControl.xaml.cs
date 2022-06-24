@@ -32,5 +32,15 @@ namespace WpfUI.Controls
         {
             InitializeComponent();
         }
+
+        private void AnalyzeYear_DropDownClosed(object sender, EventArgs e)
+        {
+            FlightsStatisticsViewModel flightsStatisticsViewModel = 
+                new FlightsStatisticsViewModel(Source,new DateTime((int)AnalyzeYear.SelectedItem,1,1), new DateTime((int)AnalyzeYear.SelectedItem,12,31,23,59,59) );
+            FlightsDurationText.Text = $"{(int)flightsStatisticsViewModel.FlightsDuration.TotalHours}:{flightsStatisticsViewModel.FlightsDuration.Minutes}";
+            FlightsMeanDurationText.Text = $"{(int)flightsStatisticsViewModel.MeanFlightsDuration.TotalHours}:{flightsStatisticsViewModel.MeanFlightsDuration.Minutes}";
+            FlightsMedianDurationText.Text = $"{(int)flightsStatisticsViewModel.MedianFlightsDuration.TotalHours}:{flightsStatisticsViewModel.MedianFlightsDuration.Minutes}";
+            FlightsCountText.Text = flightsStatisticsViewModel.FlightsCount.ToString();
+        }
     }
 }
