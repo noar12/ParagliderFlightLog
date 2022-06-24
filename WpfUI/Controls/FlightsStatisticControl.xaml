@@ -43,8 +43,8 @@
                 <TextBlock Name="FlightsMedianDurationText"/>
             </StackPanel>
         </StackPanel>
-        
-        <!--<TextBlock Text="{Binding Path=Source.FlightListViewModel.Count, ElementName=x_Control}"/>-->
-        <!--<plt:PlotView/>-->
+        <WpfPlot Name="FlightDurationDistPlot" Grid.Column="2" Grid.RowSpan="3"/>
+
+
     </Grid>
 </UserControl>

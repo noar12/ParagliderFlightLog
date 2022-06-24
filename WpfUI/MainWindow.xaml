@@ -25,7 +25,7 @@
         <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1" Grid.RowSpan="3">
             <Button x:Name="FlightListButton" Content="Flight List"  Click="FlightListButton_Click" />
             <Button x:Name="SiteListButton" Content="Site List"  Click="SiteListButton_Click" />
-            <Button x:Name="FlightStatButton" Content="Flight Statistic"  Click="FlightStatButton_Click" />
+            <Button x:Name="FlightStatButton" Content="Flights Statistic"  Click="FlightStatButton_Click" />
 
         </StackPanel>
          

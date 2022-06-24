@@ -41,6 +41,17 @@ namespace WpfUI.Controls
             FlightsMeanDurationText.Text = $"{(int)flightsStatisticsViewModel.MeanFlightsDuration.TotalHours}:{flightsStatisticsViewModel.MeanFlightsDuration.Minutes}";
             FlightsMedianDurationText.Text = $"{(int)flightsStatisticsViewModel.MedianFlightsDuration.TotalHours}:{flightsStatisticsViewModel.MedianFlightsDuration.Minutes}";
             FlightsCountText.Text = flightsStatisticsViewModel.FlightsCount.ToString();
+            FlightDurationDistPlot.Plot.Clear();
+            var bar = FlightDurationDistPlot.Plot.AddBar(flightsStatisticsViewModel.FlightsDurationHistData.Counts, flightsStatisticsViewModel.FlightsDurationHistData.BinEdges);
+            bar.BarWidth = 0.05;
+
+            // customize the plot style
+            FlightDurationDistPlot.Plot.YAxis.Label("Flight count (#)");
+            FlightDurationDistPlot.Plot.XAxis.Label("Duration (Hours)");
+            FlightDurationDistPlot.Plot.SetAxisLimits(yMin: 0);
+
+            
+            FlightDurationDistPlot.Refresh();
         }
     }
 }
