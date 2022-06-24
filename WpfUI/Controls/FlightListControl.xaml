@@ -6,6 +6,8 @@
              xmlns:local="clr-namespace:WpfUI.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Name="x_Control">
+
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -24,8 +26,18 @@
             </DataGrid.Columns>
         </DataGrid>
         <WrapPanel Orientation="Horizontal" DataContext="" Grid.Row="1" Grid.Column="2" Grid.RowSpan="3">
-            <TextBlock Text="{Binding SelectedItem.Comment, ElementName=x_Control}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
-            
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Glider" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.GliderName, ElementName=x_Control}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Max Height [m]" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.MaxHeight, ElementName=x_Control}"/>
+            </StackPanel>
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="Comment" FontWeight="Bold" />
+                <TextBlock Text="{Binding SelectedItem.Comment, ElementName=x_Control}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
+            </StackPanel>
         </WrapPanel>
     </Grid>
 

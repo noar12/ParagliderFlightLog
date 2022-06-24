@@ -31,6 +31,7 @@ namespace WpfUI.Controls
         public FlightsStatisticControl()
         {
             InitializeComponent();
+            
         }
 
         private void AnalyzeYear_DropDownClosed(object sender, EventArgs e)
@@ -48,6 +49,7 @@ namespace WpfUI.Controls
             // customize the plot style
             FlightDurationDistPlot.Plot.YAxis.Label("Flight count (#)");
             FlightDurationDistPlot.Plot.XAxis.Label("Duration (Hours)");
+            FlightDurationDistPlot.Plot.Title("Flight duration distribution");
             FlightDurationDistPlot.Plot.SetAxisLimits(yMin: 0);
 
             

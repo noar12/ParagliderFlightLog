@@ -1,4 +1,4 @@
-﻿<Window x:Class="WpfUI.MainWindow"
+﻿<Window Margin="{DynamicResource TextBlockStyle}" x:Class="WpfUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -7,6 +7,15 @@
         xmlns:controls="clr-namespace:WpfUI.Controls"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Name="x_MainWindow">
+    <Window.Resources>
+        <!-- One style for each *type* of control on the window -->
+        <Style TargetType="TextBox">
+            <Setter Property="Margin" Value="5,3,5,3"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="Margin" Value="5,3,5,3"/>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>

@@ -27,19 +27,19 @@
         </ComboBox>
         <StackPanel Orientation="Vertical" Grid.Row="1" >
             <StackPanel Orientation="Horizontal">
-                <Label Content="Flights count"/>
+                <TextBlock Text="Flights count" FontWeight="Bold"/>
                 <TextBlock Name="FlightsCountText"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Label Content="Flights duration"/>
+                <TextBlock Text="Flights duration" FontWeight="Bold" />
                 <TextBlock Name="FlightsDurationText"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Label Content="Flights mean duration"/>
+                <TextBlock Text="Flights mean duration" FontWeight="Bold" />
                 <TextBlock Name="FlightsMeanDurationText"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <Label Content="Flights median duration"/>
+                <TextBlock Text="Flights median duration" FontWeight="Bold" />
                 <TextBlock Name="FlightsMedianDurationText"/>
             </StackPanel>
         </StackPanel>

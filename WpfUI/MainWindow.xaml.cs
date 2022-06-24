@@ -45,6 +45,7 @@ namespace WpfUI
             Status.DataContext = mainViewModel;
 
             fsc.Source = mainViewModel;
+            
 
         }
 
@@ -70,6 +71,9 @@ namespace WpfUI
         private void FlightStatButton_Click(object sender, RoutedEventArgs e)
         {
             MainContent.Content = fsc;
+            //fsc.AnalyzeYear.SelectedItem = fsc.AnalyzeYear.Items[fsc.AnalyzeYear.Items.Count - 1];
+            // find a solution to fire dropdown event to trigger the statistic calculation of the last item
+
         }
     }
 }

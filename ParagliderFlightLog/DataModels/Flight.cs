@@ -38,5 +38,19 @@ namespace ParagliderFlightLog.DataModels
         public double TakeOffAltitude { get => m_takeOffAltitude; set => m_takeOffAltitude = value; }
         public double TakeOffLatitude { get => m_takeOffLatitude; set => m_takeOffLatitude = value; }
         public double TakeOffLongitude { get => m_takeOffLongitude; set => m_takeOffLongitude = value; }
+        public List<FlightPoint> FlightPoints
+        {
+            get
+            {
+                // for inspiration...https://github.com/ringostarr80/RL.Geo/blob/master/RL.Geo/Gps/Serialization/IgcDeSerializer.cs
+                return new List<FlightPoint>() { new FlightPoint() { Latitude= double.NaN, Height = double.NaN, Longitude = double.NaN} };
+            }
+        }
+    }
+    public class FlightPoint
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double Height { get; set; }
     }
 }
