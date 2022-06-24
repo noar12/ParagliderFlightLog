@@ -25,10 +25,18 @@ namespace WpfUI
         SiteListControl slc = new SiteListControl();
         FlightsStatisticControl fsc = new FlightsStatisticControl();
 
+        MainViewModel mainViewModel = new MainViewModel();
+
+        
+
         public MainWindow()
         {
+            CommandManager.RegisterClassCommandBinding(typeof(MainWindow),
+               new CommandBinding(LogBookCommand.ImportIGC_Command, OnImportIGC,
+                                  (s, e) => { e.CanExecute = true; }));
+
             InitializeComponent();
-            MainViewModel mainViewModel = new MainViewModel();
+            
 
             
             flc.Source = mainViewModel.FlightListViewModel;
@@ -40,7 +48,15 @@ namespace WpfUI
 
         }
 
-
+        private void OnImportIGC(object sender, ExecutedRoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDlg = new Microsoft.Win32.OpenFileDialog();
+            if (openFileDlg.ShowDialog() == true)
+            {
+                mainViewModel.AddFlightFromIGC(openFileDlg.FileName);
+            }
+            
+        }
 
         private void FlightListButton_Click(object sender, RoutedEventArgs e)
         {

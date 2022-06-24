@@ -26,6 +26,7 @@
             <Button x:Name="FlightListButton" Content="Flight List"  Click="FlightListButton_Click" />
             <Button x:Name="SiteListButton" Content="Site List"  Click="SiteListButton_Click" />
             <Button x:Name="FlightStatButton" Content="Flights Statistic"  Click="FlightStatButton_Click" />
+            <Button x:Name="ImportIGC" Content="Import IGC"  Command="{x:Static local:LogBookCommand.ImportIGC_Command}" />
 
         </StackPanel>
          

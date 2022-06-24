@@ -58,6 +58,11 @@ namespace WpfUI.ViewModels
              
         }
 
+        internal void AddFlightFromIGC(string fileName)
+        {
+            m_flightLog.ImportFlightFromIGC(fileName);
+        }
+
         public TimeSpan TotalFlightDuration { get {
                 return m_flightLog.GetTotalFlightDuration();
                     } }

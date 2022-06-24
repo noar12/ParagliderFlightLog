@@ -35,6 +35,11 @@ namespace ParagliderFlightLog.DataModels
             return l_totalFlightDuration;
         }
 
+        public void ImportFlightFromIGC(string IGC_FilePath) 
+        { 
+            throw new NotImplementedException();
+        }
+
     }
   
 }
