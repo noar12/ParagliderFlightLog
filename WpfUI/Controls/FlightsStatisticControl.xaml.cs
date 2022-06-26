@@ -36,6 +36,7 @@ namespace WpfUI.Controls
 
         private void AnalyzeYear_DropDownClosed(object sender, EventArgs e)
         {
+            //build Flight statistic view model for the selected year
             FlightsStatisticsViewModel flightsStatisticsViewModel = 
                 new FlightsStatisticsViewModel(Source,new DateTime((int)AnalyzeYear.SelectedItem,1,1), new DateTime((int)AnalyzeYear.SelectedItem,12,31,23,59,59) );
             FlightsDurationText.Text = $"{(int)flightsStatisticsViewModel.FlightsDuration.TotalHours}:{flightsStatisticsViewModel.FlightsDuration.Minutes}";

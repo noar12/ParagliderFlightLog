@@ -70,6 +70,7 @@ namespace WpfUI.ViewModels
         internal void AddFlightFromIGC(string fileName)
         {
             m_flightLog.ImportFlightFromIGC(fileName);
+            var test = m_flightLog.Flights[m_flightLog.Flights.Count - 2].FlightPoints.Count;
         }
 
         public TimeSpan TotalFlightDuration { get {
@@ -85,10 +86,22 @@ namespace WpfUI.ViewModels
                 
             }
         }
+        /// <summary>
+        /// Return a TimeSpan representing the cumulative flight duration in the period between start and end
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         public TimeSpan FlightDurationInPeriod(DateTime start, DateTime end)
         {
             return m_flightLog.GetTotalFlightDuration(start, end);
         }
+        /// <summary>
+        /// Return a List of all the flight in the period specified between "start" and "end"
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         public List<FlightViewModel> FlightsInPeriod(DateTime start, DateTime end)
         {
             return FlightListViewModel.Where(f => f.TakeOffDateTime > start && f.TakeOffDateTime < end).ToList();

@@ -206,9 +206,13 @@ namespace ParagliderFlightLog.DataModels
             l_Flight.TakeOffLatitude = V_LatDeco;
             l_Flight.TakeOffLongitude = V_LongDeco;
             l_Flight.TakeOffAltitude = V_AltDeco;
-            l_Flight.TakeOffDateTime = V_Date;
+            
             l_Flight.FlightDuration = new TimeSpan(0,0,(int)V_Duree);
             l_Flight.Comment = V_Commentaire;
+            if (V_IGC=="")
+            {
+                l_Flight.TakeOffDateTime = V_Date;
+            }
             l_Flight.IgcFileContent = V_IGC;
 
             // find the guid ref in glider and in site corresponding to m_V_Engin and m_V_Site
