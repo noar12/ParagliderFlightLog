@@ -203,10 +203,6 @@ namespace ParagliderFlightLog.DataModels
         {
             Flight l_Flight = new Flight();
             l_Flight.Flight_ID = Guid.NewGuid().ToString();
-            l_Flight.TakeOffLatitude = V_LatDeco;
-            l_Flight.TakeOffLongitude = V_LongDeco;
-            l_Flight.TakeOffAltitude = V_AltDeco;
-            
             l_Flight.FlightDuration = new TimeSpan(0,0,(int)V_Duree);
             l_Flight.Comment = V_Commentaire;
             if (V_IGC=="")

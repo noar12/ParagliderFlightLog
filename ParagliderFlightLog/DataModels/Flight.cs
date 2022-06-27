@@ -10,23 +10,17 @@ namespace ParagliderFlightLog.DataModels
 {
     public class Flight
     {
-        private string m_igcFileContent="";
+        private string m_igcFileContent = "";
 
-        private string m_comment="";
+        private string m_comment = "";
 
-        private string m_flight_ID="";
+        private string m_flight_ID = "";
 
-        private string m_REF_TakeOffSite_ID="";
+        private string m_REF_TakeOffSite_ID = "";
 
-        private string m_REF_Glider_ID="";
+        private string m_REF_Glider_ID = "";
 
         private TimeSpan m_flightDuration;
-
-        private double m_takeOffAltitude;
-
-        private double m_takeOffLatitude;
-
-        private double m_takeOffLongitude;
 
         private DateTime m_takeOffDateTime;
 
@@ -35,6 +29,10 @@ namespace ParagliderFlightLog.DataModels
         public string Flight_ID { get => m_flight_ID; set => m_flight_ID = value; }
         public string REF_TakeOffSite_ID { get => m_REF_TakeOffSite_ID; set => m_REF_TakeOffSite_ID = value; }
         public string REF_Glider_ID { get => m_REF_Glider_ID; set => m_REF_Glider_ID = value; }
+        /// <summary>
+        /// The take off time in UTC as a timestamp based on the igc data (date in meta data and time as the timestamp of the first sample)
+        /// or on a backing field if no igc content is available
+        /// </summary>
         public DateTime TakeOffDateTime
         {
             get
@@ -68,24 +66,42 @@ namespace ParagliderFlightLog.DataModels
                 m_takeOffDateTime = value;
             }
         }
-        public TimeSpan FlightDuration { get => m_flightDuration; set => m_flightDuration = value; }
-        public double TakeOffAltitude { get => m_takeOffAltitude; set => m_takeOffAltitude = value; }
-        public double TakeOffLatitude { get => m_takeOffLatitude; set => m_takeOffLatitude = value; }
-        public double TakeOffLongitude { get => m_takeOffLongitude; set => m_takeOffLongitude = value; }
+        /// <summary>
+        /// The flight duration as a TimeSpan based on the number of sample in the IGC File (1 sample per seconds) 
+        /// or on the content of a backing field if no igc content is available
+        /// </summary>
+        public TimeSpan FlightDuration
+        {
+            get => FlightPoints.Count > 0 ? new TimeSpan(0, 0, FlightPoints.Count) : m_flightDuration;
+
+            set => m_flightDuration = value;
+        }
+        /// <summary>
+        /// The altitude of the take off if an igc content is available. NaN otherwise
+        /// </summary>
+        public double TakeOffAltitude { get => FlightPoints.Count > 0 ? FlightPoints[0].Height : double.NaN; }
+        /// <summary>
+        /// The latitude of the take off if an igc content is available. NaN otherwise
+        /// </summary>
+        public double TakeOffLatitude { get => FlightPoints.Count > 0 ? FlightPoints[0].Latitude : double.NaN; }
+        /// <summary>
+        /// The longitude of the take off if an igc content is available. NaN otherwise
+        /// </summary>
+        public double TakeOffLongitude { get => FlightPoints.Count > 0 ? FlightPoints[0].Longitude : double.NaN; }
         public List<FlightPoint> FlightPoints
         {
             get
             {
                 List<FlightPoint> l_flightPoints = new List<FlightPoint>();
                 FlightPoint l_flightPoint = new FlightPoint();
-                foreach( string line in IgcFileContent.Split("\r\n"))
+                foreach (string line in IgcFileContent.Split("\r\n"))
                 {
                     if (ParseIGCFlightData(line, out l_flightPoint))
                     {
                         l_flightPoints.Add(l_flightPoint);
                     }
                 }
-             
+
 
                 return l_flightPoints;
             }
@@ -99,7 +115,7 @@ namespace ParagliderFlightLog.DataModels
         /// <returns></returns>
         private bool ParseIGCFlightData(string IGC_Line, out FlightPoint parsedFlightPoint)
         {
-            
+
             const string COORDINATE_REGEX = @"^B(?<UTCTimeHour>\d\d)(?<UTCTimeMinute>\d\d)(?<UTCTimeSecond>\d\d)(?<d1>\d\d)(?<m1>\d\d\d\d\d)(?<dir1>[NnSs])(?<d2>\d\d\d)(?<m2>\d\d\d\d\d)(?<dir2>[EeWw])A(?<BaroAlt>\d\d\d\d\d)(?<GPS_Alt>\d\d\d\d\d)";
             var match = Regex.Match(IGC_Line, COORDINATE_REGEX);
             if (match.Success)
