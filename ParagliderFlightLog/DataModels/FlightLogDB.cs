@@ -7,6 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Data;
+using System.Data.SQLite;
+using Dapper;
+using System.Collections;
+using System.Collections.Specialized;
 
 namespace ParagliderFlightLog.DataModels
 {
@@ -15,6 +20,213 @@ namespace ParagliderFlightLog.DataModels
         private ObservableCollection<Flight> m_flights = new System.Collections.ObjectModel.ObservableCollection<Flight>();
         private ObservableCollection<Site> m_sites = new System.Collections.ObjectModel.ObservableCollection<Site>();
         private ObservableCollection<Glider> m_gliders = new System.Collections.ObjectModel.ObservableCollection<Glider>();
+
+        private const string DB_PATH = "ParagliderFlightLog.db";
+
+        public FlightLogDB()
+        {
+            m_flights.CollectionChanged += FlightsCollectionChangedHandler;
+            m_sites.CollectionChanged += SitesCollectionChangedHandler;
+            m_gliders.CollectionChanged += GliderCollectionChangedHandler;
+        }
+
+
+
+        public void LoadFlightLogDB()
+        {
+            if (File.Exists(DB_PATH))
+            {
+                string sqlGetAllSite = "SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude FROM Sites";
+                string sqlGetAllGlider = "SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory FROM Gliders";
+                string sqlGetAllFlight = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights";
+
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                {
+                    m_sites = new ObservableCollection<Site>(conn.Query<Site>(sqlGetAllSite).ToList());
+                    m_gliders = new ObservableCollection<Glider>(conn.Query<Glider>(sqlGetAllGlider).ToList());
+                    // something wrong here. It seems that dapper is not able to cast what it put in the database itself...
+                    m_flights = new ObservableCollection<Flight>(conn.Query<Flight>(sqlGetAllFlight).ToList());
+
+
+
+                }
+
+            }
+
+
+        }
+
+        private void CreateFlightLogDB()
+        {
+            string sqlCreateSites = @"CREATE TABLE ""Sites"" (
+    ""Site_ID""   TEXT NOT NULL UNIQUE,
+    ""Name""  TEXT NOT NULL UNIQUE,
+    ""Town""  TEXT,
+	""Country""   INTEGER NOT NULL,
+	""WindOrientationBegin""  INTEGER NOT NULL,
+	""WindOrientationEnd""    INTEGER NOT NULL,
+	""Altitude""  REAL NOT NULL,
+	""Latitude""  REAL NOT NULL,
+	""Longitude"" REAL NOT NULL,
+	PRIMARY KEY(""Site_ID""));";
+
+            string sqlCreateGliders = @"CREATE TABLE ""Gliders"" (
+    ""Glider_ID"" TEXT NOT NULL UNIQUE,
+    ""Manufacturer""  TEXT NOT NULL,
+	""Model"" TEXT NOT NULL,
+	""BuildYear"" INTEGER NOT NULL,
+	""LastCheckDateTime"" TEXT,
+	""HomologationCategory""  INTEGER,
+	PRIMARY KEY(""Glider_ID""));";
+
+            string sqlCreateFlights = @"CREATE TABLE ""Flights"" (
+    ""Flight_ID"" TEXT NOT NULL UNIQUE,
+    ""Comment""   TEXT,
+	""REF_TakeOffSite_ID""    TEXT NOT NULL,
+	""REF_Glider_ID"" TEXT NOT NULL,
+	""FlightDuration_s""    INTEGER,
+	""TakeOffDateTime""    TEXT,
+	""IgcFileContent""    TEXT,
+	PRIMARY KEY(""Flight_ID""));";
+
+            if (!File.Exists(DB_PATH))
+            {
+                SQLiteConnection.CreateFile(DB_PATH);
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                {
+                    conn.Open();
+                    SQLiteCommand CreateSitesCommand = new SQLiteCommand(sqlCreateSites, conn);
+                    SQLiteCommand CreateGlidersCommand = new SQLiteCommand(sqlCreateGliders, conn);
+                    SQLiteCommand CreateFlightsCommand = new SQLiteCommand(sqlCreateFlights, conn);
+
+                    CreateSitesCommand.ExecuteNonQuery();
+                    CreateGlidersCommand.ExecuteNonQuery();
+                    CreateFlightsCommand.ExecuteNonQuery();
+                    conn.Close();
+                }
+            }
+        }
+        private void FlightsCollectionChangedHandler(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //System.Diagnostics.Debug.WriteLine("Collection changed triggered");
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    WriteFlightsInDB(e.NewItems);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    DeleteFlightsInDB(e.OldItems);
+                    break;
+                default:
+                    throw new NotSupportedException();
+
+            }
+
+        }
+        private void GliderCollectionChangedHandler(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    WriteGlidersInDB(e.NewItems);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    DeleteGlidersInDB(e.OldItems);
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+            
+        }
+
+
+
+        private void SitesCollectionChangedHandler(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    WriteSitesInDB(e.NewItems);
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    DeleteSitesInDB(e.OldItems);
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private void DeleteSitesInDB(IList? oldItems)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void WriteSitesInDB(IList? newItems)
+        {
+            if (!File.Exists(DB_PATH))
+                CreateFlightLogDB();
+            if (newItems != null)
+            {
+                string sqlWriteSite = "INSERT INTO Sites (Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude) VALUES(@Site_ID, @Name, @Town, @Country, @WindOrientationBegin, @WindOrientationEnd, @Altitude, @Latitude, @Longitude)";
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                {
+
+                    foreach (Site site in newItems)
+                    {
+                        conn.Execute(sqlWriteSite, site);
+                    }
+
+                }
+            }
+        }
+
+        private void DeleteFlightsInDB(IList? oldItems)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void WriteFlightsInDB(IList? newItems)
+        {
+            if (!File.Exists(DB_PATH))
+                CreateFlightLogDB();
+            if (newItems != null)
+            {
+                string sqlWriteFlight = "INSERT INTO Flights (Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s) VALUES(@Flight_ID, @IgcFileContent, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s)";
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                {
+
+                    foreach (Flight flight in newItems)
+                    {
+                        conn.Execute(sqlWriteFlight, flight);
+                    }
+
+                }
+            }
+        }
+
+        private void DeleteGlidersInDB(IList? oldItems)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void WriteGlidersInDB(IList? newItems)
+        {
+            if (!File.Exists(DB_PATH))
+                CreateFlightLogDB();
+            if (newItems != null)
+            {
+                string sqlWriteGlider = "INSERT INTO Gliders (Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory) VALUES (@Glider_ID, @Manufacturer, @Model, @BuildYear, @LastCheckDateTime, @HomologationCategory)";
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                {
+
+                    foreach (Glider glider in newItems)
+                    {
+                        conn.Execute(sqlWriteGlider, glider);
+                    }
+
+                }
+            }
+        }
 
         public ObservableCollection<Flight> Flights { get => m_flights; set => m_flights = value; }
         public ObservableCollection<Site> Sites { get => m_sites; set => m_sites = value; }
@@ -47,14 +259,14 @@ namespace ParagliderFlightLog.DataModels
         /// </summary>
         /// <param name="IGC_FilePath"></param>
         /// <exception cref="NotImplementedException"></exception>
-        public void ImportFlightFromIGC(string IGC_FilePath) 
+        public void ImportFlightFromIGC(string IGC_FilePath)
         {
             Flight l_Newflight = new Flight();
-            
+
             using (var sr = new StreamReader(IGC_FilePath))
             {
                 // to be done: check if it is a correct igc file before injecting
-                   l_Newflight.IgcFileContent = sr.ReadToEnd();           
+                l_Newflight.IgcFileContent = sr.ReadToEnd();
             }
 
             // check if we were able to parse some point before inserting the new flight
@@ -67,6 +279,13 @@ namespace ParagliderFlightLog.DataModels
                 throw new Exception();
             }
         }
+
+        private static string LoadConnectionString(string DB_Path)
+        {
+            // "Data Source=./<relativePathToSqliteDataBase;Version=3;"
+            return $"Data Source={ DB_Path };Version=3;";
+
+        }
     }
-  
+
 }

@@ -15,18 +15,25 @@ namespace WpfUI.ViewModels
 
         public MainViewModel()
         {
-            LogFlyDB l_logFlyDB = new LogFlyDB();
-            l_logFlyDB.LoadLogFlyDB("Logfly.db");
+            //LogFlyDB l_logFlyDB = new LogFlyDB();
+            //l_logFlyDB.LoadLogFlyDB("Logfly.db");
             //m_flightLog.Flights.CollectionChanged += BuildFlightListViewModel; It does not work so i am calling the method manually for now
-            m_flightLog = l_logFlyDB.BuildFlightLogDB();
+            //m_flightLog = l_logFlyDB.BuildFlightLogDB();
 
 
 
-            BuildFlightListViewModel(null , null); //jsut to call it until i understand how to trigger it through collectionchanged
+            //BuildFlightListViewModel(null , null); //jsut to call it until i understand how to trigger it through collectionchanged
+            //BuildSiteListViewModel();
+
+            m_flightLog.LoadFlightLogDB();
+
             BuildSiteListViewModel();
-            
+            BuildFlightListViewModel(null, null);
 
-            
+
+
+
+
 
         }
 
@@ -66,11 +73,31 @@ namespace WpfUI.ViewModels
              
         }
 
+        internal void ImportLogFlyDB(string fileName)
+        {
+            LogFlyDB l_logFlyDB = new LogFlyDB();
+            l_logFlyDB.LoadLogFlyDB(fileName);
+            FlightLogDB l_FlightLogDB = l_logFlyDB.BuildFlightLogDB();
+            foreach (Glider glider in l_FlightLogDB.Gliders)
+            {
+                m_flightLog.Gliders.Add(glider);
+            }
+            foreach (Site site in l_FlightLogDB.Sites)
+            {
+                m_flightLog.Sites.Add(site);
+            }
+            foreach (Flight flight in l_FlightLogDB.Flights)
+            {
+                m_flightLog.Flights.Add(flight);
+            }
+
+
+        }
 
         internal void AddFlightFromIGC(string fileName)
         {
             m_flightLog.ImportFlightFromIGC(fileName);
-            var test = m_flightLog.Flights[m_flightLog.Flights.Count - 2].FlightPoints.Count;
+            
         }
 
         public TimeSpan TotalFlightDuration { get {

@@ -27,26 +27,37 @@ namespace WpfUI
 
         MainViewModel mainViewModel = new MainViewModel();
 
-        
+
 
         public MainWindow()
         {
             CommandManager.RegisterClassCommandBinding(typeof(MainWindow),
-               new CommandBinding(LogBookCommand.ImportIGC_Command, OnImportIGC,
-                                  (s, e) => { e.CanExecute = true; }));
-
+                new CommandBinding(LogBookCommand.ImportIGC_Command, OnImportIGC,
+                (s, e) => { e.CanExecute = true; }));
+            CommandManager.RegisterClassCommandBinding(typeof(MainWindow),
+                new CommandBinding(LogBookCommand.ImportLogFlyDbCommand, OnImportLogFlyDB,
+                (s, e) => { e.CanExecute = true; }));
             InitializeComponent();
-            
 
-            
+
+
             flc.Source = mainViewModel.FlightListViewModel;
-            
+
             slc.Source = mainViewModel.SiteListViewModel;
             Status.DataContext = mainViewModel;
 
             fsc.Source = mainViewModel;
-            
 
+
+        }
+
+        private void OnImportLogFlyDB(object sender, ExecutedRoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openFileDlg = new Microsoft.Win32.OpenFileDialog();
+            if (openFileDlg.ShowDialog() == true) {
+                mainViewModel.ImportLogFlyDB(openFileDlg.FileName);
+            }
+            
         }
 
         private void OnImportIGC(object sender, ExecutedRoutedEventArgs e)
@@ -56,7 +67,7 @@ namespace WpfUI
             {
                 mainViewModel.AddFlightFromIGC(openFileDlg.FileName);
             }
-            
+
         }
 
         private void FlightListButton_Click(object sender, RoutedEventArgs e)

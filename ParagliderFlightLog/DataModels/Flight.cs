@@ -76,6 +76,14 @@ namespace ParagliderFlightLog.DataModels
 
             set => m_flightDuration = value;
         }
+        public int FlightDuration_s
+        {
+            get { return m_flightDuration.Seconds; }
+            set
+            {
+                m_flightDuration = new TimeSpan(0, 0, value);
+            }
+        }
         /// <summary>
         /// The altitude of the take off if an igc content is available. NaN otherwise
         /// </summary>

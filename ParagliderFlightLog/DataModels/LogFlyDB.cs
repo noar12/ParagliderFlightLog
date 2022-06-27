@@ -40,7 +40,10 @@ namespace ParagliderFlightLog.DataModels
             }
         };
 
-
+        /// <summary>
+        /// Load all the data from a LogFly DB and put them in the instance field.
+        /// </summary>
+        /// <param name="DB_Path"></param>
         public void LoadLogFlyDB(string DB_Path)
         {
             string SqlGetAllSite = "SELECT S_ID, S_Nom, S_Alti, S_Latitude, S_Longitude, S_Commentaire FROM Site";
@@ -50,55 +53,14 @@ namespace ParagliderFlightLog.DataModels
             {
                 m_LogFlySiteCollection = conn.Query<LogFlySite>(SqlGetAllSite).ToList();
                 m_LogFlyVolCollection = conn.Query<LogFlyVol>(SqlGetAllVol).ToList();
-                //using (SQLiteCommand cmd = new SQLiteCommand(SqlGetAllSite, conn))
-                //{
-                //    using (SQLiteDataReader dr = cmd.ExecuteReader())
-                //    {
-
-                //        while (dr.Read())
-                //        {
-                //            m_LogFlySiteCollection.Add(new LogFlySite(
-                //                dr.GetInt64(0),
-                //                dr.GetString(1),
-                //                dr.GetString(2),
-                //                dr.GetDouble(3),
-                //                dr.GetDouble(4)
-                //                ));
-                //        }
-
-                //    }
-                //}
-                //using (SQLiteCommand cmd = new SQLiteCommand(SqlGetAllVol, conn))
-                //{
-                //    using(SQLiteDataReader dr = cmd.ExecuteReader())
-                //    {
-                //        int i = 0;
-                //        while (dr.Read())
-                //        {
-
-
-
-                //            m_LogFlyVolCollection.Add(new LogFlyVol(
-                //                dr.GetInt64(0),
-                //                dr.GetDateTime(1),
-                //                new TimeSpan(0, 0, (int)dr.GetInt64(2)),
-                //                dr.GetDouble(3),
-                //                dr.GetDouble(4),
-                //                dr.GetInt64(5),
-                //                dr.GetString(6),
-                //                !dr.IsDBNull(7) ? dr.GetString(7) : null,
-                //                dr.GetString(8),
-                //                dr.GetInt64(9),
-                //                dr.GetString(10),
-                //                !dr.IsDBNull(11) ? dr.GetInt32(11) : -1, // cannot put a null here. What would be a better solution?
-                //                !dr.IsDBNull(12) ? dr.GetString(12) : null
-                //                ));
-                //        }
-                //    }
-                //}
+                
             }
 
         }
+        /// <summary>
+        /// Return a FlightLogDB based on the LogFly Site and Flight collection of the instance. Glider is a constant arbitrary collection (to be changed...).
+        /// </summary>
+        /// <returns></returns>
         public FlightLogDB BuildFlightLogDB()
         {
             System.Collections.ObjectModel.ObservableCollection<Site> l_sites = new System.Collections.ObjectModel.ObservableCollection<Site>();
