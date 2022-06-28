@@ -135,7 +135,8 @@ namespace WpfUI.ViewModels
         }
         public ObservableCollection<FlightViewModel> FlightListViewModel { get; set; } = new ObservableCollection<FlightViewModel>();
         public ObservableCollection<SiteViewModel> SiteListViewModel { get; set; } = new ObservableCollection<SiteViewModel>();
-
         
+
+
     }
 }

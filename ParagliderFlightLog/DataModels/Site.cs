@@ -39,39 +39,5 @@ namespace ParagliderFlightLog.DataModels
         public double Longitude { get => m_longitude; set => m_longitude = value; }
     }
 
-    public enum ECountry
-    {
-        /// <remarks/>
-        Switzerland,
-
-        /// <remarks/>
-        France,
-
-        /// <remarks/>
-        Italy,
-
-        /// <remarks/>
-        Austria,
-
-        /// <remarks/>
-        Spain,
-    }
-    public enum EWindOrientation
-    {
-        /// <remarks/>
-        North,
-        NorthEast,
-
-        /// <remarks/>
-        East,
-        SouthEast,
-
-        /// <remarks/>
-        South,
-        SouthWest,
-
-        /// <remarks/>
-        West,
-        NorthWest,
-    }
+    
 }

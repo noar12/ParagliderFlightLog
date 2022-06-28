@@ -44,7 +44,6 @@ namespace ParagliderFlightLog.DataModels
                 {
                     m_sites = new ObservableCollection<Site>(conn.Query<Site>(sqlGetAllSite).ToList());
                     m_gliders = new ObservableCollection<Glider>(conn.Query<Glider>(sqlGetAllGlider).ToList());
-                    // something wrong here. It seems that dapper is not able to cast what it put in the database itself...
                     m_flights = new ObservableCollection<Flight>(conn.Query<Flight>(sqlGetAllFlight).ToList());
 
 
@@ -55,7 +54,7 @@ namespace ParagliderFlightLog.DataModels
 
 
         }
-
+         
         private void CreateFlightLogDB()
         {
             string sqlCreateSites = @"CREATE TABLE ""Sites"" (
@@ -106,7 +105,7 @@ namespace ParagliderFlightLog.DataModels
                 }
             }
         }
-        private void FlightsCollectionChangedHandler(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void FlightsCollectionChangedHandler(object? sender, NotifyCollectionChangedEventArgs e)
         {
             //System.Diagnostics.Debug.WriteLine("Collection changed triggered");
             switch (e.Action)

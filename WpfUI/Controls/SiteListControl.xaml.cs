@@ -43,5 +43,12 @@ namespace WpfUI.Controls
             get { return (SiteViewModel)GetValue(SelectedItemProperty); }
             set { SetValue(SelectedItemProperty, value); }
         }
+
+        private void AddSite_Click(object sender, RoutedEventArgs e)
+        {
+            Forms.AddSiteForm AddSiteForm = new Forms.AddSiteForm();
+            AddSiteForm.DataContext = Source;
+            AddSiteForm.ShowDialog();
+        }
     }
 }
