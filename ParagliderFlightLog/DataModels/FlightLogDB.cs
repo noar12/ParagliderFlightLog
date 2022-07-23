@@ -291,11 +291,18 @@ namespace ParagliderFlightLog.DataModels
                     l_Newflight.REF_Glider_ID = l_Glider.Glider_ID;
                 }
             }
+            // search for a take off site
 
-            if (l_Newflight.TakeOffLatitude != double.NaN && l_Newflight.TakeOffLongitude != double.NaN)
-            {
-                
-            }
+
+
+            Site? TakeOffSite = Sites.
+                Where(s => l_Newflight.TakeOffPoint.DistanceFrom(new FlightPoint() { Longitude = s.Longitude, Latitude = s.Latitude, Height = s.Altitude }) < s.SiteRadius).
+                FirstOrDefault();
+            if (TakeOffSite != null)
+                l_Newflight.REF_TakeOffSite_ID = TakeOffSite.Site_ID;
+
+            
+
             // check if we were able to parse some point before inserting the new flight
             if (l_Newflight.FlightPoints.Any())
             {

@@ -9,7 +9,8 @@ namespace ParagliderFlightLog.DataModels
 {
     public class Site
     {
-        
+
+
         private string m_site_ID = Guid.NewGuid().ToString();
 
         private string m_name = "";
@@ -29,6 +30,7 @@ namespace ParagliderFlightLog.DataModels
 
         private double m_longitude;
 
+        public double SiteRadius { get; } = 50;
         public string Site_ID { get => m_site_ID; set => m_site_ID = value; }
         public string Name { get => m_name; set => m_name = value; }
         public string Town { get => m_town; set => m_town = value; }
@@ -39,11 +41,7 @@ namespace ParagliderFlightLog.DataModels
         public double Altitude { get => m_altitude; set => m_altitude = value; }
         public double Latitude { get => m_latitude; set => m_latitude = value; }
         public double Longitude { get => m_longitude; set => m_longitude = value; }
-        public double DistanceFrom(FlightPoint flightPoint)
-        {
-            // https://en.wikipedia.org/wiki/Haversine_formula
-            return 0.0;
-        }
+
     }
 
     

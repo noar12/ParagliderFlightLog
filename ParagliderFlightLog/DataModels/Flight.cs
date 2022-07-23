@@ -88,14 +88,11 @@ namespace ParagliderFlightLog.DataModels
         /// The altitude of the take off if an igc content is available. NaN otherwise
         /// </summary>
         public double TakeOffAltitude { get => FlightPoints.Count > 0 ? FlightPoints[0].Height : double.NaN; }
-        /// <summary>
-        /// The latitude of the take off if an igc content is available. NaN otherwise
-        /// </summary>
-        public double TakeOffLatitude { get => FlightPoints.Count > 0 ? FlightPoints[0].Latitude : double.NaN; }
+
         /// <summary>
         /// The longitude of the take off if an igc content is available. NaN otherwise
         /// </summary>
-        public double TakeOffLongitude { get => FlightPoints.Count > 0 ? FlightPoints[0].Longitude : double.NaN; }
+        public FlightPoint TakeOffPoint { get => FlightPoints.Count > 0 ? FlightPoints[0] : new FlightPoint() { Latitude = double.NaN, Longitude = double.NaN, Height= double.NaN}; }
         public List<FlightPoint> FlightPoints
         {
             get
@@ -155,10 +152,23 @@ namespace ParagliderFlightLog.DataModels
         }
 
     }
+    /// <summary>
+    /// Flight point represented in decimal degree
+    /// </summary>
     public class FlightPoint
     {
+        
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public double Height { get; set; }
+        public double DistanceFrom(FlightPoint OtherFlightPoint)
+        {
+            const double EARTH_RADIUS = 6371000;
+            
+            return 2 * EARTH_RADIUS
+                * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin((this.Latitude / 180 * Math.PI - OtherFlightPoint.Latitude / 180 * Math.PI) / 2), 2)
+                + Math.Cos(this.Latitude / 180 * Math.PI) * Math.Cos(OtherFlightPoint.Latitude / 180 * Math.PI)
+                * Math.Pow(Math.Sin((this.Longitude / 180 * Math.PI - OtherFlightPoint.Longitude / 180 * Math.PI) / 2), 2)));
+        }
     }
 }
