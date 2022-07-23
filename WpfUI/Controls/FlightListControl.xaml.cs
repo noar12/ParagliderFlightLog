@@ -24,9 +24,18 @@ namespace WpfUI.Controls
         public FlightListControl()
         {
             InitializeComponent();
-            
+            CommandManager.RegisterClassCommandBinding(typeof(FlightListControl),
+                new CommandBinding(LogBookCommand.RemoveFlightCommand, OnRemoveFlight,
+                (s, e) => { e.CanExecute = FlightGrid.SelectedItem != null; }));
         }
 
+        private void OnRemoveFlight(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (FlightGrid.SelectedItem is FlightViewModel fwm)
+            {
+                Source.Remove(fwm);
+            }
+        }
 
         public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(ICollection<FlightViewModel>), typeof(FlightListControl), new PropertyMetadata(null));
         public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedItem", typeof(FlightViewModel), typeof(FlightListControl), new PropertyMetadata(null));

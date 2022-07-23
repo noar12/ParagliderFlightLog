@@ -182,7 +182,20 @@ namespace ParagliderFlightLog.DataModels
 
         private void DeleteFlightsInDB(IList? oldItems)
         {
-            throw new NotImplementedException();
+            if (!File.Exists(DB_PATH))
+                CreateFlightLogDB();
+            if (oldItems != null)
+            {
+                string sqlDeleteFlight = "DELETE FROM Flights WHERE Flight_ID = @Flight_ID";
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                {
+                    foreach (Flight flight in oldItems)
+                    {
+                        conn.Execute(sqlDeleteFlight, flight);
+                    }
+                }
+
+            }
         }
 
         private void WriteFlightsInDB(IList? newItems)
@@ -259,7 +272,7 @@ namespace ParagliderFlightLog.DataModels
         /// </summary>
         /// <param name="IGC_FilePath"></param>
         /// <exception cref="NotImplementedException"></exception>
-        public void ImportFlightFromIGC(string IGC_FilePath)
+        public Flight ImportFlightFromIGC(string IGC_FilePath)
         {
             Flight l_Newflight = new Flight();
             
@@ -288,6 +301,7 @@ namespace ParagliderFlightLog.DataModels
             {
                 
                 m_flights.Add(l_Newflight);
+                return l_Newflight;
             }
             else
             {

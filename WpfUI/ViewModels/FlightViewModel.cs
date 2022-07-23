@@ -9,13 +9,29 @@ namespace WpfUI.ViewModels
 {
     public class FlightViewModel
     {
-        public DateTime TakeOffDateTime { get; set; }
-        public TimeSpan FlightDuration { get; set; }
-        public string TakeOffSiteName { get; set; }
-        public string GliderName { get; set; }
+        public FlightViewModel()
+        {
+        }
+
+        public FlightViewModel(string flightID, DateTime takeOffDateTime, TimeSpan flightDuration, string takeOffSiteName, string gliderName, List<FlightPoint> flightPoints, string comment)
+        {
+            FlightID = flightID;
+            TakeOffDateTime = takeOffDateTime;
+            FlightDuration = flightDuration;
+            TakeOffSiteName = takeOffSiteName;
+            GliderName = gliderName;
+            FlightPoints = flightPoints;
+            Comment = comment;
+        }
+
+        public string FlightID { get; set; } = "";
+        public DateTime TakeOffDateTime { get; set; } = DateTime.MinValue;
+        public TimeSpan FlightDuration { get; set; } = TimeSpan.Zero;
+        public string TakeOffSiteName { get; set; } = "Unknown site";
+        public string GliderName { get; set; } = "Unknown glider";
         public double MaxHeight { get => FlightPoints.Select(fp => fp.Height).ToList().Max(); }
-        public List<FlightPoint> FlightPoints { get; set; }
-        public string Comment { get; set; }
+        public List<FlightPoint> FlightPoints { get; set; } = new List<FlightPoint>();
+        public string Comment { get; set; } = "";
     }
 
 

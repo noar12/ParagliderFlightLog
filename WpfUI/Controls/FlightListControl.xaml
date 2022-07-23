@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfUI.Controls"
+             xmlns:root="clr-namespace:WpfUI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Name="x_Control">
 
@@ -16,9 +17,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid ItemsSource="{Binding Path=Source, ElementName=x_Control}" AutoGenerateColumns="False" Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" SelectedItem="{Binding SelectedItem,ElementName=x_Control}">
+        <DataGrid x:Name = "FlightGrid" ItemsSource="{Binding Path=Source, ElementName=x_Control}" AutoGenerateColumns="False" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" SelectedItem="{Binding SelectedItem,ElementName=x_Control}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Flight Date/Time" Binding = "{Binding TakeOffDateTime}" />
                 <DataGridTextColumn Header = "Take off site" Binding = "{Binding TakeOffSiteName}" />
@@ -38,7 +40,11 @@
                 <TextBlock Text="Comment" FontWeight="Bold" />
                 <TextBlock Text="{Binding SelectedItem.Comment, ElementName=x_Control}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
             </StackPanel>
+
         </WrapPanel>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Grid.Column="1" Grid.Row="3">
+            <Button x:Name="RemoveFlight" Content="Remove" Command="{x:Static root:LogBookCommand.RemoveFlightCommand}"/>
+        </StackPanel>
     </Grid>
 
 </UserControl>

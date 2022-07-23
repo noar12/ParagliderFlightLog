@@ -28,7 +28,10 @@ namespace WpfUI.ViewModels
             m_flightLog.LoadFlightLogDB();
 
             BuildSiteListViewModel();
-            BuildFlightListViewModel(null, null);
+            BuildFlightListViewModel();
+
+            //m_flightLog.Flights.CollectionChanged += UpdateFlightListViewModel;
+            FlightListViewModel.CollectionChanged += FlightListViewModel_CollectionChanged;
 
 
 
@@ -36,6 +39,67 @@ namespace WpfUI.ViewModels
 
 
         }
+
+        private void FlightListViewModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Remove:
+                    foreach(var item in e.OldItems)
+                    {
+                        if (item is FlightViewModel fvm)
+                        {
+
+                            m_flightLog.Flights.Remove(m_flightLog.Flights.Where(f => f.Flight_ID == fvm.FlightID).FirstOrDefault(new Flight()));
+                        }
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        //private void UpdateFlightListViewModel(object? sender, NotifyCollectionChangedEventArgs e)
+        //{
+        //    switch (e.Action)
+        //    {
+        //        case NotifyCollectionChangedAction.Add:
+        //            foreach (var item in e.NewItems)
+        //            {
+        //                if (item is Flight flight)
+        //                {
+        //                    string l_TakeOffSiteName = m_flightLog.Sites.Where(site => site.Site_ID == flight.REF_TakeOffSite_ID)
+        //                        .FirstOrDefault(new Site() { Name = "Site not found" }).Name;
+        //                    string l_GliderName = m_flightLog.Gliders.Where(glider => glider.Glider_ID == flight.REF_Glider_ID)
+        //                        .FirstOrDefault(new Glider() { Model = "Glider not found" }).Model;
+        //                    FlightViewModel fvm = new FlightViewModel(flight.Flight_ID, flight.TakeOffDateTime,
+        //                        flight.FlightDuration, l_TakeOffSiteName, l_GliderName, flight.FlightPoints, flight.Comment);
+                
+        //                    FlightListViewModel.Add(fvm);
+        //                }
+                        
+        //            }
+                    
+        //            break;
+        //        case NotifyCollectionChangedAction.Remove:
+        //            foreach (var item in e.OldItems)
+        //            {
+        //                if (item is Flight flight)
+        //                {
+                            
+        //                    FlightListViewModel.Remove(FlightListViewModel.Where(fwm => fwm.FlightID == flight.Flight_ID).FirstOrDefault(new FlightViewModel()));
+        //                }
+        //            }
+        //            break;
+
+        //        default:
+        //            throw new InvalidOperationException();
+        //            break;
+        //    }
+        //}
 
         private void BuildSiteListViewModel()
         {
@@ -50,25 +114,20 @@ namespace WpfUI.ViewModels
             }
         }
 
-        private void BuildFlightListViewModel(object sender, NotifyCollectionChangedEventArgs e)
+        private void BuildFlightListViewModel()
         {
             
             foreach (Flight flight in m_flightLog.Flights)
             {
                 //Site? l_site = (from s in m_flightLog.Sites where s.Site_ID == flight.REF_TakeOffSite_ID select s).FirstOrDefault();
                 //string l_siteName = l_site != null ? l_site.Name : "Site not found";
-                FlightListViewModel.Add(new FlightViewModel()
-                {
-                    TakeOffDateTime = flight.TakeOffDateTime,
-                    TakeOffSiteName = m_flightLog.Sites.Where(site => site.Site_ID == flight.REF_TakeOffSite_ID).FirstOrDefault(new Site() { Name = "Site not found" }).Name,
-                    //TakeOffSiteName = (from s in m_flightLog.Sites where s.Site_ID == flight.REF_TakeOffSite_ID select s).FirstOrDefault().Name,
-                    //TakeOffSiteName = l_siteName,
-                    GliderName = m_flightLog.Gliders.Where(glider => glider.Glider_ID == flight.REF_Glider_ID).FirstOrDefault(new Glider() { Model = "Glider not found" }).Model,
-                    FlightDuration = flight.FlightDuration,
-                    Comment = flight.Comment,
-                    FlightPoints = flight.FlightPoints
-
-                });
+                string l_TakeOffSiteName = m_flightLog.Sites.Where(site => site.Site_ID == flight.REF_TakeOffSite_ID)
+                    .FirstOrDefault(new Site() { Name = "Site not found" }).Name;
+                string l_GliderName = m_flightLog.Gliders.Where(glider => glider.Glider_ID == flight.REF_Glider_ID)
+                    .FirstOrDefault(new Glider() { Model = "Glider not found" }).Model;
+                FlightViewModel fvm = new FlightViewModel(flight.Flight_ID, flight.TakeOffDateTime,
+                    flight.FlightDuration, l_TakeOffSiteName, l_GliderName, flight.FlightPoints, flight.Comment);
+                FlightListViewModel.Add(fvm);
             }
              
         }
@@ -96,8 +155,19 @@ namespace WpfUI.ViewModels
 
         internal void AddFlightFromIGC(string fileName)
         {
-            m_flightLog.ImportFlightFromIGC(fileName);
-            
+            Flight l_newFlight = m_flightLog.ImportFlightFromIGC(fileName);
+            IEnumerable<Flight> l_NewItem = new List<Flight>() { l_newFlight };
+
+            string l_TakeOffSiteName = m_flightLog.Sites.Where(site => site.Site_ID == l_newFlight.REF_TakeOffSite_ID)
+                                .FirstOrDefault(new Site() { Name = "Site not found" }).Name;
+            string l_GliderName = m_flightLog.Gliders.Where(glider => glider.Glider_ID == l_newFlight.REF_Glider_ID)
+                .FirstOrDefault(new Glider() { Model = "Glider not found" }).Model;
+            FlightViewModel fvm = new FlightViewModel(l_newFlight.Flight_ID, l_newFlight.TakeOffDateTime,
+                l_newFlight.FlightDuration, l_TakeOffSiteName, l_GliderName, l_newFlight.FlightPoints, l_newFlight.Comment);
+
+            FlightListViewModel.Add(fvm);
+
+          
         }
 
         public TimeSpan TotalFlightDuration { get {
