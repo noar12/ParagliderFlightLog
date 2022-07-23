@@ -30,7 +30,7 @@ namespace ParagliderFlightLog.DataModels
 
         private double m_longitude;
 
-        public double SiteRadius { get; } = 50;
+        public double SiteRadius { get; } = 280; // on devrait pouvoir réduire mais certain point de site de la db sont très mal placé (ex: le CERNIL)
         public string Site_ID { get => m_site_ID; set => m_site_ID = value; }
         public string Name { get => m_name; set => m_name = value; }
         public string Town { get => m_town; set => m_town = value; }

@@ -25,7 +25,9 @@ namespace ParagliderFlightLog.DataModels
 
         public FlightLogDB()
         {
-
+            m_flights.CollectionChanged += FlightsCollectionChangedHandler;
+            m_sites.CollectionChanged += SitesCollectionChangedHandler;
+            m_gliders.CollectionChanged += GliderCollectionChangedHandler;
         }
 
 

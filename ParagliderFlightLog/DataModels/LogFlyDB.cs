@@ -23,7 +23,7 @@ namespace ParagliderFlightLog.DataModels
             new Glider(){
                 Glider_ID = Guid.NewGuid().ToString(),
                 Manufacturer = "Skywalk",
-                Model = "Mescal 4",
+                Model = "Mescal4",
                 IGC_Name = "Mescal 4",
                 BuildYear = 2015,
                 HomologationCategory = EHomologationCategory.ENALow,
@@ -33,7 +33,7 @@ namespace ParagliderFlightLog.DataModels
             new Glider(){
                 Glider_ID = Guid.NewGuid().ToString(),
                 Manufacturer = "Advance",
-                Model = "Epsilon 9",
+                Model = "Epsilon9",
                 IGC_Name = "Epsilon 9",
                 BuildYear = 2019,
                 HomologationCategory = EHomologationCategory.ENBLow,
