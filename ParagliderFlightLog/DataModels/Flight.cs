@@ -14,7 +14,7 @@ namespace ParagliderFlightLog.DataModels
 
         private string m_comment = "";
 
-        private string m_flight_ID = "";
+        private string m_flight_ID = Guid.NewGuid().ToString();
 
         private string m_REF_TakeOffSite_ID = "";
 
@@ -114,6 +114,19 @@ namespace ParagliderFlightLog.DataModels
                 return l_flightPoints;
             }
         }
+        public string IGC_GliderName
+        {
+            get
+            {
+                const string GLIDER_TYPE_REGEX = @"^HFGTYGLIDERTYPE:(?<value>.+)$";
+                var match = Regex.Match(IgcFileContent, GLIDER_TYPE_REGEX, RegexOptions.Multiline);
+                if (match.Success)
+                {
+                    return match.Groups["value"].Value.TrimEnd('\r','\n');
+                }
+                return "";
+            }
+        }
         /// <summary>
         /// Parse the IGC_Line as coordinate. Highly inspired from https://github.com/ringostarr80/RL.Geo/blob/master/RL.Geo/Gps/Serialization/IgcDeSerializer.cs
         /// return true if it succeed false otherwise
@@ -140,6 +153,7 @@ namespace ParagliderFlightLog.DataModels
             return false;
 
         }
+
     }
     public class FlightPoint
     {

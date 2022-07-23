@@ -25,9 +25,7 @@ namespace ParagliderFlightLog.DataModels
 
         public FlightLogDB()
         {
-            m_flights.CollectionChanged += FlightsCollectionChangedHandler;
-            m_sites.CollectionChanged += SitesCollectionChangedHandler;
-            m_gliders.CollectionChanged += GliderCollectionChangedHandler;
+
         }
 
 
@@ -37,7 +35,7 @@ namespace ParagliderFlightLog.DataModels
             if (File.Exists(DB_PATH))
             {
                 string sqlGetAllSite = "SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude FROM Sites";
-                string sqlGetAllGlider = "SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory FROM Gliders";
+                string sqlGetAllGlider = "SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name FROM Gliders";
                 string sqlGetAllFlight = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights";
 
                 using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
@@ -46,7 +44,9 @@ namespace ParagliderFlightLog.DataModels
                     m_gliders = new ObservableCollection<Glider>(conn.Query<Glider>(sqlGetAllGlider).ToList());
                     m_flights = new ObservableCollection<Flight>(conn.Query<Flight>(sqlGetAllFlight).ToList());
 
-
+                    m_flights.CollectionChanged += FlightsCollectionChangedHandler;
+                    m_sites.CollectionChanged += SitesCollectionChangedHandler;
+                    m_gliders.CollectionChanged += GliderCollectionChangedHandler;
 
                 }
 
@@ -76,7 +76,8 @@ namespace ParagliderFlightLog.DataModels
 	""BuildYear"" INTEGER NOT NULL,
 	""LastCheckDateTime"" TEXT,
 	""HomologationCategory""  INTEGER,
-	PRIMARY KEY(""Glider_ID""));";
+    ""IGC_Name""  TEXT UNIQUE,
+    PRIMARY KEY(""Glider_ID""));";
 
             string sqlCreateFlights = @"CREATE TABLE ""Flights"" (
     ""Flight_ID"" TEXT NOT NULL UNIQUE,
@@ -214,7 +215,7 @@ namespace ParagliderFlightLog.DataModels
                 CreateFlightLogDB();
             if (newItems != null)
             {
-                string sqlWriteGlider = "INSERT INTO Gliders (Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory) VALUES (@Glider_ID, @Manufacturer, @Model, @BuildYear, @LastCheckDateTime, @HomologationCategory)";
+                string sqlWriteGlider = "INSERT INTO Gliders (Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name) VALUES (@Glider_ID, @Manufacturer, @Model, @BuildYear, @LastCheckDateTime, @HomologationCategory, @IGC_Name)";
                 using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
                 {
 
@@ -261,16 +262,31 @@ namespace ParagliderFlightLog.DataModels
         public void ImportFlightFromIGC(string IGC_FilePath)
         {
             Flight l_Newflight = new Flight();
-
+            
             using (var sr = new StreamReader(IGC_FilePath))
             {
                 // to be done: check if it is a correct igc file before injecting
                 l_Newflight.IgcFileContent = sr.ReadToEnd();
             }
 
+            if (l_Newflight.IGC_GliderName != "")
+            {
+                // A glider is defined in the IGC so we will try to match it with an existing one
+                Glider? l_Glider = Gliders.FirstOrDefault(g => g.IGC_Name == l_Newflight.IGC_GliderName);
+                if ( l_Glider != null) 
+                {
+                    l_Newflight.REF_Glider_ID = l_Glider.Glider_ID;
+                }
+            }
+
+            if (l_Newflight.TakeOffLatitude != double.NaN && l_Newflight.TakeOffLongitude != double.NaN)
+            {
+                
+            }
             // check if we were able to parse some point before inserting the new flight
             if (l_Newflight.FlightPoints.Any())
             {
+                
                 m_flights.Add(l_Newflight);
             }
             else

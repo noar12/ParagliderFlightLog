@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace ParagliderFlightLog.DataModels
 {
     public class Site
     {
-        private string m_site_ID = "";
+        
+        private string m_site_ID = Guid.NewGuid().ToString();
 
         private string m_name = "";
 
@@ -37,6 +39,11 @@ namespace ParagliderFlightLog.DataModels
         public double Altitude { get => m_altitude; set => m_altitude = value; }
         public double Latitude { get => m_latitude; set => m_latitude = value; }
         public double Longitude { get => m_longitude; set => m_longitude = value; }
+        public double DistanceFrom(FlightPoint flightPoint)
+        {
+            // https://en.wikipedia.org/wiki/Haversine_formula
+            return 0.0;
+        }
     }
 
     
