@@ -32,12 +32,53 @@ namespace WpfUI.ViewModels
 
             //m_flightLog.Flights.CollectionChanged += UpdateFlightListViewModel;
             FlightListViewModel.CollectionChanged += FlightListViewModel_CollectionChanged;
+            SiteListViewModel.CollectionChanged += SiteListViewModel_CollectionChanged;
 
 
 
 
 
 
+        }
+
+        private void SiteListViewModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (var item in e.NewItems)
+                    {
+                        if (item is SiteViewModel svm)
+                        {
+                            Enum.TryParse(svm.Country, out ECountry l_Country);
+                            Enum.TryParse(svm.WindOrientationBegin, out EWindOrientation l_WindOrientationBegin);
+                            Enum.TryParse( svm.WindOrientationEnd, out EWindOrientation l_WindOrientationEnd);
+                            Site l_site = new Site()
+                            {
+                                Name = svm.Name,
+                                Altitude = svm.Altitude,
+                                Latitude = svm.Latitude,
+                                Longitude = svm.Longitude,
+                                Country = l_Country,
+                                Town = svm.Town,
+                                WindOrientationBegin = l_WindOrientationBegin,
+                                WindOrientationEnd = l_WindOrientationEnd,
+                                
+                            };
+                            m_flightLog.Sites.Add(l_site);
+                        }
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    throw new NotImplementedException();
+                    break;
+                case NotifyCollectionChangedAction.Replace:
+                    throw new NotImplementedException();
+                    break;
+                
+                default:
+                    break;
+            }
         }
 
         private void FlightListViewModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -109,7 +150,7 @@ namespace WpfUI.ViewModels
                 {
                     Name = site.Name,
                     Altitude = site.Altitude,
-                    WindOrientation = $"{site.WindOrientationBegin} - {site.WindOrientationEnd}"
+                    WindOrientation = site.WindOrientationText,
                 });
             }
         }
@@ -169,6 +210,8 @@ namespace WpfUI.ViewModels
 
           
         }
+
+        
 
         public TimeSpan TotalFlightDuration { get {
                 return m_flightLog.GetTotalFlightDuration();

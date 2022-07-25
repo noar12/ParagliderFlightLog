@@ -11,7 +11,16 @@ namespace WpfUI.ViewModels
     {
         public string Name { get; set; }
         public double Altitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public string Country { get; set; }
+        public string Town { get; set; }
         public string WindOrientation { get; set; }
+        public string WindOrientationBegin { get; set; }
+        public string WindOrientationEnd { get; set; }
         public string[] AvailableWindOrientation { get => Enum.GetNames(typeof(EWindOrientation)); }
+        public string[] AvailableCountry { get => Enum.GetNames(typeof(ECountry)); }
+
+
     }
 }

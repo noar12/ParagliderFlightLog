@@ -37,6 +37,7 @@ namespace ParagliderFlightLog.DataModels
         public ECountry Country { get => m_country; set => m_country = value; }
         public EWindOrientation WindOrientationBegin { get => m_windOrientationBegin; set => m_windOrientationBegin = value; }
         public EWindOrientation WindOrientationEnd { get => m_windOrientationEnd; set => m_windOrientationEnd = value; }
+        public string WindOrientationText { get => $"{WindOrientationBegin} - {WindOrientationEnd}"; }
         public bool WindOrientationSpecified { get => m_windOrientationSpecified; set => m_windOrientationSpecified = value; }
         public double Altitude { get => m_altitude; set => m_altitude = value; }
         public double Latitude { get => m_latitude; set => m_latitude = value; }

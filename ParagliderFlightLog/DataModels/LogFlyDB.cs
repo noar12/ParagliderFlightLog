@@ -23,7 +23,7 @@ namespace ParagliderFlightLog.DataModels
             new Glider(){
                 Glider_ID = Guid.NewGuid().ToString(),
                 Manufacturer = "Skywalk",
-                Model = "Mescal4",
+                Model = "Mescal 4",
                 IGC_Name = "Mescal 4",
                 BuildYear = 2015,
                 HomologationCategory = EHomologationCategory.ENALow,
@@ -33,7 +33,7 @@ namespace ParagliderFlightLog.DataModels
             new Glider(){
                 Glider_ID = Guid.NewGuid().ToString(),
                 Manufacturer = "Advance",
-                Model = "Epsilon9",
+                Model = "Epsilon 9",
                 IGC_Name = "Epsilon 9",
                 BuildYear = 2019,
                 HomologationCategory = EHomologationCategory.ENBLow,
@@ -78,7 +78,7 @@ namespace ParagliderFlightLog.DataModels
 
             foreach (var vol in m_LogFlyVolCollection)
             {
-                l_flights.Add(vol.ToFlighLogDBFlight(l_sites, m_LogFlyGliderCollection));
+                l_flights.Add(vol.ToFlightLogDBFlight(l_sites, m_LogFlyGliderCollection));
             }
 
             FlightLogDB l_FlightLogDB = new FlightLogDB();
@@ -163,7 +163,7 @@ namespace ParagliderFlightLog.DataModels
         public int V_League { get => m_V_League; set => m_V_League = value; }
         public string V_Score { get => m_V_Score; set => m_V_Score = value; }
 
-        internal Flight ToFlighLogDBFlight(System.Collections.ObjectModel.ObservableCollection<Site> sites, List<Glider> gliders)
+        internal Flight ToFlightLogDBFlight(System.Collections.ObjectModel.ObservableCollection<Site> sites, List<Glider> gliders)
         {
             Flight l_Flight = new Flight();
             l_Flight.Flight_ID = Guid.NewGuid().ToString();

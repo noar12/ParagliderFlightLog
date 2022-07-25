@@ -23,6 +23,7 @@ namespace ParagliderFlightLog.DataModels
         private TimeSpan m_flightDuration;
 
         private DateTime m_takeOffDateTime;
+        private List<FlightPoint> m_FlightPoints =  new List<FlightPoint>();
 
         public string IgcFileContent { get => m_igcFileContent; set => m_igcFileContent = value; }
         public string Comment { get => m_comment; set => m_comment = value; }
@@ -78,7 +79,7 @@ namespace ParagliderFlightLog.DataModels
         }
         public int FlightDuration_s
         {
-            get { return m_flightDuration.Seconds; }
+            get { return (int)FlightDuration.TotalSeconds; }
             set
             {
                 m_flightDuration = new TimeSpan(0, 0, value);
@@ -97,18 +98,19 @@ namespace ParagliderFlightLog.DataModels
         {
             get
             {
-                List<FlightPoint> l_flightPoints = new List<FlightPoint>();
-                FlightPoint l_flightPoint = new FlightPoint();
-                foreach (string line in IgcFileContent.Split("\r\n"))
+                if (m_FlightPoints.Count == 0)
                 {
-                    if (ParseIGCFlightData(line, out l_flightPoint))
+                    FlightPoint l_flightPoint = new FlightPoint();
+                    foreach (string line in IgcFileContent.Split("\r\n"))
                     {
-                        l_flightPoints.Add(l_flightPoint);
+                        if (ParseIGCFlightData(line, out l_flightPoint))
+                        {
+                            m_FlightPoints.Add(l_flightPoint);
+                        }
                     }
                 }
 
-
-                return l_flightPoints;
+                return m_FlightPoints;
             }
         }
         public string IGC_GliderName

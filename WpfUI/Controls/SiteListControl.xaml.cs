@@ -49,6 +49,7 @@ namespace WpfUI.Controls
             Forms.AddSiteForm AddSiteForm = new Forms.AddSiteForm();
             AddSiteForm.DataContext = Source;
             AddSiteForm.ShowDialog();
+            
         }
     }
 }

@@ -55,7 +55,7 @@
 
 
             <TextBlock Text="Country" Grid.Column="0" Grid.Row="2"/>
-            <TextBox x:Name="Country" Grid.Column="1" Grid.Row="2" MinWidth="100"/>
+            <ComboBox x:Name="Country" Grid.Column="1" Grid.Row="2" MinWidth="100" ItemsSource="{Binding AvailableCountry}"/>
 
             <TextBlock Text="Wind orientation (Clockwise, North-North for all orientation)" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2"/>
             <TextBlock Text="From" Grid.Column="0" Grid.Row="4"/>
@@ -79,8 +79,8 @@
             <TextBox x:Name="Altitude" MinWidth="100"/>
         </StackPanel>
         <StackPanel Grid.Column="2" Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button x:Name="OK" Content="OK" />
-            <Button x:Name="Cancel" Content="Cancel"/>
+            <Button x:Name="OK" Content="OK" Click="OK_Click" />
+            <Button x:Name="Cancel" Content="Cancel" Click="Cancel_Click"/>
         </StackPanel>
         
     </Grid>
