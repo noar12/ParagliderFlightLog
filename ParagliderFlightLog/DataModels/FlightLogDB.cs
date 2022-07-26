@@ -274,7 +274,7 @@ namespace ParagliderFlightLog.DataModels
         /// </summary>
         /// <param name="IGC_FilePath"></param>
         /// <exception cref="NotImplementedException"></exception>
-        public Flight ImportFlightFromIGC(string IGC_FilePath)
+        public (Flight, Site) ImportFlightFromIGC(string IGC_FilePath)
         {
             Flight l_Newflight = new Flight();
             
@@ -293,24 +293,33 @@ namespace ParagliderFlightLog.DataModels
                     l_Newflight.REF_Glider_ID = l_Glider.Glider_ID;
                 }
             }
+
             // search for a take off site
-
-
-
-            Site? TakeOffSite = Sites.
+            Site? l_TakeOffSite = Sites.
                 Where(s => l_Newflight.TakeOffPoint.DistanceFrom(new FlightPoint() { Longitude = s.Longitude, Latitude = s.Latitude, Height = s.Altitude }) < s.SiteRadius).
                 FirstOrDefault();
-            if (TakeOffSite != null)
-                l_Newflight.REF_TakeOffSite_ID = TakeOffSite.Site_ID;
+            if (l_TakeOffSite != null)
+                l_Newflight.REF_TakeOffSite_ID = l_TakeOffSite.Site_ID;
+            else
+            {
+                l_TakeOffSite = new Site()
+                {
+                    Name = "Unknown site",
+                    Latitude = l_Newflight.TakeOffPoint.Latitude,
+                    Longitude = l_Newflight.TakeOffPoint.Longitude,
+                    Altitude = l_Newflight.TakeOffAltitude,
+                };
+                Sites.Add(l_TakeOffSite);
+                l_Newflight.REF_TakeOffSite_ID = l_TakeOffSite.Site_ID;
+            }
 
             
 
             // check if we were able to parse some point before inserting the new flight
             if (l_Newflight.FlightPoints.Any())
-            {
-                
+            { 
                 m_flights.Add(l_Newflight);
-                return l_Newflight;
+                return (l_Newflight, l_TakeOffSite);
             }
             else
             {

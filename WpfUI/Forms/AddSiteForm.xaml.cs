@@ -41,6 +41,7 @@ namespace WpfUI.Forms
 
             SiteViewModel siteViewModel = new SiteViewModel()
             {
+                Site_ID = new Guid().ToString(),
                 Name = l_Name,
                 Town = l_Town,
                 Country = l_Country,
@@ -49,7 +50,7 @@ namespace WpfUI.Forms
                 Latitude = l_Latitude,
                 Longitude = l_Longitude,
                 Altitude = l_Altitude,
-                WindOrientation = $"{ l_WindOrientationBegin } - {l_WindOrientationEnd}"
+               
             };
             if (DataContext is ICollection<SiteViewModel> l_SiteViewModel) 
             {
