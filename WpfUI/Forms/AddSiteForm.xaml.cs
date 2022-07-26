@@ -21,10 +21,61 @@ namespace WpfUI.Forms
     /// </summary>
     public partial class AddSiteForm : Window
     {
+
+
+
+        public bool EditMode
+        {
+            get { return (bool)GetValue(EditModeProperty); }
+            set { SetValue(EditModeProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for EditMode.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty EditModeProperty =
+            DependencyProperty.Register("EditMode", typeof(bool), typeof(SiteViewModel));
+
+
+
+
+        public SiteViewModel SelectedSite
+        {
+            get { return (SiteViewModel)GetValue(SelectedSiteProperty); }
+            set { SetValue(SelectedSiteProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedSite.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SelectedSiteProperty =
+            DependencyProperty.Register("SelectedSite", typeof(SiteViewModel), typeof(AddSiteForm));
+
+
+
+        public ICollection<SiteViewModel> SiteCollection
+        {
+            get { return (ICollection<SiteViewModel>)GetValue(SiteCollectionProperty); }
+            set { SetValue(SiteCollectionProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SiteCollection.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SiteCollectionProperty =
+            DependencyProperty.Register("SiteCollection", typeof(ICollection<SiteViewModel>), typeof(AddSiteForm));
+
+
+
         public AddSiteForm()
         {
             InitializeComponent();
             this.SizeToContent = SizeToContent.WidthAndHeight;
+            if (EditMode)
+            {
+                Name.Text = SelectedSite.Name;
+                Town.Text = SelectedSite.Town;
+                Country.Text = SelectedSite.Country;
+                WindOrientationStart.Text = SelectedSite.WindOrientationBegin;
+                WindOrientationEnd.Text = SelectedSite.WindOrientationEnd;
+                Latitude.Text = SelectedSite.Latitude.ToString();
+                Longitude.Text = SelectedSite.Longitude.ToString();
+                Altitude.Text = SelectedSite.Altitude.ToString();
+            }
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
@@ -38,24 +89,26 @@ namespace WpfUI.Forms
             double.TryParse(Latitude.Text, out double l_Latitude);
             double.TryParse(Longitude.Text, out double l_Longitude);
             double.TryParse(Altitude.Text, out double l_Altitude);
+            if (!EditMode)
+            {
+                SiteViewModel siteViewModel = new SiteViewModel()
+                {
+                    Site_ID = new Guid().ToString(),
+                    Name = l_Name,
+                    Town = l_Town,
+                    Country = l_Country,
+                    WindOrientationBegin = l_WindOrientationBegin,
+                    WindOrientationEnd = l_WindOrientationEnd,
+                    Latitude = l_Latitude,
+                    Longitude = l_Longitude,
+                    Altitude = l_Altitude,
 
-            SiteViewModel siteViewModel = new SiteViewModel()
-            {
-                Site_ID = new Guid().ToString(),
-                Name = l_Name,
-                Town = l_Town,
-                Country = l_Country,
-                WindOrientationBegin = l_WindOrientationBegin,
-                WindOrientationEnd = l_WindOrientationEnd,
-                Latitude = l_Latitude,
-                Longitude = l_Longitude,
-                Altitude = l_Altitude,
-               
-            };
-            if (DataContext is ICollection<SiteViewModel> l_SiteViewModel) 
-            {
-                l_SiteViewModel.Add(siteViewModel);
+                };
+
+                SiteCollection.Add(siteViewModel);
             }
+            
+            
 
             this.Close();
         }

@@ -31,6 +31,7 @@
         </WrapPanel>
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom">
             <Button x:Name="AddSite" Content="Add new site" Click="AddSite_Click"/>
+            <Button x:Name="EditSite" Content="Edit site" Click="EditSite_Click"/>
         </StackPanel>
         
     </Grid>
