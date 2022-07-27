@@ -49,26 +49,30 @@ namespace WpfUI.ViewModels
                     foreach (var item in e.NewItems)
                     {
                         // if the site is not in the data model yet we add it
-                        if (item is SiteViewModel svm && m_flightLog.Sites.Where(s => s.Site_ID == svm.Site_ID).Count() == 0)
+                        if (item is SiteViewModel svm)
                         {
-                            Enum.TryParse(svm.Country, out ECountry l_Country);
-                            Enum.TryParse(svm.WindOrientationBegin, out EWindOrientation l_WindOrientationBegin);
-                            Enum.TryParse( svm.WindOrientationEnd, out EWindOrientation l_WindOrientationEnd);
-                            Site l_site = new Site()
+                            if (m_flightLog.Sites.Where(s => s.Site_ID == svm.Site_ID).Count() == 0)
                             {
-                                Site_ID = svm.Site_ID,
-                                Name = svm.Name,
-                                Altitude = svm.Altitude,
-                                Latitude = svm.Latitude,
-                                Longitude = svm.Longitude,
-                                Country = l_Country,
-                                Town = svm.Town,
-                                WindOrientationBegin = l_WindOrientationBegin,
-                                WindOrientationEnd = l_WindOrientationEnd,
-                                
-                            };
-                            m_flightLog.Sites.Add(l_site);
+                                Enum.TryParse(svm.Country, out ECountry l_Country);
+                                Enum.TryParse(svm.WindOrientationBegin, out EWindOrientation l_WindOrientationBegin);
+                                Enum.TryParse(svm.WindOrientationEnd, out EWindOrientation l_WindOrientationEnd);
+                                Site l_site = new Site()
+                                {
+                                    Site_ID = svm.Site_ID,
+                                    Name = svm.Name,
+                                    Altitude = svm.Altitude,
+                                    Latitude = svm.Latitude,
+                                    Longitude = svm.Longitude,
+                                    Country = l_Country,
+                                    Town = svm.Town,
+                                    WindOrientationBegin = l_WindOrientationBegin,
+                                    WindOrientationEnd = l_WindOrientationEnd,
+
+                                };
+                                m_flightLog.Sites.Add(l_site);
+                            }
                         }
+
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:
@@ -148,18 +152,7 @@ namespace WpfUI.ViewModels
         {
             foreach (Site site in m_flightLog.Sites)
             {
-                SiteListViewModel.Add(new SiteViewModel()
-                {
-                    Site_ID = site.Site_ID,
-                    Name = site.Name,
-                    Town = site.Town,
-                    Country = site.Country.ToString(),
-                    Latitude = site.Latitude,
-                    Longitude = site.Longitude,
-                    Altitude = site.Altitude,
-                    WindOrientationBegin = site.WindOrientationBegin.ToString(),
-                    WindOrientationEnd = site.WindOrientationEnd.ToString(),
-                });
+                SiteListViewModel.Add(new SiteViewModel(site));
             }
         }
 
@@ -168,14 +161,7 @@ namespace WpfUI.ViewModels
             
             foreach (Flight flight in m_flightLog.Flights)
             {
-                //Site? l_site = (from s in m_flightLog.Sites where s.Site_ID == flight.REF_TakeOffSite_ID select s).FirstOrDefault();
-                //string l_siteName = l_site != null ? l_site.Name : "Site not found";
-                string l_TakeOffSiteName = m_flightLog.Sites.Where(site => site.Site_ID == flight.REF_TakeOffSite_ID)
-                    .FirstOrDefault(new Site() { Name = "Site not found" }).Name;
-                string l_GliderName = m_flightLog.Gliders.Where(glider => glider.Glider_ID == flight.REF_Glider_ID)
-                    .FirstOrDefault(new Glider() { Model = "Glider not found" }).Model;
-                FlightViewModel fvm = new FlightViewModel(flight.Flight_ID, flight.TakeOffDateTime,
-                    flight.FlightDuration, l_TakeOffSiteName, l_GliderName, flight.FlightPoints, flight.Comment);
+                FlightViewModel fvm = new FlightViewModel(flight,m_flightLog.Sites, m_flightLog.Gliders);
                 FlightListViewModel.Add(fvm);
             }
              
@@ -210,31 +196,15 @@ namespace WpfUI.ViewModels
 
             (Flight l_NewFlight, Site l_NewSite) = m_flightLog.ImportFlightFromIGC(filePath);
 
-            string l_TakeOffSiteName = m_flightLog.Sites.Where(site => site.Site_ID == l_NewFlight.REF_TakeOffSite_ID)
-                                .FirstOrDefault(new Site() { Name = "Site not found" }).Name;
-            string l_GliderName = m_flightLog.Gliders.Where(glider => glider.Glider_ID == l_NewFlight.REF_Glider_ID)
-                .FirstOrDefault(new Glider() { Model = "Glider not found" }).Model;
-            FlightViewModel fvm = new FlightViewModel(l_NewFlight.Flight_ID, l_NewFlight.TakeOffDateTime,
-                l_NewFlight.FlightDuration, l_TakeOffSiteName, l_GliderName, l_NewFlight.FlightPoints, l_NewFlight.Comment);
-            
-
+            FlightViewModel fvm = new FlightViewModel(l_NewFlight, m_flightLog.Sites, m_flightLog.Gliders);
             FlightListViewModel.Add(fvm);
             if(SiteListViewModel.Where(s => s.Site_ID == l_NewSite.Site_ID).Count() == 0)
             {
-                SiteViewModel svm = new SiteViewModel()
-                {
-                    Site_ID = l_NewSite.Site_ID,
-                    Name = l_NewSite.Name,
-                    Town = l_NewSite.Town,
-                    Country = l_NewSite.Country.ToString(),
-                    Latitude = l_NewSite.Latitude,
-                    Longitude = l_NewSite.Longitude,
-                    Altitude = l_NewSite.Altitude,
-                    WindOrientationBegin = l_NewSite.WindOrientationBegin.ToString(),
-                    WindOrientationEnd = l_NewSite.WindOrientationEnd.ToString(),
-                };
+                SiteViewModel svm = new SiteViewModel(l_NewSite);
+                
                 SiteListViewModel.Add(svm);
             }
+
                 
           
         }

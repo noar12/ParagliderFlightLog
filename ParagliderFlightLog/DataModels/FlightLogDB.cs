@@ -17,9 +17,9 @@ namespace ParagliderFlightLog.DataModels
 {
     public class FlightLogDB
     {
-        private ObservableCollection<Flight> m_flights = new System.Collections.ObjectModel.ObservableCollection<Flight>();
-        private ObservableCollection<Site> m_sites = new System.Collections.ObjectModel.ObservableCollection<Site>();
-        private ObservableCollection<Glider> m_gliders = new System.Collections.ObjectModel.ObservableCollection<Glider>();
+        private ObservableCollection<Flight> m_flights = new ObservableCollection<Flight>();
+        private ObservableCollection<Site> m_sites = new ObservableCollection<Site>();
+        private ObservableCollection<Glider> m_gliders = new ObservableCollection<Glider>();
 
         private const string DB_PATH = "ParagliderFlightLog.db";
 
@@ -29,7 +29,6 @@ namespace ParagliderFlightLog.DataModels
             m_sites.CollectionChanged += SitesCollectionChangedHandler;
             m_gliders.CollectionChanged += GliderCollectionChangedHandler;
         }
-
 
 
         public void LoadFlightLogDB()
@@ -42,14 +41,13 @@ namespace ParagliderFlightLog.DataModels
 
                 using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
                 {
-                    m_sites = new ObservableCollection<Site>(conn.Query<Site>(sqlGetAllSite).ToList());
-                    m_gliders = new ObservableCollection<Glider>(conn.Query<Glider>(sqlGetAllGlider).ToList());
-                    m_flights = new ObservableCollection<Flight>(conn.Query<Flight>(sqlGetAllFlight).ToList());
+                    m_sites = new ObservableCollection<Site>(conn.Query<Site>(sqlGetAllSite));
+                    m_gliders = new ObservableCollection<Glider>(conn.Query<Glider>(sqlGetAllGlider));
+                    m_flights = new ObservableCollection<Flight>(conn.Query<Flight>(sqlGetAllFlight));
 
                     m_flights.CollectionChanged += FlightsCollectionChangedHandler;
                     m_sites.CollectionChanged += SitesCollectionChangedHandler;
                     m_gliders.CollectionChanged += GliderCollectionChangedHandler;
-
                 }
 
             }

@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ParagliderFlightLog.DataModels
 {
-    public class Site
+    public class Site : INotifyPropertyChanged
     {
 
 
         private string m_site_ID = Guid.NewGuid().ToString();
 
-        private string m_name = "";
+        private string m_name = "Unknown site";
 
         private string m_town = "";
 
@@ -32,7 +33,14 @@ namespace ParagliderFlightLog.DataModels
 
         public double SiteRadius { get; } = 280; // on devrait pouvoir réduire mais certain point de site de la db sont très mal placé (ex: le CERNIL)
         public string Site_ID { get => m_site_ID; set => m_site_ID = value; }
-        public string Name { get => m_name; set => m_name = value; }
+        public string Name
+        {
+            get => m_name; set
+            {
+                m_name = value;
+                NotifyPropertyChanged();
+            }
+        }
         public string Town { get => m_town; set => m_town = value; }
         public ECountry Country { get => m_country; set => m_country = value; }
         public EWindOrientation WindOrientationBegin { get => m_windOrientationBegin; set => m_windOrientationBegin = value; }
@@ -43,7 +51,15 @@ namespace ParagliderFlightLog.DataModels
         public double Latitude { get => m_latitude; set => m_latitude = value; }
         public double Longitude { get => m_longitude; set => m_longitude = value; }
 
+        public event PropertyChangedEventHandler? PropertyChanged;
+        // This method is called by the Set accessor of each property.  
+        // The CallerMemberName attribute that is applied to the optional propertyName  
+        // parameter causes the property name of the caller to be substituted as an argument.  
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
-    
+
 }

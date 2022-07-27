@@ -46,22 +46,23 @@ namespace WpfUI.Controls
 
         private void AddSite_Click(object sender, RoutedEventArgs e)
         {
-            Forms.AddSiteForm AddSiteForm = new Forms.AddSiteForm();
-            AddSiteForm.DataContext = Source;
-            AddSiteForm.SiteCollection = Source;
-            AddSiteForm.ShowDialog();
+            SiteViewModel svm = new SiteViewModel();
+            Forms.SiteForm AddSiteForm = new Forms.SiteForm(svm);
             
+            
+            if(AddSiteForm.ShowDialog() == true)
+                Source.Add(svm);
+
         }
 
         private void EditSite_Click(object sender, RoutedEventArgs e)
         {
-            Forms.AddSiteForm EditSiteForm = new Forms.AddSiteForm(); // this has to be renamed properly if working with the same form work for both add and edit mode
-            // this is not working because we change the value of the properties after the construction
-            EditSiteForm.DataContext = Source;
-            EditSiteForm.SiteCollection = Source;
-            EditSiteForm.SelectedSite = SelectedItem;
-            EditSiteForm.EditMode = true;
-            EditSiteForm.Show();
+            Forms.SiteForm EditSiteForm = new Forms.SiteForm(SelectedItem); // this has to be renamed properly if working with the same form work for both add and edit mode
+            
+            EditSiteForm.ShowDialog();
+
+            
+            
         }
     }
 }

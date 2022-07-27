@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace ParagliderFlightLog.DataModels
 {
-    public class Flight
+    public class Flight : INotifyPropertyChanged
     {
+        // todo: put in each setter something like an PropertyChanged
         private string m_igcFileContent = "";
 
         private string m_comment = "";
@@ -126,6 +129,17 @@ namespace ParagliderFlightLog.DataModels
                 return "";
             }
         }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        // This method is called by the Set accessor of each property.  
+        // The CallerMemberName attribute that is applied to the optional propertyName  
+        // parameter causes the property name of the caller to be substituted as an argument.  
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         /// <summary>
         /// Parse the IGC_Line as coordinate. Highly inspired from https://github.com/ringostarr80/RL.Geo/blob/master/RL.Geo/Gps/Serialization/IgcDeSerializer.cs
         /// return true if it succeed false otherwise

@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace ParagliderFlightLog.DataModels
 {
-    public class Glider
+    public class Glider : INotifyPropertyChanged
     {
         private string m_glider_ID = Guid.NewGuid().ToString();
 
@@ -30,7 +32,15 @@ namespace ParagliderFlightLog.DataModels
         public DateTime LastCheckDateTime { get => m_lastCheckDateTime; set => m_lastCheckDateTime = value; }
         public bool LastCheckDateTimeSpecified { get => m_lastCheckDateTimeSpecified; set => m_lastCheckDateTimeSpecified = value; }
         public EHomologationCategory HomologationCategory { get => m_homologationCategory; set => m_homologationCategory = value; }
-        
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+        // This method is called by the Set accessor of each property.  
+        // The CallerMemberName attribute that is applied to the optional propertyName  
+        // parameter causes the property name of the caller to be substituted as an argument.  
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 
     public enum EHomologationCategory

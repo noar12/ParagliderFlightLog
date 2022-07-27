@@ -9,16 +9,63 @@ namespace WpfUI.ViewModels
 {
     public class SiteViewModel
     {
-        public string Site_ID { get; set; }
-        public string Name { get; set; }
-        public double Altitude { get; set; }
-        public double Latitude { get; set; }
-        public double Longitude { get; set; }
-        public string Country { get; set; }
-        public string Town { get; set; }
+        private Site m_Site = new Site();
+        public SiteViewModel(Site site) { m_Site = site; }
+        public SiteViewModel() { m_Site = new Site(); }
+        public string Site_ID { get { return m_Site.Site_ID; } }
+        public string Name
+        {
+            get { return m_Site.Name; }
+            set { m_Site.Name = value; }
+        }
+        public double Altitude
+        {
+            get { return m_Site.Altitude; }
+            set { m_Site.Altitude = value; }
+        }
+        public double Latitude
+        {
+            get { return m_Site.Latitude; }
+            set { m_Site.Latitude = value; }
+        }
+        public double Longitude
+        {
+            get { return m_Site.Longitude; }
+            set { m_Site.Longitude = value; }
+        }
+        public string Country
+        {
+            get { return m_Site.Country.ToString(); }
+            set
+            {
+                Enum.TryParse<ECountry>(value, out ECountry l_ECountry);
+                m_Site.Country = l_ECountry;
+            }
+        }
+        public string Town
+        {
+            get { return m_Site.Town; }
+            set { m_Site.Town = value; }
+        }
         public string WindOrientation { get { return $"{WindOrientationBegin} - {WindOrientationEnd}"; } }
-        public string WindOrientationBegin { get; set; }
-        public string WindOrientationEnd { get; set; }
+        public string WindOrientationBegin
+        {
+            get { return m_Site.WindOrientationBegin.ToString(); }
+            set
+            {
+                Enum.TryParse<EWindOrientation>(value, out EWindOrientation l_EWindOrientation);
+                m_Site.WindOrientationBegin = l_EWindOrientation;
+            }
+        }
+        public string WindOrientationEnd
+        {
+            get { return m_Site.WindOrientationEnd.ToString(); }
+            set
+            {
+                Enum.TryParse<EWindOrientation>(value, out EWindOrientation l_EWindOrientation);
+                m_Site.WindOrientationEnd = l_EWindOrientation;
+            }
+        }
         public string[] AvailableWindOrientation { get => Enum.GetNames(typeof(EWindOrientation)); }
         public string[] AvailableCountry { get => Enum.GetNames(typeof(ECountry)); }
 
