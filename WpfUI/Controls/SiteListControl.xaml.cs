@@ -21,20 +21,23 @@ namespace WpfUI.Controls
     /// </summary>
     public partial class SiteListControl : UserControl
     {
+        
         public SiteListControl()
         {
+            
+            
             InitializeComponent();
         }
-        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(ICollection<SiteViewModel>), typeof(SiteListControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(MainViewModel), typeof(SiteListControl), new PropertyMetadata(null));
         public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedItem", typeof(SiteViewModel), typeof(SiteListControl), new PropertyMetadata(null));
 
         //private static void OnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         //{
 
         //}
-        public ICollection<SiteViewModel> Source
+        public MainViewModel Source
         {
-            get { return (ICollection<SiteViewModel>)GetValue(SourceProperty); }
+            get { return (MainViewModel)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
 
@@ -48,18 +51,24 @@ namespace WpfUI.Controls
         {
             SiteViewModel svm = new SiteViewModel();
             Forms.SiteForm AddSiteForm = new Forms.SiteForm(svm);
-            
-            
-            if(AddSiteForm.ShowDialog() == true)
-                Source.Add(svm);
+
+
+            if (AddSiteForm.ShowDialog() == true)
+            {
+                Source.AddSite(svm);
+            }
+
 
         }
 
         private void EditSite_Click(object sender, RoutedEventArgs e)
         {
-            Forms.SiteForm EditSiteForm = new Forms.SiteForm(SelectedItem); // this has to be renamed properly if working with the same form work for both add and edit mode
-            
-            EditSiteForm.ShowDialog();
+            Forms.SiteForm EditSiteForm = new Forms.SiteForm(SelectedItem);
+
+            if (EditSiteForm.ShowDialog() == true)
+            {
+                
+            }
 
             
             

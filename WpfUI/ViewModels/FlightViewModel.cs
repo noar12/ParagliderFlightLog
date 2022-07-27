@@ -10,12 +10,14 @@ namespace WpfUI.ViewModels
     public class FlightViewModel
     {
         private Flight m_Flight = new Flight();
+        private ICollection<Flight> m_FlightCollection = new List<Flight>();
         private ICollection<Site> m_SiteCollection = new List<Site>();
         private ICollection<Glider> m_GliderCollection = new List<Glider>();
-        // to do: Constructor FlightViewModel(Flight flight);
-        public FlightViewModel(Flight flight, ICollection<Site> sites, ICollection<Glider> gliders)
+        
+        public FlightViewModel(Flight flight, ICollection<Flight> flights, ICollection<Site> sites, ICollection<Glider> gliders)
         {
             m_Flight = flight;
+            m_FlightCollection = flights;
             m_SiteCollection = sites;
             m_GliderCollection = gliders;
 
@@ -41,6 +43,14 @@ namespace WpfUI.ViewModels
         public double MaxHeight { get => m_Flight.FlightPoints.Select(fp => fp.Height).ToList().Max(); }
         public List<FlightPoint> FlightPoints { get { return m_Flight.FlightPoints; } }
         public string Comment { get { return m_Flight.Comment; } }
+        public void RemoveFlight()
+        {
+            m_FlightCollection.Remove(m_Flight);
+        }
+        public void AddFlight()
+        {
+            m_FlightCollection.Add(m_Flight);
+        }
     }
 
 

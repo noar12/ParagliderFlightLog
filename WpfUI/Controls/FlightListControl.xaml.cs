@@ -31,9 +31,9 @@ namespace WpfUI.Controls
 
         private void OnRemoveFlight(object sender, ExecutedRoutedEventArgs e)
         {
-            if (FlightGrid.SelectedItem is FlightViewModel fwm)
+            if (FlightGrid.SelectedItem is FlightViewModel fvm)
             {
-                Source.Remove(fwm);
+                fvm.RemoveFlight();
             }
         }
 

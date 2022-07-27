@@ -41,14 +41,22 @@ namespace WpfUI
 
 
 
+           
+            slc.Source = mainViewModel;
+            
             flc.Source = mainViewModel.FlightListViewModel;
 
-            slc.Source = mainViewModel.SiteListViewModel;
+            
             Status.DataContext = mainViewModel;
 
             fsc.Source = mainViewModel;
 
 
+        }
+
+        private void OnAddSite(object sender, ExecutedRoutedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         private void OnImportLogFlyDB(object sender, ExecutedRoutedEventArgs e)
