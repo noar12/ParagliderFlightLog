@@ -35,10 +35,11 @@ namespace ParagliderFlightLog.DataModels
         public string Site_ID { get => m_site_ID; set => m_site_ID = value; }
         public string Name
         {
-            get => m_name; set
+            get => m_name;
+            set
             {
                 m_name = value;
-                NotifyPropertyChanged();
+                
             }
         }
         public string Town { get => m_town; set => m_town = value; }
@@ -59,6 +60,8 @@ namespace ParagliderFlightLog.DataModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+
     }
 
 

@@ -151,8 +151,30 @@ namespace ParagliderFlightLog.DataModels
                 case NotifyCollectionChangedAction.Remove:
                     DeleteSitesInDB(e.OldItems);
                     break;
+                case NotifyCollectionChangedAction.Replace:
+                    ReplaceSitesInDB(e.NewItems);
+                    break;
                 default:
                     throw new NotSupportedException();
+            }
+        }
+
+        private void ReplaceSitesInDB(IList? newItems)
+        {
+            if (!File.Exists(DB_PATH))
+                CreateFlightLogDB();
+            if (newItems != null)
+            {
+                string sqlReplaceSite = "UPDATE Sites SET Name = @Name, Town = @Town, Country = @Country, WindOrientationBegin = @WindOrientationBegin, WindOrientationEnd = @WindOrientationEnd, Altitude = @Altitude, Latitude = @Latitude, Longitude = @Longitude WHERE Site_ID = @Site_ID";
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                {
+
+                    foreach (Site site in newItems)
+                    {
+                        conn.Execute(sqlReplaceSite, site);
+                    }
+
+                }
             }
         }
 

@@ -18,7 +18,7 @@ namespace WpfUI.ViewModels
         }
         public SiteViewModel() { m_Site = new Site(); }
 
-        public Site Site { get { return m_Site; } }
+        public Site Site { get { return m_Site; } set { m_Site = value; } }
         public string Site_ID { get { return m_Site.Site_ID; } }
         public string Name
         {

@@ -67,7 +67,7 @@ namespace WpfUI.Controls
 
             if (EditSiteForm.ShowDialog() == true)
             {
-                
+                Source.EditSite(SelectedItem);
             }
 
             

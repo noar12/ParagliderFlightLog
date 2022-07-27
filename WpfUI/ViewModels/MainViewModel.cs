@@ -63,12 +63,36 @@ namespace WpfUI.ViewModels
                     throw new NotImplementedException();
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    throw new NotImplementedException();
+                    foreach (var item in e.NewItems)
+                    {
+                        if (item is Site site)
+                        {
+                            SiteViewModel? l_OldSiteViewModel = SiteListViewModel.Where(s => s.Site_ID == site.Site_ID).FirstOrDefault();
+                            if (l_OldSiteViewModel != null)
+                            {
+                                int l_Index = SiteListViewModel.IndexOf(l_OldSiteViewModel);
+                                SiteListViewModel[l_Index].Site = site;
+                            }
+                        }
+                    }
                     break;
 
                 default:
                     break;
             }
+        }
+
+        internal void EditSite(SiteViewModel selectedItem)
+        {
+
+            Site l_OldSite = m_flightLog.Sites.Where(s => s.Site_ID == selectedItem.Site_ID).FirstOrDefault();
+            if (l_OldSite != null)
+            {
+                int l_Index = m_flightLog.Sites.IndexOf(l_OldSite);
+                m_flightLog.Sites[l_Index] = selectedItem.Site;
+            }
+            
+            
         }
 
         internal void AddSite(SiteViewModel svm)
