@@ -85,7 +85,7 @@ namespace WpfUI.ViewModels
         internal void EditSite(SiteViewModel selectedItem)
         {
 
-            Site l_OldSite = m_flightLog.Sites.Where(s => s.Site_ID == selectedItem.Site_ID).FirstOrDefault();
+            Site? l_OldSite = m_flightLog.Sites.Where(s => s.Site_ID == selectedItem.Site_ID).FirstOrDefault();
             if (l_OldSite != null)
             {
                 int l_Index = m_flightLog.Sites.IndexOf(l_OldSite);
