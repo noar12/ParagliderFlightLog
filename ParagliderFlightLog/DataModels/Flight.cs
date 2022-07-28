@@ -25,7 +25,7 @@ namespace ParagliderFlightLog.DataModels
 
         private TimeSpan m_flightDuration;
 
-        private DateTime m_takeOffDateTime;
+        private DateTime m_takeOffDateTime = DateTime.MinValue;
         private List<FlightPoint> m_FlightPoints =  new List<FlightPoint>();
 
         public string IgcFileContent { get => m_igcFileContent; set => m_igcFileContent = value; }
