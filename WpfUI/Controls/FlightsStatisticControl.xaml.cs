@@ -56,5 +56,26 @@ namespace WpfUI.Controls
             
             FlightDurationDistPlot.Refresh();
         }
+
+        private void AnalyzeType_DropDownClosed(object sender, EventArgs e)
+        {
+            var l_FlightYearsData = Source.FlightListViewModel.GroupBy(f => f.TakeOffDateTime.Year).OrderBy(group => group.Key);
+            foreach (var flightYearData in l_FlightYearsData)
+            {
+                var l_FlightMonthsDataInYear = flightYearData.GroupBy(f => f.TakeOffDateTime.Month).OrderBy(group => group.Key);
+                foreach (var flightMonthData in l_FlightMonthsDataInYear)
+                {
+                    var l_OrderedFlightmonthData = flightMonthData.OrderBy(f => f.FlightDuration).ToArray();
+                    var l_MonthDurationMedian = l_OrderedFlightmonthData[l_OrderedFlightmonthData.Length / 2].FlightDuration;// the middle of the ordered sequence is the median (at least of sample count is even)
+
+                }
+                //
+                //
+                //FlightDurationDistPlot.Plot.AddScatter();
+
+            }
+            
+
+        }
     }
 }
