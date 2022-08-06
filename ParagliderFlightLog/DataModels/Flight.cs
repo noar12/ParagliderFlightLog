@@ -177,6 +177,11 @@ namespace ParagliderFlightLog.DataModels
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public double Height { get; set; }
+        /// <summary>
+        /// Compute the distance in meter from another flight point
+        /// </summary>
+        /// <param name="OtherFlightPoint"></param>
+        /// <returns></returns>
         public double DistanceFrom(FlightPoint OtherFlightPoint)
         {
             const double EARTH_RADIUS = 6371000;

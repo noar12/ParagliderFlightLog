@@ -27,9 +27,24 @@ namespace WpfUI.Controls
             
             
             InitializeComponent();
+            CommandManager.RegisterClassCommandBinding(typeof(SiteListControl),
+                new CommandBinding(LogBookCommand.EditSiteCommand, OnEditSites,
+                (s, e) => { e.CanExecute = SitesGrid.SelectedItems.Count == 1; }));
         }
         public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(MainViewModel), typeof(SiteListControl), new PropertyMetadata(null));
         public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedItem", typeof(SiteViewModel), typeof(SiteListControl), new PropertyMetadata(null));
+
+
+        public int SiteUseCount
+        {
+            get { return (int)GetValue(SiteUseCountProperty); }
+            set { SetValue(SiteUseCountProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SiteUseCount.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SiteUseCountProperty =
+            DependencyProperty.Register("SiteUseCount", typeof(int), typeof(SiteListControl), new PropertyMetadata(null));
+
 
         //private static void OnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         //{
@@ -61,7 +76,7 @@ namespace WpfUI.Controls
 
         }
 
-        private void EditSite_Click(object sender, RoutedEventArgs e)
+        private void OnEditSites(object sender, RoutedEventArgs e)
         {
             Forms.SiteForm EditSiteForm = new Forms.SiteForm(SelectedItem);
 
@@ -72,6 +87,11 @@ namespace WpfUI.Controls
 
             
             
+        }
+
+        private void SitesGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SiteUseCount = SelectedItem.GetSiteUseCount(Source.FlightListViewModel);
         }
     }
 }

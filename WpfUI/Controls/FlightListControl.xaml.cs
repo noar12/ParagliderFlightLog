@@ -25,13 +25,21 @@ namespace WpfUI.Controls
         {
             InitializeComponent();
             CommandManager.RegisterClassCommandBinding(typeof(FlightListControl),
-                new CommandBinding(LogBookCommand.RemoveFlightCommand, OnRemoveFlight,
+                new CommandBinding(LogBookCommand.RemoveFlightCommand, OnRemoveFlights,
                 (s, e) => { e.CanExecute = FlightGrid.SelectedItem != null; }));
         }
 
-        private void OnRemoveFlight(object sender, ExecutedRoutedEventArgs e)
+        private void OnRemoveFlights(object sender, ExecutedRoutedEventArgs e)
         {
-            if (FlightGrid.SelectedItem is FlightViewModel fvm)
+            List<FlightViewModel> l_FlightToRemove = new List<FlightViewModel>();
+            foreach (object? item in FlightGrid.SelectedItems)
+            {
+                if (item is FlightViewModel fvm)
+                {
+                    l_FlightToRemove.Add(fvm);
+                }
+            }
+            foreach (FlightViewModel fvm in l_FlightToRemove)
             {
                 fvm.RemoveFlight();
             }

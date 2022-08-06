@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:WpfUI.Controls"
              xmlns:root="clr-namespace:WpfUI"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Name="x_Control">
+             d:DesignHeight="450" d:DesignWidth="800" Name="x_Control"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
 
     <Grid>
@@ -20,25 +21,39 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid x:Name = "FlightGrid" ItemsSource="{Binding Path=Source, ElementName=x_Control}" AutoGenerateColumns="False" Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" SelectedItem="{Binding SelectedItem,ElementName=x_Control}">
+        <DataGrid x:Name = "FlightGrid" ItemsSource="{Binding Path=Source}" AutoGenerateColumns="False"
+                  Grid.Column="0" Grid.Row="0" Grid.RowSpan="4"
+                  SelectedItem="{Binding SelectedItem,ElementName=x_Control}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Flight Date/Time" Binding = "{Binding TakeOffDateTime}" />
                 <DataGridTextColumn Header = "Take off site" Binding = "{Binding TakeOffSiteName}" />
                 <DataGridTextColumn Header = "Duration" Binding = "{Binding FlightDuration}" />
             </DataGrid.Columns>
         </DataGrid>
-        <WrapPanel Orientation="Horizontal" DataContext="" Grid.Row="1" Grid.Column="2" Grid.RowSpan="3">
+        <WrapPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2" Grid.RowSpan="3">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Glider" FontWeight="Bold"/>
-                <TextBlock Text="{Binding SelectedItem.GliderName, ElementName=x_Control}"/>
+                <TextBlock Text="{Binding SelectedItem.GliderName}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Max Height [m]" FontWeight="Bold"/>
-                <TextBlock Text="{Binding SelectedItem.MaxHeight, ElementName=x_Control}"/>
+                <TextBlock Text="{Binding SelectedItem.MaxHeight}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Trace Length [km]" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.TraceLength, StringFormat=N3}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Max climb (8s) [m/s]" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.MaxClimb, StringFormat=N1}"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Max sink (8s) [m/s]" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.MaxSink, StringFormat=N1}"/>
             </StackPanel>
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="Comment" FontWeight="Bold" />
-                <TextBlock Text="{Binding SelectedItem.Comment, ElementName=x_Control}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
+                <TextBlock Text="{Binding SelectedItem.Comment}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
             </StackPanel>
 
         </WrapPanel>

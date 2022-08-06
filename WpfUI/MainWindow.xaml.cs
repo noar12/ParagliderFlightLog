@@ -71,9 +71,12 @@ namespace WpfUI
         private void OnImportIGC(object sender, ExecutedRoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDlg = new Microsoft.Win32.OpenFileDialog();
+            openFileDlg.Title = "Choose the IGC file(s) to import";
+            openFileDlg.Filter = "IGC file | *.igc";
+            openFileDlg.Multiselect = true;
             if (openFileDlg.ShowDialog() == true)
             {
-                mainViewModel.AddFlightFromIGC(openFileDlg.FileName);
+                mainViewModel.AddFlightsFromIGC(openFileDlg.FileNames);
             }
 
         }

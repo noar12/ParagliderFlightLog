@@ -6,7 +6,8 @@
              xmlns:local="clr-namespace:WpfUI.Controls"
              xmlns:MainVM="clr-namespace:WpfUI"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800" Name="x_Control">
+             d:DesignHeight="450" d:DesignWidth="800" Name="x_Control"
+             DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>
@@ -18,22 +19,28 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <DataGrid ItemsSource="{Binding Path=Source.SiteListViewModel, ElementName=x_Control}" AutoGenerateColumns="False"
-                  Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" SelectedItem="{Binding SelectedItem,ElementName=x_Control}">
+        <DataGrid x:Name="SitesGrid" ItemsSource="{Binding Path=Source.SiteListViewModel}" AutoGenerateColumns="False"
+                  Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" SelectedItem="{Binding SelectedItem}" SelectionChanged="SitesGrid_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header = "Site name" Binding = "{Binding Name}" />
                 <DataGridTextColumn Header = "Site altitude" Binding = "{Binding Altitude}" />
-                <!--To be done: translate REF to human readable string-->
+                
                 <DataGridTextColumn Header = "Site orientation" Binding = "{Binding WindOrientation}" />
             </DataGrid.Columns>
         </DataGrid>
         <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3">
-            <TextBlock Text="{Binding SelectedItem.Name, ElementName=x_Control}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
-
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Site Name" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SelectedItem.Name}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Number of flight" FontWeight="Bold"/>
+                <TextBlock Text="{Binding SiteUseCount}"/>
+            </StackPanel>
         </WrapPanel>
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom">
             <Button x:Name="AddSite" Content="Add new site" Click="AddSite_Click"/>
-            <Button x:Name="EditSite" Content="Edit site" Click="EditSite_Click"/>
+            <Button x:Name="EditSite" Content="Edit site" Command="{x:Static MainVM:LogBookCommand.EditSiteCommand}"/>
         </StackPanel>
         
     </Grid>

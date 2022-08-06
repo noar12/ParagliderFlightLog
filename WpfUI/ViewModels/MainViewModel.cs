@@ -224,22 +224,12 @@ namespace WpfUI.ViewModels
         /// Import an IGC file in the data model and use the result to instanciate and add a new FlightViewModel in the FlightListViewModel to update the UI and do the same with the takeoff site if it doesn't exist yet.
         /// </summary>
         /// <param name="filePath"></param>
-        internal void AddFlightFromIGC(string filePath)
+        internal void AddFlightsFromIGC(string[] filePaths)
         {
-
-            (Flight l_NewFlight, Site l_NewSite) = m_flightLog.ImportFlightFromIGC(filePath);
-
-            //FlightViewModel fvm = new FlightViewModel(l_NewFlight, m_flightLog.Flights, m_flightLog.Sites, m_flightLog.Gliders);
-            //FlightListViewModel.Add(fvm);
-            //if(SiteListViewModel.Where(s => s.Site_ID == l_NewSite.Site_ID).Count() == 0)
-            //{
-            //    SiteViewModel svm = new SiteViewModel(l_NewSite);
-
-            //    SiteListViewModel.Add(svm);
-            //}
-
-
-
+            foreach (string filePath in filePaths)
+            {
+                m_flightLog.ImportFlightFromIGC(filePath);
+            }
         }
 
         public TimeSpan TotalFlightDuration

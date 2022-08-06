@@ -294,7 +294,7 @@ namespace ParagliderFlightLog.DataModels
         /// </summary>
         /// <param name="IGC_FilePath"></param>
         /// <exception cref="NotImplementedException"></exception>
-        public (Flight, Site) ImportFlightFromIGC(string IGC_FilePath)
+        public void ImportFlightFromIGC(string IGC_FilePath)
         {
             Flight l_Newflight = new Flight();
             
@@ -339,7 +339,7 @@ namespace ParagliderFlightLog.DataModels
             if (l_Newflight.FlightPoints.Any())
             { 
                 m_flights.Add(l_Newflight);
-                return (l_Newflight, l_TakeOffSite);
+                
             }
             else
             {

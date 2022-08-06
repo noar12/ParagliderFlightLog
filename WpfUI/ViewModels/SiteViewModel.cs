@@ -73,6 +73,10 @@ namespace WpfUI.ViewModels
                 m_Site.WindOrientationEnd = l_EWindOrientation;
             }
         }
+        public int GetSiteUseCount(IList<FlightViewModel> flights)
+        {
+            return flights.Where(f => f.TakeOffSiteID == this.Site_ID).Count();
+        }
         public string[] AvailableWindOrientation { get => Enum.GetNames(typeof(EWindOrientation)); }
         public string[] AvailableCountry { get => Enum.GetNames(typeof(ECountry)); }
 
