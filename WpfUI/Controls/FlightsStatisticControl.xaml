@@ -20,7 +20,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0">
 
-        <ComboBox Name="AnalyzeType" DropDownClosed="AnalyzeType_DropDownClosed">
+        <ComboBox Name="AnalyzeType">
             <ComboBoxItem>
                 <TextBlock Text="Annual Distribution"/>
             </ComboBoxItem>
@@ -28,13 +28,14 @@
                     <TextBlock Text="Monthly median over years"/>
                 </ComboBoxItem>
             </ComboBox>
-            <ComboBox Name="AnalyzeYear" ItemsSource="{Binding Path=Source.YearsOfFlying, ElementName=x_Control}" DropDownClosed="AnalyzeYear_DropDownClosed">
+            <ComboBox Name="AnalyzeYear" ItemsSource="{Binding Path=Source.YearsOfFlying, ElementName=x_Control}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding .}"/>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
+            <Button x:Name="Analyze" Content="Analyze" Click="Analyze_Click"/>
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Row="1" >
             <StackPanel Orientation="Horizontal">
@@ -54,7 +55,7 @@
                 <TextBlock Name="FlightsMedianDurationText"/>
             </StackPanel>
         </StackPanel>
-        <WpfPlot Name="FlightDurationDistPlot" Grid.Column="2" Grid.RowSpan="3"/>
+        <WpfPlot Name="FlightStatisticPlot" Grid.Column="2" Grid.RowSpan="3"/>
 
 
     </Grid>
