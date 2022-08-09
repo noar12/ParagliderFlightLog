@@ -62,9 +62,18 @@ namespace WpfUI.Controls
 
         private void Analyze_Click(object sender, RoutedEventArgs e)
         {
+            FlightsStatisticsViewModel flightsStatisticsViewModel;
             //build Flight statistic view model for the selected year
-            FlightsStatisticsViewModel flightsStatisticsViewModel =
-                new FlightsStatisticsViewModel(Source, new DateTime((int)AnalyzeYear.SelectedItem, 1, 1), new DateTime((int)AnalyzeYear.SelectedItem, 12, 31, 23, 59, 59));
+            if (AnalyzeYear.SelectedItem != null)
+            {
+                flightsStatisticsViewModel =
+    new FlightsStatisticsViewModel(Source, new DateTime((int)AnalyzeYear.SelectedItem, 1, 1), new DateTime((int)AnalyzeYear.SelectedItem, 12, 31, 23, 59, 59));
+            }
+            else
+            {
+                flightsStatisticsViewModel =new FlightsStatisticsViewModel(Source, DateTime.MinValue, DateTime.Now);
+            }
+
             
             //Write general statistic about the selected year
             FlightsDurationText.Text = flightsStatisticsViewModel.FlightsDurationText;

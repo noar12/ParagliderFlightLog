@@ -10,11 +10,11 @@ namespace WpfUI.ViewModels
     public class FlightsStatisticsViewModel
     {
         public TimeSpan FlightsDuration { get; private set; }
-        public string FlightsDurationText { get { return $"{FlightsDuration.TotalHours}:{FlightsDuration.Minutes}"; } }
+        public string FlightsDurationText { get { return $"{(int)FlightsDuration.TotalHours}:{FlightsDuration.Minutes}"; } }
         public TimeSpan MeanFlightsDuration { get; private set; }
-        public string MeanFlightsDurationText { get { return $"{MeanFlightsDuration.TotalHours}:{MeanFlightsDuration.Minutes}"; } }
+        public string MeanFlightsDurationText { get { return $"{(int)MeanFlightsDuration.TotalHours}:{MeanFlightsDuration.Minutes}"; } }
         public TimeSpan MedianFlightsDuration { get; private set; }
-        public string MedianFlightDurationText { get { return $"{MedianFlightsDuration.TotalHours}:{MedianFlightsDuration.Minutes}"; } }
+        public string MedianFlightDurationText { get { return $"{(int)MedianFlightsDuration.TotalHours}:{MedianFlightsDuration.Minutes}"; } }
         public int FlightsCount { get; private set; }
         public HistData FlightsDurationHistData { get; private set; }
 
