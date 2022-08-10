@@ -111,8 +111,18 @@ namespace WpfUI.Controls
                     }
                     */
                     double[] l_MonthList = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-                    double[] l_MonthData = { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0 };
-                    FlightStatisticPlot.Plot.AddScatter(l_MonthList, l_MonthData);
+                    
+                    foreach (int l_FlightYear in Source.YearsOfFlying)
+                    {
+                        double[] l_MonthData = flightsStatisticsViewModel.GetMonthlyMedian(l_FlightYear);
+                        FlightStatisticPlot.Plot.AddScatter(l_MonthList, l_MonthData, label: l_FlightYear.ToString());
+                    }
+
+                    FlightStatisticPlot.Plot.YAxis.Label("Median duration (Hours)");
+                    FlightStatisticPlot.Plot.XAxis.Label("Month (-)");
+                    FlightStatisticPlot.Plot.Title("Month median flight duration for each year");
+                    FlightStatisticPlot.Plot.SetAxisLimits(yMin: 0);
+                    FlightStatisticPlot.Plot.Legend(true);
                     FlightStatisticPlot.Refresh();
                     break;
                 default:
