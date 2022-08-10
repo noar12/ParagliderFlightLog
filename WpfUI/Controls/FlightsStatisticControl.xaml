@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:plt="http://oxyplot.org/wpf"
              xmlns:local="clr-namespace:WpfUI.Controls"
+             xmlns:root="clr-namespace:WpfUI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Name="x_Control" >
     <Grid>
@@ -22,20 +23,23 @@
 
         <ComboBox Name="AnalyzeType">
             <ComboBoxItem>
-                <TextBlock Text="Annual Distribution"/>
+                <TextBlock Text="Duration Distribution" Margin="0,0,0,0"/>
             </ComboBoxItem>
                 <ComboBoxItem>
-                    <TextBlock Text="Monthly median over years"/>
+                    <TextBlock Text="Monthly median" Margin="0,0,0,0"/>
                 </ComboBoxItem>
             </ComboBox>
-            <ComboBox Name="AnalyzeYear" ItemsSource="{Binding Path=Source.YearsOfFlying, ElementName=x_Control}">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding .}"/>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <Button x:Name="Analyze" Content="Analyze" Click="Analyze_Click"/>
+            
+                <ComboBox Name="AnalyzeYear" ItemsSource="{Binding Path=Source.YearsOfFlying, ElementName=x_Control}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding .}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button x:Name="ClearYear" Content="Clear Year" Click="ClearYear_Click"/>
+
+            <Button x:Name="Analyze" Content="Analyze" Command="{x:Static root:LogBookCommand.StatisticAnalyzeCommand}"/>
         </StackPanel>
         <StackPanel Orientation="Vertical" Grid.Row="1" >
             <StackPanel Orientation="Horizontal">
