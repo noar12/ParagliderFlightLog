@@ -91,6 +91,7 @@ namespace WpfUI.Controls
                     // customize the plot style
                     FlightStatisticPlot.Plot.YAxis.Label("Flight count (#)");
                     FlightStatisticPlot.Plot.XAxis.Label("Duration (Hours)");
+                    FlightStatisticPlot.Plot.XAxis.AutomaticTickPositions();
                     FlightStatisticPlot.Plot.Title("Flight duration distribution");
                     FlightStatisticPlot.Plot.SetAxisLimits(yMin: 0);
 
@@ -99,30 +100,24 @@ namespace WpfUI.Controls
                     break;
                 case 1:
                     FlightStatisticPlot.Plot.Clear();
-                    // to be done: prepare the data in the view model to display them here
-                    /* inspiration:
-                    var l_FlightMonthsDataInYear = flightYearData.GroupBy(f => f.TakeOffDateTime.Month).OrderBy(group => group.Key);
-                    foreach (var flightMonthData in l_FlightMonthsDataInYear)
-                    {
-                        var l_OrderedFlightmonthData = flightMonthData.OrderBy(f => f.FlightDuration).ToArray();
-                        // the middle of the ordered sequence is the median (at least of sample count is even)
-                        var l_MonthDurationMedian = l_OrderedFlightmonthData[l_OrderedFlightmonthData.Length / 2].FlightDuration;
-
-                    }
-                    */
-                    double[] l_MonthList = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
-                    
+                   
+                    string[] l_MonthList = { "January", "February", "March", "April", "Mai", "June", "July", "August", "Septempber", "October", "November", "December" };
+                    string[] l_YearsText = new string[Source.YearsOfFlying.Count];
+                    double[][] l_MedianValues = new double[Source.YearsOfFlying.Count][];
+                    int i = 0;
                     foreach (int l_FlightYear in Source.YearsOfFlying)
                     {
                         double[] l_MonthData = flightsStatisticsViewModel.GetMonthlyMedian(l_FlightYear);
-                        FlightStatisticPlot.Plot.AddScatter(l_MonthList, l_MonthData, label: l_FlightYear.ToString());
+                        l_YearsText[i] = l_FlightYear.ToString();
+                        l_MedianValues[i] = l_MonthData;
+                        i++;
                     }
-
+                    FlightStatisticPlot.Plot.AddBarGroups(l_MonthList, l_YearsText, l_MedianValues, new double[l_MedianValues.Length][]);
                     FlightStatisticPlot.Plot.YAxis.Label("Median duration (Hours)");
                     FlightStatisticPlot.Plot.XAxis.Label("Month (-)");
                     FlightStatisticPlot.Plot.Title("Month median flight duration for each year");
                     FlightStatisticPlot.Plot.SetAxisLimits(yMin: 0);
-                    FlightStatisticPlot.Plot.Legend(true);
+                    FlightStatisticPlot.Plot.Legend(true,location: ScottPlot.Alignment.UpperRight);
                     FlightStatisticPlot.Refresh();
                     break;
                 default:
