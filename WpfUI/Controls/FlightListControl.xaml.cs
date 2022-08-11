@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mapsui.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,10 @@ namespace WpfUI.Controls
             CommandManager.RegisterClassCommandBinding(typeof(FlightListControl),
                 new CommandBinding(LogBookCommand.RemoveFlightCommand, OnRemoveFlights,
                 (s, e) => { e.CanExecute = FlightGrid.SelectedItem != null; }));
+            var mapControl = new Mapsui.UI.Wpf.MapControl();
+            mapControl.Map?.Layers.Add(OpenStreetMap.CreateTileLayer());//Tiling.OpenStreetMap.CreateTileLayer());
+            //mapControl.Map?.Layers.Add(Mapsui.Tiling.OpenStreetMap.CreateTileLayer());
+            FlightMapControl = mapControl;
         }
 
         private void OnRemoveFlights(object sender, ExecutedRoutedEventArgs e)

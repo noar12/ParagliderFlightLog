@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Mapsui" Version="3.0.2" />
+    <PackageReference Include="Mapsui.Wpf" Version="3.0.2" />
     <PackageReference Include="ScottPlot" Version="4.1.49" />
     <PackageReference Include="ScottPlot.WPF" Version="4.1.49" />
   </ItemGroup>

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfUI.Controls"
              xmlns:root="clr-namespace:WpfUI"
+             xmlns:map="clr-namespace:Mapsui.UI.Wpf;assembly=Mapsui.UI.Wpf"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Name="x_Control"
              DataContext="{Binding RelativeSource={RelativeSource Self}}">
@@ -55,7 +56,7 @@
                 <TextBlock Text="Comment" FontWeight="Bold" />
                 <TextBlock Text="{Binding SelectedItem.Comment}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
             </StackPanel>
-
+            <map:MapControl x:Name="FlightMapControl"/>
         </WrapPanel>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" Grid.Column="1" Grid.Row="3">
             <Button x:Name="RemoveFlight" Content="Remove" Command="{x:Static root:LogBookCommand.RemoveFlightCommand}"/>
