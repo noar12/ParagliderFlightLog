@@ -82,6 +82,17 @@ namespace WpfUI.ViewModels
             }
         }
 
+        internal void EditFlight(FlightViewModel selectedItem)
+        {
+            Flight? l_OldFlight= m_flightLog.Flights.Where(f => f.Flight_ID == selectedItem.FlightID).FirstOrDefault();
+            if (l_OldFlight != null)
+            {
+                int l_Index = m_flightLog.Flights.IndexOf(l_OldFlight);
+                m_flightLog.Flights[l_Index] = selectedItem.Flight;
+            }
+            
+        }
+
         internal void EditSite(SiteViewModel selectedItem)
         {
 
@@ -123,7 +134,18 @@ namespace WpfUI.ViewModels
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    throw new NotImplementedException();
+                    foreach (var item in e.NewItems)
+                    {
+                        if (item is Flight flight)
+                        {
+                            FlightViewModel? l_OldFlgihtViewModel = FlightListViewModel.Where(f => f.FlightID == flight.Flight_ID).FirstOrDefault();
+                            if (l_OldFlgihtViewModel != null)
+                            {
+                                int l_Index = FlightListViewModel.IndexOf(l_OldFlgihtViewModel);
+                                FlightListViewModel[l_Index].Flight = flight;
+                            }
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -249,6 +271,9 @@ namespace WpfUI.ViewModels
 
             }
         }
+
+        public IEnumerable<String> SiteNameList { get { return SiteListViewModel.Select(s => s.Name); } }
+        public IEnumerable<String> GliderNameList { get { return m_flightLog.Gliders.Select(g => g.FullName); } }
         /// <summary>
         /// Return a TimeSpan representing the cumulative flight duration in the period between start and end
         /// </summary>

@@ -32,7 +32,7 @@ namespace ParagliderFlightLog.DataModels
         public DateTime LastCheckDateTime { get => m_lastCheckDateTime; set => m_lastCheckDateTime = value; }
         public bool LastCheckDateTimeSpecified { get => m_lastCheckDateTimeSpecified; set => m_lastCheckDateTimeSpecified = value; }
         public EHomologationCategory HomologationCategory { get => m_homologationCategory; set => m_homologationCategory = value; }
-
+        public string FullName { get { return $"{Manufacturer} {Model}"; } }
         public event PropertyChangedEventHandler? PropertyChanged;
         // This method is called by the Set accessor of each property.  
         // The CallerMemberName attribute that is applied to the optional propertyName  

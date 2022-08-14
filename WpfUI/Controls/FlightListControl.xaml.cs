@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfUI.ViewModels;
+using WpfUI.Forms;
 
 namespace WpfUI.Controls
 {
@@ -27,6 +28,24 @@ namespace WpfUI.Controls
             CommandManager.RegisterClassCommandBinding(typeof(FlightListControl),
                 new CommandBinding(LogBookCommand.RemoveFlightCommand, OnRemoveFlights,
                 (s, e) => { e.CanExecute = FlightGrid.SelectedItem != null; }));
+            CommandManager.RegisterClassCommandBinding(typeof(FlightListControl),
+                new CommandBinding(LogBookCommand.EditFlightCommand, OnEditFlights,
+                (s, e) => { e.CanExecute = FlightGrid.SelectedItems.Count == 1; }));
+        }
+
+        private void OnEditFlights(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (FlightGrid.SelectedItem is FlightViewModel fvm)
+            {
+                FlightForm flightForm = new FlightForm();
+                flightForm.Source = Source;
+                flightForm.EditableFlight = SelectedItem;
+                if (flightForm.ShowDialog() == true)
+                {
+                    Source.EditFlight(SelectedItem);
+                }
+
+            }
         }
 
         private void OnRemoveFlights(object sender, ExecutedRoutedEventArgs e)
@@ -45,16 +64,16 @@ namespace WpfUI.Controls
             }
         }
 
-        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(ICollection<FlightViewModel>), typeof(FlightListControl), new PropertyMetadata(null));
+        public static readonly DependencyProperty SourceProperty = DependencyProperty.Register("Source", typeof(MainViewModel), typeof(FlightListControl), new PropertyMetadata(null));
         public static readonly DependencyProperty SelectedItemProperty = DependencyProperty.Register("SelectedItem", typeof(FlightViewModel), typeof(FlightListControl), new PropertyMetadata(null));
 
         //private static void OnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         //{
 
         //}
-        public ICollection<FlightViewModel> Source
+        public MainViewModel Source
         {
-            get { return (ICollection<FlightViewModel>)GetValue(SourceProperty); }
+            get { return (MainViewModel)GetValue(SourceProperty); }
             set { SetValue(SourceProperty, value); }
         }
         

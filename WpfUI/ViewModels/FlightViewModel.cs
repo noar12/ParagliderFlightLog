@@ -37,11 +37,50 @@ namespace WpfUI.ViewModels
 
         // to do: property have to get from flight ref et set to flight ref
         public string FlightID { get { return m_Flight.Flight_ID; } }
+        public Flight Flight
+        {
+            get { return m_Flight; }
+            set
+            {
+                m_Flight = value;
+            }
+        }
         public DateTime TakeOffDateTime { get { return m_Flight.TakeOffDateTime; } }
         public TimeSpan FlightDuration { get { return m_Flight.FlightDuration; } }
         public string TakeOffSiteID { get { return m_Flight.REF_TakeOffSite_ID; } }
-        public string TakeOffSiteName { get { return m_SiteCollection.Where(s => s.Site_ID == m_Flight.REF_TakeOffSite_ID).FirstOrDefault(new Site()).Name; } }
-        public string GliderName { get { return m_GliderCollection.Where(g => g.Glider_ID == m_Flight.REF_Glider_ID).FirstOrDefault(new Glider()).Model; } }
+        public string TakeOffSiteName
+        {
+            get { return m_SiteCollection.Where(s => s.Site_ID == m_Flight.REF_TakeOffSite_ID).FirstOrDefault(new Site()).Name; }
+            set
+            {
+                Site? l_ProposedSite = m_SiteCollection.Where(s => s.Name == value).FirstOrDefault();
+                if ( l_ProposedSite != null)
+                {
+                    m_Flight.REF_TakeOffSite_ID = l_ProposedSite.Site_ID;
+                }
+                else
+                {
+                    throw new ArgumentException("The proposed site was not found in the data");
+                }
+                
+            }
+        }
+        public string GliderName
+        {
+            get { return m_GliderCollection.Where(g => g.Glider_ID == m_Flight.REF_Glider_ID).FirstOrDefault(new Glider()).FullName; }
+            set
+            {
+                Glider? l_ProposedGlider = m_GliderCollection.Where(g => g.FullName == value).FirstOrDefault();
+                if(l_ProposedGlider != null)
+                {
+                    m_Flight.REF_Glider_ID = l_ProposedGlider.Glider_ID;
+                }
+                else
+                {
+                    throw new ArgumentException("The proposed glider was not found in the data");
+                }
+            }
+        }
         public double MaxHeight
         {
             get
@@ -57,7 +96,7 @@ namespace WpfUI.ViewModels
             }
         }
         public List<FlightPoint> FlightPoints { get { return m_Flight.FlightPoints; } }
-        public string Comment { get { return m_Flight.Comment; } }
+        public string Comment { get { return m_Flight.Comment; } set { m_Flight.Comment = value; } }
         /// <summary>
         /// Get the trace length in km
         /// </summary>

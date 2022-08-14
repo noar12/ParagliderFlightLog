@@ -7,7 +7,8 @@
              xmlns:MainVM="clr-namespace:WpfUI"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Name="x_Control"
-             DataContext="{Binding RelativeSource={RelativeSource Self}}">
+             DataContext="{Binding RelativeSource={RelativeSource Self}}"
+             >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="auto"/>

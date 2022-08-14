@@ -117,12 +117,35 @@ namespace ParagliderFlightLog.DataModels
                 case NotifyCollectionChangedAction.Remove:
                     DeleteFlightsInDB(e.OldItems);
                     break;
+                case NotifyCollectionChangedAction.Replace:
+                    ReplaceFlightInDB(e.NewItems);
+                    break;
                 default:
                     throw new NotSupportedException();
 
             }
 
         }
+
+        private void ReplaceFlightInDB(IList? newItems)
+        {
+            if (!File.Exists(DB_PATH))
+                CreateFlightLogDB();
+            if (newItems != null)
+            {
+                string sqlReplaceFlight = "UPDATE Flights SET Comment = @Comment, REF_TakeOffSite_ID = @REF_TakeOffSite_ID, REF_Glider_ID = @REF_Glider_ID, FlightDuration_s = @FlightDuration_s, TakeOffDateTime = @TakeOffDateTime, IgcFileContent = @IgcFileContent WHERE Flight_ID = @Flight_ID";
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                {
+
+                    foreach (Flight flight in newItems)
+                    {
+                        conn.Execute(sqlReplaceFlight, flight);
+                    }
+
+                }
+            }
+        }
+
         private void GliderCollectionChangedHandler(object? sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)

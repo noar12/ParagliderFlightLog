@@ -14,7 +14,7 @@ namespace WpfUI
         private static RoutedUICommand s_RemoveFlightCommand;
         private static RoutedUICommand s_EditSiteCommand;
         private static RoutedUICommand s_StatisticAnalyzeCommand;
-
+        private static RoutedUICommand s_EditFlightCommand;
 
         static LogBookCommand()
         {
@@ -23,6 +23,7 @@ namespace WpfUI
             s_RemoveFlightCommand = new RoutedUICommand("Remove a flight from the data base", "RemoveFlight", typeof(LogBookCommand));
             s_EditSiteCommand = new RoutedUICommand("Edit a site in the data base", "EditSite", typeof(LogBookCommand));
             s_StatisticAnalyzeCommand = new RoutedUICommand("Analyze the flight", "StatisticAnalyze", typeof(LogBookCommand));
+            s_EditFlightCommand = new RoutedUICommand("Edit the flight", "EditFlight", typeof(LogBookCommand));
 
         }
         public static RoutedUICommand ImportIGC_Command => s_ImportIGC_Command;
@@ -30,6 +31,7 @@ namespace WpfUI
         public static RoutedUICommand RemoveFlightCommand => s_RemoveFlightCommand;
         public static RoutedUICommand EditSiteCommand => s_EditSiteCommand;
         public static RoutedUICommand StatisticAnalyzeCommand => s_StatisticAnalyzeCommand;
+        public static RoutedUICommand EditFlightCommand => s_EditFlightCommand;
 
     }
 }

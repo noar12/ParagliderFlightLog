@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WpfUI"
         xmlns:controls="clr-namespace:WpfUI.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Name="x_MainWindow">
+        Title="MainWindow" Height="400" Width="800" Name="x_MainWindow">
     <Window.Resources>
         <!-- One style for each *type* of control on the window -->
         <Style TargetType="TextBox">

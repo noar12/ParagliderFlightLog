@@ -7,16 +7,8 @@
         xmlns:vm="clr-namespace:WpfUI.ViewModels"
         mc:Ignorable="d"
         Title="Site edition"
+        SizeToContent ="WidthAndHeight"
         >
-    <Window.Resources>
-        <!-- One style for each *type* of control on the window -->
-        <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="5,3,5,3"/>
-        </Style>
-        <Style TargetType="TextBlock">
-            <Setter Property="Margin" Value="5,3,5,3"/>
-        </Style>
-    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
