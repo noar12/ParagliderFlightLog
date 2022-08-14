@@ -1,0 +1,20 @@
+﻿@page "/"
+@using ParagliderFlightLog
+@using ParagliderFlightLog.DataModels
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+<button onclick="@onLoad">Load DB</button>
+@l_flightLogDB.Flights.Count flights in the db
+Welcome to your new app.
+
+There is currently
+
+@code{
+    FlightLogDB l_flightLogDB = new FlightLogDB();
+    void onLoad()
+    {
+        l_flightLogDB.LoadFlightLogDB();
+    }
+}
