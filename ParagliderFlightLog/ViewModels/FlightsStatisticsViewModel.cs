@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ParagliderFlightLog.DataModels;
 
 
-namespace WpfUI.ViewModels
+namespace ParagliderFlightLog.ViewModels
 {
     public class FlightsStatisticsViewModel
     {
@@ -33,7 +33,8 @@ namespace WpfUI.ViewModels
             FlightsCount = l_AnalyzeFlights.Count;
             List<double> l_flightsDurationsList = l_AnalyzeFlights.Select(f => f.FlightDuration.TotalHours).ToList();
 
-            (double[] counts, double[] binEdges) = ScottPlot.Statistics.Common.Histogram(l_flightsDurationsList.ToArray(), 20);
+            //(double[] counts, double[] binEdges) = ScottPlot.Statistics.Common.Histogram(l_flightsDurationsList.ToArray(), 20);
+            (double[] counts, double[] binEdges) = (new double[0], new double[0]);
             FlightsDurationHistData = new HistData(counts, binEdges.Take(binEdges.Length - 1).ToArray());
 
             

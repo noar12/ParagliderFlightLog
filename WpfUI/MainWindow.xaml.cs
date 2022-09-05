@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WpfUI.Controls;
-using WpfUI.ViewModels;
+using ParagliderFlightLog.ViewModels;
 namespace WpfUI
 {
     /// <summary>

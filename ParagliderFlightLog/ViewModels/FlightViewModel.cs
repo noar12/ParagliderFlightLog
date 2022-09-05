@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ParagliderFlightLog.DataModels;
 
-namespace WpfUI.ViewModels
+namespace ParagliderFlightLog.ViewModels
 {
     public class FlightViewModel
     {

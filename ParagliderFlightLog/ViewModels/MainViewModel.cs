@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ParagliderFlightLog.DataModels;
 
-namespace WpfUI.ViewModels
+namespace ParagliderFlightLog.ViewModels
 {
     public class MainViewModel
     {
@@ -82,7 +82,7 @@ namespace WpfUI.ViewModels
             }
         }
 
-        internal void EditFlight(FlightViewModel selectedItem)
+        public void EditFlight(FlightViewModel selectedItem)
         {
             Flight? l_OldFlight= m_flightLog.Flights.Where(f => f.Flight_ID == selectedItem.FlightID).FirstOrDefault();
             if (l_OldFlight != null)
@@ -93,7 +93,7 @@ namespace WpfUI.ViewModels
             
         }
 
-        internal void EditSite(SiteViewModel selectedItem)
+        public void EditSite(SiteViewModel selectedItem)
         {
 
             Site? l_OldSite = m_flightLog.Sites.Where(s => s.Site_ID == selectedItem.Site_ID).FirstOrDefault();
@@ -106,7 +106,7 @@ namespace WpfUI.ViewModels
             
         }
 
-        internal void AddSite(SiteViewModel svm)
+        public void AddSite(SiteViewModel svm)
         {
             m_flightLog.Sites.Add(svm.Site);
         }
@@ -222,7 +222,7 @@ namespace WpfUI.ViewModels
 
         }
 
-        internal void ImportLogFlyDB(string fileName)
+        public void ImportLogFlyDB(string fileName)
         {
             LogFlyDB l_logFlyDB = new LogFlyDB();
             l_logFlyDB.LoadLogFlyDB(fileName);
@@ -246,7 +246,7 @@ namespace WpfUI.ViewModels
         /// Import an IGC file in the data model and use the result to instanciate and add a new FlightViewModel in the FlightListViewModel to update the UI and do the same with the takeoff site if it doesn't exist yet.
         /// </summary>
         /// <param name="filePath"></param>
-        internal void AddFlightsFromIGC(string[] filePaths)
+        public void AddFlightsFromIGC(string[] filePaths)
         {
             foreach (string filePath in filePaths)
             {
