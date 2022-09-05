@@ -1,20 +1,65 @@
 ﻿@page "/"
-@using ParagliderFlightLog
-@using ParagliderFlightLog.DataModels
+@using ParagliderFlightLog.ViewModels
 <PageTitle>Index</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Take off Date/Time</th>
+                        <th scope="col">Take off name</th>
+                        <th scope="col">Flight duration</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-<button onclick="@onLoad">Load DB</button>
-@l_flightLogDB.Flights.Count flights in the db
-Welcome to your new app.
-
-There is currently
+                    @foreach (var flight in mvm.FlightListViewModel.ToList())
+                    {
+                        <tr>
+                            <td>@flight.TakeOffDateTime.ToString()</td>
+                            <td>@flight.TakeOffSiteName.ToString()</td>
+                            <td>@flight.FlightDuration.ToString()</td>
+                            <td><button class="btn btn-primary" @onclick="() => ShowFlightDetail(flight)">Detail</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <strong>Glider:</strong> @SelectedFlight.GliderName
+            </div>
+            <div class="row">
+                <strong>Max height [m]:</strong> @SelectedFlight.MaxHeight
+            </div>
+            <div class="row">
+                <strong>Trace length [km]:</strong> @SelectedFlight.TraceLength
+            </div>
+            <div class="row">
+                <strong>Max climb (8s) [m/s]:</strong> @SelectedFlight.MaxClimb
+            </div>
+            <div class="row">
+                <strong>Max sink (8s) [m/s]:</strong> @SelectedFlight.MaxSink
+            </div>
+            <div class="row">
+                <strong>Comment:</strong> @SelectedFlight.Comment
+            </div>
+        </div>
+    </div>
+</div>
 
 @code{
-    FlightLogDB l_flightLogDB = new FlightLogDB();
-    void onLoad()
+    protected override void OnInitialized()
     {
-        l_flightLogDB.LoadFlightLogDB();
+        mvm = new MainViewModel();
+        SelectedFlight = mvm.FlightListViewModel[mvm.FlightListViewModel.Count - 1];
+    }
+    MainViewModel mvm = new MainViewModel();
+
+    FlightViewModel SelectedFlight;
+    private void ShowFlightDetail(FlightViewModel flight){
+        SelectedFlight = flight;
     }
 }
