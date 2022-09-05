@@ -33,13 +33,29 @@ namespace ParagliderFlightLog.ViewModels
             FlightsCount = l_AnalyzeFlights.Count;
             List<double> l_flightsDurationsList = l_AnalyzeFlights.Select(f => f.FlightDuration.TotalHours).ToList();
 
-            //(double[] counts, double[] binEdges) = ScottPlot.Statistics.Common.Histogram(l_flightsDurationsList.ToArray(), 20);
-            (double[] counts, double[] binEdges) = (new double[0], new double[0]);
-            FlightsDurationHistData = new HistData(counts, binEdges.Take(binEdges.Length - 1).ToArray());
+            (double[] counts, double[] binEdges) = ComputeHistData(l_flightsDurationsList.ToArray(), 20);
+            FlightsDurationHistData = new HistData(counts, binEdges);
 
             
 
 
+        }
+
+        private (double[] counts, double[] binEdges) ComputeHistData(double[] sample, int groupCount)
+        {
+            double[] l_counts = new double[groupCount];
+            double[] l_binEdges = new double[groupCount];
+            double l_BinWidth = (sample.Max()) / groupCount;
+
+            double l_PreviousBin = 0.0;
+            for (int i = 0; i < groupCount; i++)
+            {
+                double l_CurrentBin = l_PreviousBin + l_BinWidth;
+                l_binEdges[i] = l_CurrentBin;
+                l_counts[i] = sample.Where(s => (s > l_PreviousBin) && (s <= l_CurrentBin)).Count();
+                l_PreviousBin = l_CurrentBin;
+            }
+            return (l_counts, l_binEdges);
         }
 
         public double[] GetMonthlyMedian(int l_FlightYear)
