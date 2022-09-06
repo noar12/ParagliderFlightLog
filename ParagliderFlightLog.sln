@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfUI", "WpfUI\WpfUI.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParagliderFlightLogTest", "ParagliderFlightLogTest\ParagliderFlightLogTest.csproj", "{3425CF5E-A51C-4C04-8249-B60FC11A300E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorUI", "BlazorUI\BlazorUI.csproj", "{7AE3250B-1111-40EF-912C-00FE7A49FE6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorUI", "BlazorUI\BlazorUI.csproj", "{7AE3250B-1111-40EF-912C-00FE7A49FE6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
