@@ -4,47 +4,35 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-4">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">Take off Date/Time</th>
-                        <th scope="col">Take off name</th>
-                        <th scope="col">Flight duration</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                    @foreach (var flight in mvm.FlightListViewModel.ToList())
-                    {
-                        <tr>
-                            <td>@flight.TakeOffDateTime.ToString()</td>
-                            <td>@flight.TakeOffSiteName.ToString()</td>
-                            <td>@flight.FlightDuration.ToString()</td>
-                            <td><button class="btn btn-primary" @onclick="() => ShowFlightDetail(flight)">Detail</button></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <div class="col-5">
+            <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
+                            AllowSorting="true" Data="@mvm.FlightListViewModel" TItem="FlightViewModel"
+                            SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedFlights>
+                <Columns>
+                    <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffDateTime" Title="Date/Time" Width="150px" />
+                    <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffSiteName" Title="Site" />
+                    <RadzenDataGridColumn TItem="FlightViewModel" Property="FlightDuration" Title="Duration" />
+                </Columns>
+            </RadzenDataGrid>
         </div>
-        <div class="col-8">
+        <div class="col-7">
             <div class="row">
-                <strong>Glider:</strong> @SelectedFlight.GliderName
+                <strong>Glider:</strong> @SelectedFlights[0].GliderName
             </div>
             <div class="row">
-                <strong>Max height [m]:</strong> @SelectedFlight.MaxHeight
+                <strong>Max height [m]:</strong> @SelectedFlights[0].MaxHeight
             </div>
             <div class="row">
-                <strong>Trace length [km]:</strong> @SelectedFlight.TraceLength
+                <strong>Trace length [km]:</strong> @SelectedFlights[0].TraceLength
             </div>
             <div class="row">
-                <strong>Max climb (8s) [m/s]:</strong> @SelectedFlight.MaxClimb
+                <strong>Max climb (8s) [m/s]:</strong> @SelectedFlights[0].MaxClimb
             </div>
             <div class="row">
-                <strong>Max sink (8s) [m/s]:</strong> @SelectedFlight.MaxSink
+                <strong>Max sink (8s) [m/s]:</strong> @SelectedFlights[0].MaxSink
             </div>
             <div class="row">
-                <strong>Comment:</strong> @SelectedFlight.Comment
+                <strong>Comment:</strong> @SelectedFlights[0].Comment
             </div>
         </div>
     </div>
@@ -54,12 +42,8 @@
     protected override void OnInitialized()
     {
         mvm = new MainViewModel();
-        SelectedFlight = mvm.FlightListViewModel[mvm.FlightListViewModel.Count - 1];
     }
     MainViewModel mvm = new MainViewModel();
 
-    FlightViewModel SelectedFlight;
-    private void ShowFlightDetail(FlightViewModel flight){
-        SelectedFlight = flight;
-    }
+    IList<FlightViewModel> SelectedFlights = new List<FlightViewModel>() { new FlightViewModel() };
 }
