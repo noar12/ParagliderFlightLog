@@ -23,6 +23,7 @@ namespace ParagliderFlightLog.ViewModels
             m_GliderCollection = gliders;
 
         }
+        public FlightViewModel() { }
         //public FlightViewModel(string flightID, DateTime takeOffDateTime, TimeSpan flightDuration, string takeOffSiteName, string gliderName, List<FlightPoint> flightPoints, string comment)
         //{
         //    FlightID = flightID;

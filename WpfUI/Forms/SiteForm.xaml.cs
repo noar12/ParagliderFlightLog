@@ -22,7 +22,7 @@ namespace WpfUI.Forms
     public partial class SiteForm : Window
     {
 
-        public SiteViewModel EditableSite
+        public SiteViewModel SelectedSite
         {
             get { return (SiteViewModel)GetValue(SelectedSiteProperty); }
             set { SetValue(SelectedSiteProperty, value); }
@@ -51,33 +51,33 @@ namespace WpfUI.Forms
             InitializeComponent();
             this.SizeToContent = SizeToContent.WidthAndHeight;
             DataContext = this;
-            EditableSite = site;
+            SelectedSite = site;
 
-            Name.Text = EditableSite.Name;
-            Town.Text = EditableSite.Town;
-            Country.SelectedItem = EditableSite.Country;
-            WindOrientationStart.SelectedItem = EditableSite.WindOrientationBegin;
-            WindOrientationEnd.SelectedItem = EditableSite.WindOrientationEnd;
-            Latitude.Text = EditableSite.Latitude.ToString();
-            Longitude.Text = EditableSite.Longitude.ToString();
-            Altitude.Text = EditableSite.Altitude.ToString();
+            SiteName.Text = SelectedSite.Name;
+            Town.Text = SelectedSite.Town;
+            Country.SelectedItem = SelectedSite.Country;
+            WindOrientationStart.SelectedItem = SelectedSite.WindOrientationBegin;
+            WindOrientationEnd.SelectedItem = SelectedSite.WindOrientationEnd;
+            Latitude.Text = SelectedSite.Latitude.ToString();
+            Longitude.Text = SelectedSite.Longitude.ToString();
+            Altitude.Text = SelectedSite.Altitude.ToString();
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
             
-            EditableSite.Name = Name.Text;
-            EditableSite.Town = Town.Text;
-            EditableSite.Country = Country.Text;
-            EditableSite.WindOrientationBegin = WindOrientationStart.Text;
-            EditableSite.WindOrientationEnd = WindOrientationEnd.Text;
+            SelectedSite.Name = SiteName.Text;
+            SelectedSite.Town = Town.Text;
+            SelectedSite.Country = Country.Text;
+            SelectedSite.WindOrientationBegin = WindOrientationStart.Text;
+            SelectedSite.WindOrientationEnd = WindOrientationEnd.Text;
             
             double.TryParse(Latitude.Text, out double l_Latitude);
             double.TryParse(Longitude.Text, out double l_Longitude);
             double.TryParse(Altitude.Text, out double l_Altitude);
-            EditableSite.Latitude = l_Latitude;
-            EditableSite.Longitude = l_Longitude;
-            EditableSite.Altitude = l_Altitude;
+            SelectedSite.Latitude = l_Latitude;
+            SelectedSite.Longitude = l_Longitude;
+            SelectedSite.Altitude = l_Altitude;
 
             this.DialogResult = true;
             this.Close();

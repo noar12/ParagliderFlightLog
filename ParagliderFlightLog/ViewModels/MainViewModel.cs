@@ -50,7 +50,7 @@ namespace ParagliderFlightLog.ViewModels
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (var item in e.NewItems)
+                    foreach (var item in e.NewItems ?? new List<Site>())
                     {
                         // if the site is not in the data model yet we add it
                         if (item is Site site)
@@ -61,9 +61,8 @@ namespace ParagliderFlightLog.ViewModels
                     break;
                 case NotifyCollectionChangedAction.Remove:
                     throw new NotImplementedException();
-                    break;
                 case NotifyCollectionChangedAction.Replace:
-                    foreach (var item in e.NewItems)
+                    foreach (var item in e.NewItems ?? new List<Site>())
                     {
                         if (item is Site site)
                         {
@@ -116,7 +115,7 @@ namespace ParagliderFlightLog.ViewModels
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (var item in e.NewItems)
+                    foreach (var item in e.NewItems ?? new List<Flight>())
                     {
                         if (item is Flight flight)
                         {
@@ -125,16 +124,16 @@ namespace ParagliderFlightLog.ViewModels
                     }
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (var item in e.OldItems)
+                    foreach (var item in e.OldItems ?? new List<Flight>())
                     {
                         if (item is Flight flight)
                         {
-                            FlightListViewModel.Remove(FlightListViewModel.Where(f => f.FlightID == flight.Flight_ID).FirstOrDefault());
+                            FlightListViewModel.Remove(FlightListViewModel.Where(f => f.FlightID == flight.Flight_ID).FirstOrDefault(new FlightViewModel()));
                         }
                     }
                     break;
                 case NotifyCollectionChangedAction.Replace:
-                    foreach (var item in e.NewItems)
+                    foreach (var item in e.NewItems ?? new List<Flight>())
                     {
                         if (item is Flight flight)
                         {

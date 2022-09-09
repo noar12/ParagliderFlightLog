@@ -39,7 +39,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock Text="Name" Grid.Column="0" Grid.Row="0"/>
-            <TextBox x:Name="Name" Grid.Column="1" Grid.Row="0" MinWidth="100"/>
+            <TextBox x:Name="SiteName" Grid.Column="1" Grid.Row="0" MinWidth="100"/>
 
 
             <TextBlock Text="Town" Grid.Column="0" Grid.Row="1"/>
