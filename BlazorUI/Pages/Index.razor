@@ -97,9 +97,9 @@
     }
     async Task OnEditFlight()
     {
-       await DialogService.OpenAsync<EditFlight>($"Edit flight",
-               new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight } },
-               new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
+        await DialogService.OpenAsync<EditFlight>($"Edit flight",
+                new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight }, { "ViewModel", mvm } },
+                new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
     }
 
 }
