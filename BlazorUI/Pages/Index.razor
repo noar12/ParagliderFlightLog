@@ -1,12 +1,18 @@
 ﻿@page "/"
 @inject ContextMenuService ContextMenuService
 @inject DialogService DialogService
+@using System
+@using System.IO
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.Extensions.Logging
+@inject IWebHostEnvironment Environment
 @using ParagliderFlightLog.ViewModels
 <PageTitle>Flight list</PageTitle>
 
 <div class="container">
     <div class="row">
         <div class="col-8">
+            <InputFile OnChange="@OnAddFlights" multiple />
             <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
                             AllowSorting="true" Data="@mvm.FlightListViewModel" TItem="FlightViewModel"
                             SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@SelectedFlights
@@ -101,5 +107,26 @@
                 new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight }, { "ViewModel", mvm } },
                 new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
     }
+    async Task OnAddFlights(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            try
+            {
+                long maxFileSize = 2048000;
+                var trustedFileNameForFileStorage = Path.GetRandomFileName();
+                var path = Path.Combine(Environment.ContentRootPath,
+                        "tmp");
 
+                await using FileStream fs = new(path, FileMode.Create);
+                await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+                System.Diagnostics.Debug.WriteLine($"File copied to {fs.Name}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("File: {Filename} Error: {Error}",
+                    file.Name, ex.Message);
+            }
+        }
+    }
 }
