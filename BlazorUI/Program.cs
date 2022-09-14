@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.Extensions.FileProviders;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +14,15 @@ builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
 
 var app = builder.Build();
-
+// Otherwise base WWW files like CSS are not found
+if (Environment.OSVersion.Platform == PlatformID.Unix)
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(Path.Combine(Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)!, "wwwroot")),
+        RequestPath = ""
+    });
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
