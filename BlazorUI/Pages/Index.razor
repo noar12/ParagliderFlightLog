@@ -109,6 +109,7 @@
     }
     async Task OnAddFlights(InputFileChangeEventArgs e)
     {
+        List<string> l_IgcFilePaths = new List<string>();
         foreach (var file in e.GetMultipleFiles())
         {
             try
@@ -116,10 +117,11 @@
                 long maxFileSize = 2048000;
                 var trustedFileNameForFileStorage = Path.GetRandomFileName();
                 var path = Path.Combine(Environment.ContentRootPath,
-                        "tmp");
+                        "tmp", trustedFileNameForFileStorage);
 
                 await using FileStream fs = new(path, FileMode.Create);
                 await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+                l_IgcFilePaths.Add(fs.Name);
                 System.Diagnostics.Debug.WriteLine($"File copied to {fs.Name}");
             }
             catch (Exception ex)
@@ -127,6 +129,8 @@
                 System.Diagnostics.Debug.WriteLine("File: {Filename} Error: {Error}",
                     file.Name, ex.Message);
             }
+            mvm.AddFlightsFromIGC(l_IgcFilePaths.ToArray());
         }
     }
+   
 }
