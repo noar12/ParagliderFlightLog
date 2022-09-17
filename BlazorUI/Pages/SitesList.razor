@@ -6,6 +6,7 @@
 @using Microsoft.AspNetCore.Hosting
 @using Microsoft.Extensions.Logging
 @inject IWebHostEnvironment Environment
+@inject MainViewModel mvm
 @using ParagliderFlightLog.ViewModels
 <PageTitle>Sites list</PageTitle>
 
@@ -38,9 +39,9 @@
 @code{
     protected override void OnInitialized()
     {
-        mvm = new MainViewModel();
+
     }
-    MainViewModel mvm = new MainViewModel();
+
 
     IList<SiteViewModel> SelectedSites = new List<SiteViewModel>();
     SiteViewModel LastSelectedSite

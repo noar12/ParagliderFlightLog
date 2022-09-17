@@ -7,7 +7,7 @@
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Town</RadzenText>
                 <RadzenTextBox @bind-Value=@SiteToEdit.Town Class="w-100" />
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Country</RadzenText>
-                <RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@SiteToEdit.AvailableCountry @bind-Value=@SiteToEdit.Country
+                <RadzenDropDown AllowFiltering="false" Data=@SiteToEdit.AvailableCountry @bind-Value=@SiteToEdit.Country
                         Class="w-100" />
 
                 <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Wind</RadzenText>
