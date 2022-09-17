@@ -1,0 +1,92 @@
+﻿@page "/SitesList"
+@inject ContextMenuService ContextMenuService
+@inject DialogService DialogService
+@using System
+@using System.IO
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.Extensions.Logging
+@inject IWebHostEnvironment Environment
+@using ParagliderFlightLog.ViewModels
+<PageTitle>Sites list</PageTitle>
+
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
+                            AllowSorting="true" Data="@mvm.SiteListViewModel" TItem="SiteViewModel"
+                            SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@SelectedSites
+                            ContextMenu=@(args => ShowContextMenuWithItems(args))>
+                <Columns>
+                    <RadzenDataGridColumn TItem="SiteViewModel" Property="Name" Title="Site name" Width="150px" />
+                    <RadzenDataGridColumn TItem="SiteViewModel" Property="Altitude" Title="Altitude" />
+                    <RadzenDataGridColumn TItem="SiteViewModel" Property="WindOrientation" Title="Wind orientation" />
+                </Columns>
+            </RadzenDataGrid>
+        </div>
+        <div class="col-4">
+            <div class="row">
+                <strong>Site name:</strong> @LastSelectedSite.Name
+            </div>
+            <div class="row">
+                <strong>Number of flight:</strong> @SiteUseCount
+            </div>
+           
+        </div>
+    </div>
+</div>
+
+@code{
+    protected override void OnInitialized()
+    {
+        mvm = new MainViewModel();
+    }
+    MainViewModel mvm = new MainViewModel();
+
+    IList<SiteViewModel> SelectedSites = new List<SiteViewModel>();
+    SiteViewModel LastSelectedSite
+    {
+        get
+        {
+            return SelectedSites.Count > 0 ? SelectedSites[SelectedSites.Count - 1] : new SiteViewModel();
+        }
+    }
+    void ShowContextMenuWithItems(MouseEventArgs args){
+        ContextMenuService.Open(args,
+            new List<ContextMenuItem> {
+                new ContextMenuItem(){ Text = "Edit site", Value = siteAction.Edit },
+             }, OnMenuItemClick);
+    }
+    void OnMenuItemClick(MenuItemEventArgs args)
+    {
+        if (args.Value is siteAction action){
+            switch (action)
+            {
+                case siteAction.Edit:
+                    OnEditSite();
+                    break;
+            }
+        }
+        ContextMenuService.Close();
+
+    }
+    enum siteAction{
+        Edit,
+    }
+
+    async Task OnEditSite()
+    {
+        await DialogService.OpenAsync<EditSite>($"Edit site",
+                new Dictionary<string, object>() { { "SiteToEdit", LastSelectedSite }, { "ViewModel", mvm } },
+                new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
+    }
+    async Task OnAddSites(InputFileChangeEventArgs e)
+    {
+
+    }
+
+    int SiteUseCount{
+        get{
+            return LastSelectedSite.GetSiteUseCount(mvm.FlightListViewModel);
+        }
+    }
+}

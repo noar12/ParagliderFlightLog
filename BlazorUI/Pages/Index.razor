@@ -130,6 +130,17 @@
                     file.Name, ex.Message);
             }
             mvm.AddFlightsFromIGC(l_IgcFilePaths.ToArray());
+            foreach (string filepath in l_IgcFilePaths)
+            {
+                try
+                {
+                    System.IO.File.Delete(filepath);
+                }
+                catch (System.IO.IOException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
         }
     }
    

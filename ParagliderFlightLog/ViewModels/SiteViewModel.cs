@@ -77,6 +77,7 @@ namespace ParagliderFlightLog.ViewModels
         {
             return flights.Where(f => f.TakeOffSiteID == this.Site_ID).Count();
         }
+
         public string[] AvailableWindOrientation { get => Enum.GetNames(typeof(EWindOrientation)); }
         public string[] AvailableCountry { get => Enum.GetNames(typeof(ECountry)); }
 
