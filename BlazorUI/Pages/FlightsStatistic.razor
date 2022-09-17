@@ -8,8 +8,48 @@
 @using ParagliderFlightLog.ViewModels
 <PageTitle>Flights statistic</PageTitle>
 
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <RadzenDropDown TValue="StatisticalFlightsAnalysis" AllowFiltering="false" Data=@Enum.GetValues(typeof(StatisticalFlightsAnalysis)) @bind-Value=AnalysisToDo
+                            Class="w-100">
+                <Template>
+                    @(GetAnalyseName(context))
+                </Template>
+                        </RadzenDropDown>
+            <RadzenDropDown AllowFiltering="false" Data=@mvm.YearsOfFlying @bind-Value=@YearToAnalyse
+                            Class="w-100" />
+        </div>
+        <div class="col-8">
+           
 
+        </div>
+    </div>
+</div>
 
 @code{
+    protected override void OnInitialized()
+    {
+        fsvm = new FlightsStatisticsViewModel(mvm, DateTime.MinValue, DateTime.MaxValue);
+    }
 
+    FlightsStatisticsViewModel fsvm;
+    StatisticalFlightsAnalysis AnalysisToDo;
+    int YearToAnalyse;
+
+    void OnAnalyseChange(object args){
+
+    }
+
+    string GetAnalyseName(StatisticalFlightsAnalysis analyse){
+        switch (analyse)
+        {
+            case StatisticalFlightsAnalysis.MontlyMedian:
+                return "Monthly median";
+            case StatisticalFlightsAnalysis.DurationDistribution:
+                return "Duration Distribution";
+            default:
+                return "";
+        }
+    }
 }

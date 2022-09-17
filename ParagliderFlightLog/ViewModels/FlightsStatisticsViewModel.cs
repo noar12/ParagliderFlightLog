@@ -77,19 +77,19 @@ namespace ParagliderFlightLog.ViewModels
            
         }
 
-        string[] AvailableAnalysis
+        public string[] AvailableAnalysis
         {
             get
             {
                 List<string> availableAnalysis = new List<string>();
-                foreach( StatisticalAnalysis analysis in Enum.GetValues(typeof(StatisticalAnalysis)))
+                foreach( StatisticalFlightsAnalysis analysis in Enum.GetValues(typeof(StatisticalFlightsAnalysis)))
                 {
                     switch (analysis)
                     {
-                        case StatisticalAnalysis.MontlyMedian:
+                        case StatisticalFlightsAnalysis.MontlyMedian:
                             availableAnalysis.Add("Monthly median");
                             break;
-                        case StatisticalAnalysis.DurationDistribution:
+                        case StatisticalFlightsAnalysis.DurationDistribution:
                             availableAnalysis.Add("Duration Distribution");
                             break;
                         default:
@@ -100,6 +100,8 @@ namespace ParagliderFlightLog.ViewModels
             }
         }
     }
+
+
 
     public class HistData
     {
@@ -112,7 +114,7 @@ namespace ParagliderFlightLog.ViewModels
         }
     }
 
-    enum StatisticalAnalysis
+    public enum StatisticalFlightsAnalysis
     {
         DurationDistribution,
         MontlyMedian,
