@@ -2,30 +2,31 @@
 
 <div class="container">
     <div class="col-4">
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Name</RadzenText>
+        <strong>Name</strong>
                 <RadzenTextBox @bind-Value=@SiteToEdit.Name Class="w-100" />
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Town</RadzenText>
+        <strong>Town</strong>
                 <RadzenTextBox @bind-Value=@SiteToEdit.Town Class="w-100" />
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Country</RadzenText>
+        <strong>Country</strong>
                 <RadzenDropDown AllowFiltering="false" Data=@SiteToEdit.AvailableCountry @bind-Value=@SiteToEdit.Country
                         Class="w-100" />
 
-                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Wind</RadzenText>
+        <strong>Wind</strong>
 
-         <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H2">From</RadzenText>
+        <strong>From</strong>
         <RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@SiteToEdit.AvailableWindOrientation @bind-Value=@SiteToEdit.WindOrientationBegin
                         Class="w-100" />
-        <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H2">To</RadzenText>
+        <strong>To</strong>
         <RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@SiteToEdit.AvailableWindOrientation @bind-Value=@SiteToEdit.WindOrientationEnd
                         Class="w-100" />
     </div>
     <div class="col-8">
         <div class="row">
-                            <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Latitude</RadzenText>
+            <strong>
+                Latitude</strong>
             <RadzenNumeric ShowUpDown="false" @bind-Value=@SiteToEdit.Latitude Class="w-100" />
-                               <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Longitude</RadzenText>
+            <strong>Longitude</strong>
             <RadzenNumeric ShowUpDown="false" @bind-Value=@SiteToEdit.Longitude Class="w-100" />
-                                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Altitude</RadzenText>
+            <strong>Altitude</strong>
             <RadzenNumeric ShowUpDown="false" @bind-Value=@SiteToEdit.Altitude Class="w-100" />
         </div>
     </div>

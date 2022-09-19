@@ -17,7 +17,8 @@
             <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
                             AllowSorting="true" Data="@mvm.FlightListViewModel" TItem="FlightViewModel"
                             SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@SelectedFlights
-                            ContextMenu=@(args => ShowContextMenuWithItems(args))>
+                            ContextMenu=@(args => ShowContextMenuWithItems(args))
+>
                 <Columns>
                     <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffDateTime" Title="Date/Time" Width="150px" />
                     <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffSiteName" Title="Site" />
@@ -53,7 +54,6 @@
     {
 
     }
-
     IList<FlightViewModel> SelectedFlights = new List<FlightViewModel>();
     FlightViewModel LastSelectedFlight
     {
@@ -143,5 +143,4 @@
             }
         }
     }
-   
 }
