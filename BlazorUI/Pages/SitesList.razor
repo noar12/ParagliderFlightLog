@@ -79,6 +79,7 @@
         await DialogService.OpenAsync<EditSite>($"Edit site",
                 new Dictionary<string, object>() { { "SiteToEdit", LastSelectedSite }, { "ViewModel", mvm } },
                 new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
+        mvm.EditSite(LastSelectedSite);
     }
     async Task OnAddSites(InputFileChangeEventArgs e)
     {
