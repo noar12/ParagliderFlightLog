@@ -21,8 +21,8 @@ namespace ParagliderFlightLog.DataModels
         private ObservableCollection<Site> m_sites = new ObservableCollection<Site>();
         private ObservableCollection<Glider> m_gliders = new ObservableCollection<Glider>();
 
-        private const string DB_PATH = @"C:\Users\mar\source\repos\noar12\ParagliderFlightLog\ParagliderFlightLog.db";
-        //private const string DB_PATH = @"C:\Users\arnau\source\repos\ParagliderFlightLog\ParagliderFlightLog.db";
+        //private const string DB_PATH = @"C:\Users\mar\source\repos\noar12\ParagliderFlightLog\ParagliderFlightLog.db";
+        private const string DB_PATH = @"C:\Users\arnau\source\repos\ParagliderFlightLog\ParagliderFlightLog.db";
         //private const string DB_PATH = @"/home/noar/TestDB/ParagliderFlightLog.db";
 
         public FlightLogDB()
