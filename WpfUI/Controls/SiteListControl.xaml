@@ -27,16 +27,13 @@
                 <DataGridTextColumn Header = "Site altitude" Binding = "{Binding Altitude}" />
                 
                 <DataGridTextColumn Header = "Site orientation" Binding = "{Binding WindOrientation}" />
+                <DataGridTextColumn Header = "# use" Binding = "{Binding SiteUseCount}" />
             </DataGrid.Columns>
         </DataGrid>
         <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1" Grid.RowSpan="3">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="Site Name" FontWeight="Bold"/>
                 <TextBlock Text="{Binding SelectedItem.Name}" TextWrapping="Wrap" MinWidth="100" MaxWidth="500"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Number of flight" FontWeight="Bold"/>
-                <TextBlock Text="{Binding SiteUseCount}"/>
             </StackPanel>
         </WrapPanel>
         <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" VerticalAlignment="Bottom">

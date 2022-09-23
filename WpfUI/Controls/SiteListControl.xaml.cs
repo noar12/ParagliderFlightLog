@@ -91,7 +91,7 @@ namespace WpfUI.Controls
 
         private void SitesGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SiteUseCount = SelectedItem.GetSiteUseCount(Source.FlightListViewModel);
+            SiteUseCount = SelectedItem.SiteUseCount;
         }
     }
 }

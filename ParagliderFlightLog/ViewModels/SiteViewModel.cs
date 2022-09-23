@@ -10,10 +10,12 @@ namespace ParagliderFlightLog.ViewModels
     public class SiteViewModel
     {
         private Site m_Site = new Site();
-        
-        public SiteViewModel(Site site)
+        private ICollection<Flight> m_FlightsCollection = new List<Flight>();
+
+        public SiteViewModel(Site site, ICollection<Flight> flightsCollection)
         {
             m_Site = site;
+            m_FlightsCollection = flightsCollection;
             
         }
         public SiteViewModel() { m_Site = new Site(); }
@@ -73,10 +75,7 @@ namespace ParagliderFlightLog.ViewModels
                 m_Site.WindOrientationEnd = l_EWindOrientation;
             }
         }
-        public int GetSiteUseCount(IList<FlightViewModel> flights)
-        {
-            return flights.Where(f => f.TakeOffSiteID == this.Site_ID).Count();
-        }
+        public int SiteUseCount { get => m_FlightsCollection.Where(f => f.REF_TakeOffSite_ID == m_Site.Site_ID).Count(); }
 
         public string[] AvailableWindOrientation { get => Enum.GetNames(typeof(EWindOrientation)); }
         public string[] AvailableCountry { get => Enum.GetNames(typeof(ECountry)); }

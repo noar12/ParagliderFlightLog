@@ -55,7 +55,7 @@ namespace ParagliderFlightLog.ViewModels
                         // if the site is not in the data model yet we add it
                         if (item is Site site)
                         {
-                            SiteListViewModel.Add(new SiteViewModel(site));
+                            SiteListViewModel.Add(new SiteViewModel(site, m_flightLog.Flights));
                         }
                     }
                     break;
@@ -206,7 +206,7 @@ namespace ParagliderFlightLog.ViewModels
         {
             foreach (Site site in m_flightLog.Sites)
             {
-                SiteListViewModel.Add(new SiteViewModel(site));
+                SiteListViewModel.Add(new SiteViewModel(site, m_flightLog.Flights));
             }
         }
 
