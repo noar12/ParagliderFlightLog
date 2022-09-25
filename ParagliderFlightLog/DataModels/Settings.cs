@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Reflection;
 
 namespace ParagliderFlightLog.DataModels
 {
     public class Settings
     { 
-        private readonly string m_SettingsFile = Path.Combine(Environment.CurrentDirectory, "Settings.json");
+        private readonly string m_SettingsFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Settings.json");
         public string DbPath { get; set; } = @"/home/noar/TestDB/ParagliderFlightLog.db";
         public void Build()
         {
