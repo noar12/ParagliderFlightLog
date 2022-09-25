@@ -22,26 +22,28 @@ namespace ParagliderFlightLog.DataModels
         private ObservableCollection<Glider> m_gliders = new ObservableCollection<Glider>();
 
         //private const string DB_PATH = @"C:\Users\mar\source\repos\noar12\ParagliderFlightLog\ParagliderFlightLog.db";
-        private const string DB_PATH = @"C:\Users\arnau\source\repos\ParagliderFlightLog\ParagliderFlightLog.db";
-        //private const string DB_PATH = @"/home/noar/TestDB/ParagliderFlightLog.db";
+        //private const string DB_PATH = @"C:\Users\arnau\source\repos\ParagliderFlightLog\ParagliderFlightLog.db";
+        private Settings m_Settings;
 
-        public FlightLogDB()
+        public FlightLogDB(Settings settings)
         {
+
             m_flights.CollectionChanged += FlightsCollectionChangedHandler;
             m_sites.CollectionChanged += SitesCollectionChangedHandler;
             m_gliders.CollectionChanged += GliderCollectionChangedHandler;
+            m_Settings = settings;
         }
 
 
         public void LoadFlightLogDB()
         {
-            if (File.Exists(DB_PATH))
+            if (File.Exists(m_Settings.DbPath))
             {
                 string sqlGetAllSite = "SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude FROM Sites";
                 string sqlGetAllGlider = "SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name FROM Gliders";
                 string sqlGetAllFlight = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights";
 
-                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(m_Settings.DbPath)))
                 {
                     m_sites = new ObservableCollection<Site>(conn.Query<Site>(sqlGetAllSite));
                     m_gliders = new ObservableCollection<Glider>(conn.Query<Glider>(sqlGetAllGlider));
@@ -91,10 +93,10 @@ namespace ParagliderFlightLog.DataModels
 	""IgcFileContent""    TEXT,
 	PRIMARY KEY(""Flight_ID""));";
 
-            if (!File.Exists(DB_PATH))
+            if (!File.Exists(m_Settings.DbPath))
             {
-                SQLiteConnection.CreateFile(DB_PATH);
-                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                SQLiteConnection.CreateFile(m_Settings.DbPath);
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(m_Settings.DbPath)))
                 {
                     conn.Open();
                     SQLiteCommand CreateSitesCommand = new SQLiteCommand(sqlCreateSites, conn);
@@ -131,12 +133,12 @@ namespace ParagliderFlightLog.DataModels
 
         private void ReplaceFlightInDB(IList? newItems)
         {
-            if (!File.Exists(DB_PATH))
+            if (!File.Exists(m_Settings.DbPath))
                 CreateFlightLogDB();
             if (newItems != null)
             {
                 string sqlReplaceFlight = "UPDATE Flights SET Comment = @Comment, REF_TakeOffSite_ID = @REF_TakeOffSite_ID, REF_Glider_ID = @REF_Glider_ID, FlightDuration_s = @FlightDuration_s, TakeOffDateTime = @TakeOffDateTime, IgcFileContent = @IgcFileContent WHERE Flight_ID = @Flight_ID";
-                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(m_Settings.DbPath)))
                 {
 
                     foreach (Flight flight in newItems)
@@ -186,12 +188,12 @@ namespace ParagliderFlightLog.DataModels
 
         private void ReplaceSitesInDB(IList? newItems)
         {
-            if (!File.Exists(DB_PATH))
+            if (!File.Exists(m_Settings.DbPath))
                 CreateFlightLogDB();
             if (newItems != null)
             {
                 string sqlReplaceSite = "UPDATE Sites SET Name = @Name, Town = @Town, Country = @Country, WindOrientationBegin = @WindOrientationBegin, WindOrientationEnd = @WindOrientationEnd, Altitude = @Altitude, Latitude = @Latitude, Longitude = @Longitude WHERE Site_ID = @Site_ID";
-                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(m_Settings.DbPath)))
                 {
 
                     foreach (Site site in newItems)
@@ -210,12 +212,12 @@ namespace ParagliderFlightLog.DataModels
 
         private void WriteSitesInDB(IList? newItems)
         {
-            if (!File.Exists(DB_PATH))
+            if (!File.Exists(m_Settings.DbPath))
                 CreateFlightLogDB();
             if (newItems != null)
             {
                 string sqlWriteSite = "INSERT INTO Sites (Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude) VALUES(@Site_ID, @Name, @Town, @Country, @WindOrientationBegin, @WindOrientationEnd, @Altitude, @Latitude, @Longitude)";
-                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(m_Settings.DbPath)))
                 {
 
                     foreach (Site site in newItems)
@@ -229,12 +231,12 @@ namespace ParagliderFlightLog.DataModels
 
         private void DeleteFlightsInDB(IList? oldItems)
         {
-            if (!File.Exists(DB_PATH))
+            if (!File.Exists(m_Settings.DbPath))
                 CreateFlightLogDB();
             if (oldItems != null)
             {
                 string sqlDeleteFlight = "DELETE FROM Flights WHERE Flight_ID = @Flight_ID";
-                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(m_Settings.DbPath)))
                 {
                     foreach (Flight flight in oldItems)
                     {
@@ -247,12 +249,12 @@ namespace ParagliderFlightLog.DataModels
 
         private void WriteFlightsInDB(IList? newItems)
         {
-            if (!File.Exists(DB_PATH))
+            if (!File.Exists(m_Settings.DbPath))
                 CreateFlightLogDB();
             if (newItems != null)
             {
                 string sqlWriteFlight = "INSERT INTO Flights (Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s) VALUES(@Flight_ID, @IgcFileContent, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s)";
-                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(m_Settings.DbPath)))
                 {
 
                     foreach (Flight flight in newItems)
@@ -271,12 +273,12 @@ namespace ParagliderFlightLog.DataModels
 
         private void WriteGlidersInDB(IList? newItems)
         {
-            if (!File.Exists(DB_PATH))
+            if (!File.Exists(m_Settings.DbPath))
                 CreateFlightLogDB();
             if (newItems != null)
             {
                 string sqlWriteGlider = "INSERT INTO Gliders (Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name) VALUES (@Glider_ID, @Manufacturer, @Model, @BuildYear, @LastCheckDateTime, @HomologationCategory, @IGC_Name)";
-                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_PATH)))
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(m_Settings.DbPath)))
                 {
 
                     foreach (Glider glider in newItems)

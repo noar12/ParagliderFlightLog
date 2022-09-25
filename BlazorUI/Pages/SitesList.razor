@@ -15,7 +15,7 @@
         <div class="col-8">
             <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
                             AllowSorting="true" Data="@mvm.SiteListViewModel" TItem="SiteViewModel"
-                            SelectionMode="DataGridSelectionMode.Multiple" @bind-Value=@SelectedSites
+                            SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedSites
                             ContextMenu=@(args => ShowContextMenuWithItems(args))>
                 <Columns>
                     <RadzenDataGridColumn TItem="SiteViewModel" Property="Name" Title="Site name" Width="150px" />

@@ -11,24 +11,18 @@ namespace ParagliderFlightLog.ViewModels
 {
     public class MainViewModel
     {
-        FlightLogDB m_flightLog = new FlightLogDB();
+        FlightLogDB m_flightLog;
+        Settings m_Settings;
 
         public MainViewModel()
         {
-            //LogFlyDB l_logFlyDB = new LogFlyDB();
-            //l_logFlyDB.LoadLogFlyDB("Logfly.db");
-            //m_flightLog.Flights.CollectionChanged += BuildFlightListViewModel; It does not work so i am calling the method manually for now
-            //m_flightLog = l_logFlyDB.BuildFlightLogDB();
-
-
-
-            //BuildFlightListViewModel(null , null); //jsut to call it until i understand how to trigger it through collectionchanged
-            //BuildSiteListViewModel();
+            m_Settings = new Settings();
+            m_Settings.Build();
+            m_flightLog = new FlightLogDB(m_Settings);
 
             m_flightLog.LoadFlightLogDB();
             m_flightLog.Flights.CollectionChanged += Flights_CollectionChanged;
             m_flightLog.Sites.CollectionChanged += Sites_CollectionChanged;
-
 
             BuildSiteListViewModel();
             BuildFlightListViewModel();
@@ -36,13 +30,6 @@ namespace ParagliderFlightLog.ViewModels
             //m_flightLog.Flights.CollectionChanged += UpdateFlightListViewModel;
             //FlightListViewModel.CollectionChanged += FlightListViewModel_CollectionChanged;
             //SiteListViewModel.CollectionChanged += SiteListViewModel_CollectionChanged;
-
-
-
-
-
-
-
         }
 
         private void Sites_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -223,7 +210,7 @@ namespace ParagliderFlightLog.ViewModels
 
         public void ImportLogFlyDB(string fileName)
         {
-            LogFlyDB l_logFlyDB = new LogFlyDB();
+            LogFlyDB l_logFlyDB = new LogFlyDB(m_Settings);
             l_logFlyDB.LoadLogFlyDB(fileName);
             FlightLogDB l_FlightLogDB = l_logFlyDB.BuildFlightLogDB();
             foreach (Glider glider in l_FlightLogDB.Gliders)

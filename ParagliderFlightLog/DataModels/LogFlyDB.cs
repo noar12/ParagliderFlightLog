@@ -16,7 +16,12 @@ namespace ParagliderFlightLog.DataModels
     {
         private List<LogFlyVol> m_LogFlyVolCollection = new List<LogFlyVol>();
         private List<LogFlySite> m_LogFlySiteCollection = new List<LogFlySite>();
+        private Settings m_Settings;
 
+        public LogFlyDB(Settings settings)
+        {
+            m_Settings = settings;
+        }
         // Define arbitrary glider because there are not define in logfly db
         private List<Glider> m_LogFlyGliderCollection = new List<Glider>()
         {
@@ -81,7 +86,7 @@ namespace ParagliderFlightLog.DataModels
                 l_flights.Add(vol.ToFlightLogDBFlight(l_sites, m_LogFlyGliderCollection));
             }
 
-            FlightLogDB l_FlightLogDB = new FlightLogDB();
+            FlightLogDB l_FlightLogDB = new FlightLogDB(m_Settings);
             l_FlightLogDB.Flights = l_flights;
             l_FlightLogDB.Sites = l_sites;
             l_FlightLogDB.Gliders = new System.Collections.ObjectModel.ObservableCollection<Glider>(m_LogFlyGliderCollection);
