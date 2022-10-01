@@ -26,11 +26,13 @@ namespace ParagliderFlightLog.ViewModels
 
             BuildSiteListViewModel();
             BuildFlightListViewModel();
+            BuildGliderListViewModel();
 
             //m_flightLog.Flights.CollectionChanged += UpdateFlightListViewModel;
             //FlightListViewModel.CollectionChanged += FlightListViewModel_CollectionChanged;
             //SiteListViewModel.CollectionChanged += SiteListViewModel_CollectionChanged;
         }
+
 
         private void Sites_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -205,9 +207,15 @@ namespace ParagliderFlightLog.ViewModels
                 FlightViewModel fvm = new FlightViewModel(flight, m_flightLog.Flights, m_flightLog.Sites, m_flightLog.Gliders);
                 FlightListViewModel.Add(fvm);
             }
-
         }
 
+        private void BuildGliderListViewModel()
+        {
+            foreach (Glider glider in m_flightLog.Gliders)
+            {
+                GliderListViewModel.Add(new GliderViewModel(glider, m_flightLog.Flights));
+            }
+        }
         public void ImportLogFlyDB(string fileName)
         {
             LogFlyDB l_logFlyDB = new LogFlyDB(m_Settings);
@@ -282,5 +290,6 @@ namespace ParagliderFlightLog.ViewModels
         }
         public ObservableCollection<FlightViewModel> FlightListViewModel { get; set; } = new ObservableCollection<FlightViewModel>();
         public ObservableCollection<SiteViewModel> SiteListViewModel { get; set; } = new ObservableCollection<SiteViewModel>();
+        public ObservableCollection<GliderViewModel> GliderListViewModel { get; set; } = new ObservableCollection<GliderViewModel>();
     }
 }

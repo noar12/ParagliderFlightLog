@@ -12,10 +12,10 @@ namespace ParagliderFlightLog.DataModels
     {
         private string m_glider_ID = Guid.NewGuid().ToString();
 
-        private string m_manufacturer = "";
+        private string m_manufacturer = "Unknown manufacturer";
 
-        private string m_model = "";
-        private string m_IGC_Name = "";
+        private string m_model = "Unkown model";
+        private string m_IGC_Name = "UnknownGlider";
         private int m_buildYear;
 
         private System.DateTime m_lastCheckDateTime;
