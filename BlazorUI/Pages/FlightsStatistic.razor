@@ -48,7 +48,19 @@
             @if (AnalysisToDo == StatisticalFlightsAnalysis.MontlyMedian)
             {
                 int i = 0;
-                foreach (YearMonthlyMedian item in MonthlyMedianAnalysisResult)
+                foreach (YearMonthlyStatistic item in MonthlyMedianAnalysisResult)
+                {
+                    <RadzenColumnSeries Data="@item.MonthlyMedianItems"
+                                Title="@mvm.YearsOfFlying[i].ToString()"
+                                CategoryProperty="Month"
+                                ValueProperty="BarValue" />
+                    i++;
+                }
+            }
+            @if (AnalysisToDo == StatisticalFlightsAnalysis.MonthlyFlightDuration)
+            {
+                int i = 0;
+                foreach (YearMonthlyStatistic item in MonthlyDurationAnalysisResult)
                 {
                     <RadzenColumnSeries Data="@item.MonthlyMedianItems"
                                 Title="@mvm.YearsOfFlying[i].ToString()"
@@ -80,20 +92,19 @@
 
     void OnAnalyze()
     {
+        string[] l_MonthList = { "January", "February", "March", "April", "Mai", "June", "July", "August", "Septempber", "October", "November", "December" };
+        string[] l_YearsText = new string[mvm.YearsOfFlying.Count];
+        int i = 0;
         switch (AnalysisToDo)
         {
             case StatisticalFlightsAnalysis.MontlyMedian:
-                string[] l_MonthList = { "January", "February", "March", "April", "Mai", "June", "July", "August", "Septempber", "October", "November", "December" };
-                string[] l_YearsText = new string[mvm.YearsOfFlying.Count];
-                MonthlyMedianAnalysisResult = new YearMonthlyMedian[mvm.YearsOfFlying.Count];
-                int i = 0;
-
+                MonthlyMedianAnalysisResult = new YearMonthlyStatistic[mvm.YearsOfFlying.Count];
                 foreach (int l_FlightYear in mvm.YearsOfFlying)
                 {
-                    double[] l_MonthlyMeidans = fsvm.GetMonthlyMedian(l_FlightYear);
+                    double[] l_MonthlyMedians = fsvm.GetMonthlyMedian(l_FlightYear);
                     MonthlyItem[] currentYearMonthlyMedian = new MonthlyItem[l_MonthList.Length];
                     int j = 0;
-                    foreach (double monthMedian in l_MonthlyMeidans)
+                    foreach (double monthMedian in l_MonthlyMedians)
                     {
                         currentYearMonthlyMedian[j] = new MonthlyItem()
                             {
@@ -102,15 +113,37 @@
                             };
                         j++;
                     }
-                    MonthlyMedianAnalysisResult[i] = new YearMonthlyMedian()
+                    MonthlyMedianAnalysisResult[i] = new YearMonthlyStatistic()
                         {
                             MonthlyMedianItems = currentYearMonthlyMedian,
                         };
                     l_YearsText[i] = l_FlightYear.ToString();
                     i++;
                 }
-
-
+                break;
+            case StatisticalFlightsAnalysis.MonthlyFlightDuration:
+                MonthlyDurationAnalysisResult = new YearMonthlyStatistic[mvm.YearsOfFlying.Count];
+                foreach (int l_FlightYear in mvm.YearsOfFlying)
+                {
+                    double[] l_MonthlyDuration = fsvm.GetMonthlyFlightHours(l_FlightYear);
+                    MonthlyItem[] currentYearMonthlyDuration = new MonthlyItem[l_MonthList.Length];
+                    int j = 0;
+                    foreach (double monthDuration in l_MonthlyDuration)
+                    {
+                        currentYearMonthlyDuration[j] = new MonthlyItem()
+                            {
+                                BarValue = monthDuration,
+                                Month = l_MonthList[j],
+                            };
+                        j++;
+                    }
+                    MonthlyDurationAnalysisResult[i] = new YearMonthlyStatistic()
+                        {
+                            MonthlyMedianItems = currentYearMonthlyDuration,
+                        };
+                    l_YearsText[i] = l_FlightYear.ToString();
+                    ++i;
+                }
                 break;
             case StatisticalFlightsAnalysis.DurationDistribution:
                 fsvm = new FlightsStatisticsViewModel(mvm, new DateTime(YearToAnalyse, 1, 1), new DateTime(YearToAnalyse, 12, 31));
@@ -129,6 +162,9 @@
                 return "Monthly median";
             case StatisticalFlightsAnalysis.DurationDistribution:
                 return "Duration Distribution";
+                break;
+            case StatisticalFlightsAnalysis.MonthlyFlightDuration:
+                return "Monthly flight duration";
             default:
                 return "";
         }
@@ -145,13 +181,14 @@
         public string Month { get; set; } = string.Empty;
         public double BarValue { get; set; }
     }
-    class YearMonthlyMedian
+    class YearMonthlyStatistic
     {
         public MonthlyItem[] MonthlyMedianItems { get; set; } = new MonthlyItem[0];
     }
     DurationItem[] DurationAnalysisResult = new DurationItem[0];
 
-    YearMonthlyMedian[] MonthlyMedianAnalysisResult = new YearMonthlyMedian[0];
+    YearMonthlyStatistic[] MonthlyMedianAnalysisResult = new YearMonthlyStatistic[0];
+    YearMonthlyStatistic[] MonthlyDurationAnalysisResult = new YearMonthlyStatistic[0];
 
     DurationItem[] HistDataToDurationItem(HistData histData)
     {

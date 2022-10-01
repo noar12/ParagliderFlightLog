@@ -58,13 +58,13 @@ namespace ParagliderFlightLog.ViewModels
             return (l_counts, l_binEdges);
         }
 
-        public double[] GetMonthlyMedian(int l_FlightYear)
+        public double[] GetMonthlyMedian(int flightYear)
         {
             double[] l_MonthMedian = new double[12];
             for (int month = 1; month <= 12; month++)
             {
                 FlightViewModel[]? l_MonthFlights = m_MainViewModel.FlightListViewModel
-                .Where(f => f.TakeOffDateTime.Year == l_FlightYear && f.TakeOffDateTime.Month == month).OrderBy(f => f.FlightDuration).ToArray();
+                .Where(f => f.TakeOffDateTime.Year == flightYear && f.TakeOffDateTime.Month == month).OrderBy(f => f.FlightDuration).ToArray();
                 if (l_MonthFlights.Length != 0)
                 {
                     int i = month -1;
@@ -73,10 +73,20 @@ namespace ParagliderFlightLog.ViewModels
 
             }
             return l_MonthMedian;
-            
-           
         }
-
+        public double[] GetMonthlyFlightHours(int flightYear)
+        {
+            double[] l_MonthFlightHour = new double[12];
+            for (int month = 1; month <= 12; month++)
+            {
+                double l_MonthFlights = m_MainViewModel.FlightListViewModel
+                .Where(f => f.TakeOffDateTime.Year == flightYear && f.TakeOffDateTime.Month == month)
+                .Aggregate(TimeSpan.Zero,(sub, f)=> sub + f.FlightDuration).TotalHours;
+                int i = month -1;
+                l_MonthFlightHour[i] = l_MonthFlights;
+            }
+            return l_MonthFlightHour;
+        }
         public string[] AvailableAnalysis
         {
             get
@@ -118,5 +128,6 @@ namespace ParagliderFlightLog.ViewModels
     {
         DurationDistribution,
         MontlyMedian,
+        MonthlyFlightDuration,
     }
 }
