@@ -41,7 +41,7 @@ namespace ParagliderFlightLog.ViewModels
             }
         }
         public int BuildYear { get => m_Glider.BuildYear; }
-        public DateTime LastCheckDateTime { get => m_Glider.LastCheckDateTime.Date; }
+        public DateTime LastCheckDateTime { get => m_Glider.LastCheckDateTime; }
         public EHomologationCategory HomologationCategory { get => m_Glider.HomologationCategory; }
         private TimeSpan FlightTimeInPeriod(DateTime periodStart, DateTime periodEnd)
         {

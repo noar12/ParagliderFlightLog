@@ -29,6 +29,12 @@
             <div class="row">
                 <strong>Site name:</strong> @LastSelectedSite.Name
             </div>
+            <RadzenGoogleMap style="height: 500px"
+                             Zoom=12 Center=@(new GoogleMapPosition() { Lat = LastSelectedSite.Latitude, Lng = LastSelectedSite.Longitude })>
+                <Markers>
+                    <RadzenGoogleMapMarker Title="SiteMarker" Label=@LastSelectedSite.Name Position=@(new GoogleMapPosition() { Lat = LastSelectedSite.Latitude, Lng = LastSelectedSite.Longitude }) />
+                </Markers>
+            </RadzenGoogleMap>
         </div>
     </div>
 </div>

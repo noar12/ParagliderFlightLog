@@ -107,6 +107,7 @@
     }
     async Task OnAddFlights(InputFileChangeEventArgs e)
     {
+        Console.WriteLine($"ContentRootPath is : {Environment.ContentRootPath}");
         List<string> l_IgcFilePaths = new List<string>();
         foreach (var file in e.GetMultipleFiles())
         {
