@@ -120,11 +120,11 @@
                 await using FileStream fs = new(path, FileMode.Create);
                 await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
                 l_IgcFilePaths.Add(fs.Name);
-                System.Diagnostics.Debug.WriteLine($"File copied to {fs.Name}");
+                Console.WriteLine($"File copied to {fs.Name}");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("File: {Filename} Error: {Error}",
+                Console.WriteLine("File: {Filename} Error: {Error}",
                     file.Name, ex.Message);
             }
         }
@@ -138,7 +138,7 @@
             }
             catch (System.IO.IOException ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.Message);
+                Console.WriteLine(ex.Message);
             }
         }
 
