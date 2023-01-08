@@ -78,6 +78,8 @@
     {
         YearToAnalyse = DateTime.Now.Year;
         fsvm = new FlightsStatisticsViewModel(mvm, new DateTime(YearToAnalyse, 1, 1), new DateTime(YearToAnalyse, 12, 31));
+        if (fsvm.FlightsCount == 0)
+            return;
         DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
 
     }
@@ -147,6 +149,8 @@
                 break;
             case StatisticalFlightsAnalysis.DurationDistribution:
                 fsvm = new FlightsStatisticsViewModel(mvm, new DateTime(YearToAnalyse, 1, 1), new DateTime(YearToAnalyse, 12, 31));
+                if (fsvm.FlightsCount == 0)
+                    return;
                 DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
                 break;
             default:

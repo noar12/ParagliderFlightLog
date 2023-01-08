@@ -25,7 +25,8 @@ namespace ParagliderFlightLog.ViewModels
             m_MainViewModel = mainViewModel;
             // get the flights we have to put in the statistical analysis
             List<FlightViewModel> l_AnalyzeFlights = mainViewModel.FlightsInPeriod(AnalyzeStart, AnalyzeEnd);
-            
+            if (l_AnalyzeFlights.Count == 0)
+                return;
             FlightsDuration = mainViewModel.FlightDurationInPeriod(AnalyzeStart, AnalyzeEnd);
             MeanFlightsDuration = FlightsDuration / l_AnalyzeFlights.Count;
             MedianFlightsDuration = l_AnalyzeFlights.OrderBy(flight => flight.FlightDuration)
