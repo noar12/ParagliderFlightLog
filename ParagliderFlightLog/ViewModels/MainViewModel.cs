@@ -94,6 +94,16 @@ namespace ParagliderFlightLog.ViewModels
             
         }
 
+        public void EditGlider(GliderViewModel selectedItem)
+        {
+            Glider? l_OldGlider = m_flightLog.Gliders.Where(g => g.Glider_ID == selectedItem.GliderId).FirstOrDefault();
+            if (l_OldGlider != null)
+            {
+                int l_Index = m_flightLog.Gliders.IndexOf(l_OldGlider);
+                m_flightLog.Gliders[l_Index] = selectedItem.Glider;
+            }
+        }
+
         public void AddSite(SiteViewModel svm)
         {
             m_flightLog.Sites.Add(svm.Site);

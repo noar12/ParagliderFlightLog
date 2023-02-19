@@ -70,13 +70,10 @@
 
     async Task OnEditGlider()
     {
-        await DialogService.OpenAsync<EditSite>($"Edit glider",
-                new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider }, { "ViewModel", mvm } },
+        await DialogService.OpenAsync<EditGlider>($"Edit glider",
+                new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider } },
                 new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
-        // do something with the edited glider
+        mvm.EditGlider(LastSelectedGlider);
     }
-    async Task OnAddSites(InputFileChangeEventArgs e)
-    {
 
-    }
 }

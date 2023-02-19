@@ -21,7 +21,8 @@ namespace ParagliderFlightLog.ViewModels
         {
             m_Glider = new Glider();
         }
-
+        public Glider Glider { get { return m_Glider; } }
+        public string GliderId { get => m_Glider.Glider_ID; }
         public string FullName { get => m_Glider.FullName; }
         public int TotalFlightCount { get => m_FlightCollection.Where(f => f.REF_Glider_ID == m_Glider.Glider_ID).Count(); }
         public string TotalFlightTime
@@ -41,7 +42,7 @@ namespace ParagliderFlightLog.ViewModels
             }
         }
         public int BuildYear { get => m_Glider.BuildYear; }
-        public DateTime LastCheckDateTime { get => m_Glider.LastCheckDateTime; }
+        public DateTime LastCheckDateTime { get => m_Glider.LastCheckDateTime; set => m_Glider.LastCheckDateTime = value; }
         public EHomologationCategory HomologationCategory { get => m_Glider.HomologationCategory; }
         private TimeSpan FlightTimeInPeriod(DateTime periodStart, DateTime periodEnd)
         {

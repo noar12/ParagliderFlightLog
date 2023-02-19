@@ -1,0 +1,15 @@
+﻿@using ParagliderFlightLog.ViewModels
+
+<div class="container">
+    <div class="col-4">
+        <strong>Last check date</strong>
+        <RadzenDatePicker @bind-Value=@GliderToEdit.LastCheckDateTime DateFormat="d" class="w-100" />
+    </div>
+</div>
+@code {
+    [Parameter]
+    public GliderViewModel GliderToEdit { get; set; }
+
+
+
+}
