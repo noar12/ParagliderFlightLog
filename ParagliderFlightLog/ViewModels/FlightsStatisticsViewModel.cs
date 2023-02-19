@@ -46,7 +46,7 @@ namespace ParagliderFlightLog.ViewModels
         {
             double[] l_counts = new double[groupCount];
             double[] l_binEdges = new double[groupCount];
-            double l_BinWidth = (sample.Max()) / groupCount;
+            double l_BinWidth = Math.Ceiling(sample.Max()) / groupCount;
 
             double l_PreviousBin = 0.0;
             for (int i = 0; i < groupCount; i++)
