@@ -23,6 +23,7 @@ namespace ParagliderFlightLog.ViewModels
             m_flightLog.LoadFlightLogDB();
             m_flightLog.Flights.CollectionChanged += Flights_CollectionChanged;
             m_flightLog.Sites.CollectionChanged += Sites_CollectionChanged;
+            m_flightLog.Gliders.CollectionChanged += Gliders_CollectionChanged;
 
             BuildSiteListViewModel();
             BuildFlightListViewModel();
@@ -33,81 +34,7 @@ namespace ParagliderFlightLog.ViewModels
             //SiteListViewModel.CollectionChanged += SiteListViewModel_CollectionChanged;
         }
 
-
-        private void Sites_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    foreach (var item in e.NewItems ?? new List<Site>())
-                    {
-                        // if the site is not in the data model yet we add it
-                        if (item is Site site)
-                        {
-                            SiteListViewModel.Add(new SiteViewModel(site, m_flightLog.Flights));
-                        }
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    throw new NotImplementedException();
-                case NotifyCollectionChangedAction.Replace:
-                    foreach (var item in e.NewItems ?? new List<Site>())
-                    {
-                        if (item is Site site)
-                        {
-                            SiteViewModel? l_OldSiteViewModel = SiteListViewModel.Where(s => s.Site_ID == site.Site_ID).FirstOrDefault();
-                            if (l_OldSiteViewModel != null)
-                            {
-                                int l_Index = SiteListViewModel.IndexOf(l_OldSiteViewModel);
-                                SiteListViewModel[l_Index].Site = site;
-                            }
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        public void EditFlight(FlightViewModel selectedItem)
-        {
-            Flight? l_OldFlight= m_flightLog.Flights.Where(f => f.Flight_ID == selectedItem.FlightID).FirstOrDefault();
-            if (l_OldFlight != null)
-            {
-                int l_Index = m_flightLog.Flights.IndexOf(l_OldFlight);
-                m_flightLog.Flights[l_Index] = selectedItem.Flight;
-            }
-            
-        }
-
-        public void EditSite(SiteViewModel selectedItem)
-        {
-
-            Site? l_OldSite = m_flightLog.Sites.Where(s => s.Site_ID == selectedItem.Site_ID).FirstOrDefault();
-            if (l_OldSite != null)
-            {
-                int l_Index = m_flightLog.Sites.IndexOf(l_OldSite);
-                m_flightLog.Sites[l_Index] = selectedItem.Site;
-            }
-            
-            
-        }
-
-        public void EditGlider(GliderViewModel selectedItem)
-        {
-            Glider? l_OldGlider = m_flightLog.Gliders.Where(g => g.Glider_ID == selectedItem.GliderId).FirstOrDefault();
-            if (l_OldGlider != null)
-            {
-                int l_Index = m_flightLog.Gliders.IndexOf(l_OldGlider);
-                m_flightLog.Gliders[l_Index] = selectedItem.Glider;
-            }
-        }
-
-        public void AddSite(SiteViewModel svm)
-        {
-            m_flightLog.Sites.Add(svm.Site);
-        }
+ 
 
         private void Flights_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
@@ -149,57 +76,102 @@ namespace ParagliderFlightLog.ViewModels
                     break;
             }
         }
-        //private void SiteListViewModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    switch (e.Action)
-        //    {
-        //        case NotifyCollectionChangedAction.Add:
-        //            foreach (var item in e.NewItems)
-        //            {
-        //                // if the site is not in the data model yet we add it
-        //                if (item is SiteViewModel svm)
-        //                {
-        //                    if (m_flightLog.Sites.Where(s => s.Site_ID == svm.Site_ID).Count() == 0)
-        //                    {
-        //                        m_flightLog.Sites.Add(svm.Site);
-        //                    }
-        //                }
+        private void Sites_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (var item in e.NewItems ?? new List<Site>())
+                    {
+                        // if the site is not in the data model yet we add it
+                        if (item is Site site)
+                        {
+                            SiteListViewModel.Add(new SiteViewModel(site, m_flightLog.Flights));
+                        }
+                    }
+                    break;
+                case NotifyCollectionChangedAction.Remove:
+                    throw new NotImplementedException();
+                case NotifyCollectionChangedAction.Replace:
+                    foreach (var item in e.NewItems ?? new List<Site>())
+                    {
+                        if (item is Site site)
+                        {
+                            SiteViewModel? l_OldSiteViewModel = SiteListViewModel.Where(s => s.Site_ID == site.Site_ID).FirstOrDefault();
+                            if (l_OldSiteViewModel != null)
+                            {
+                                int l_Index = SiteListViewModel.IndexOf(l_OldSiteViewModel);
+                                SiteListViewModel[l_Index].Site = site;
+                            }
+                        }
+                    }
+                    break;
 
-        //            }
-        //            break;
-        //        case NotifyCollectionChangedAction.Remove:
-        //            throw new NotImplementedException();
-        //            break;
-        //        case NotifyCollectionChangedAction.Replace:
-        //            throw new NotImplementedException();
-        //            break;
+                default:
+                    break;
+            }
+        }
+        private void Gliders_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Replace:
+                    foreach (var item in e.NewItems ?? new List<Glider>())
+                    {
+                        if( item is Glider glider)
+                        {
+                            GliderViewModel? gliderViewModel = GliderListViewModel.Where(g => g.GliderId == glider.Glider_ID).FirstOrDefault();
+                            if (gliderViewModel != null)
+                            {
+                                int l_Index = GliderListViewModel.IndexOf(gliderViewModel);
+                                GliderListViewModel[l_Index].Glider = glider;
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+        public void EditFlight(FlightViewModel selectedItem)
+        {
+            Flight? l_OldFlight= m_flightLog.Flights.Where(f => f.Flight_ID == selectedItem.FlightID).FirstOrDefault();
+            if (l_OldFlight != null)
+            {
+                int l_Index = m_flightLog.Flights.IndexOf(l_OldFlight);
+                m_flightLog.Flights[l_Index] = selectedItem.Flight;
+            }
+            
+        }
 
-        //        default:
-        //            break;
-        //    }
-        //}
+        public void EditSite(SiteViewModel selectedItem)
+        {
 
-        //private void FlightListViewModel_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        //{
-        //    switch (e.Action)
-        //    {
-        //        case NotifyCollectionChangedAction.Remove:
-        //            foreach(var item in e.OldItems)
-        //            {
-        //                if (item is FlightViewModel fvm)
-        //                {
+            Site? l_OldSite = m_flightLog.Sites.Where(s => s.Site_ID == selectedItem.Site_ID).FirstOrDefault();
+            if (l_OldSite != null)
+            {
+                int l_Index = m_flightLog.Sites.IndexOf(l_OldSite);
+                m_flightLog.Sites[l_Index] = selectedItem.Site;
+            }
+            
+            
+        }
 
-        //                    m_flightLog.Flights.Remove(m_flightLog.Flights.Where(f => f.Flight_ID == fvm.FlightID).FirstOrDefault(new Flight()));
-        //                }
-        //            }
-        //            break;
-        //        case NotifyCollectionChangedAction.Replace:
-        //            throw new NotImplementedException();
-        //            break;
-        //        default:
-        //            break;
-        //    }
-        //}
+        public void EditGlider(GliderViewModel selectedItem)
+        {
+            Glider? l_OldGlider = m_flightLog.Gliders.Where(g => g.Glider_ID == selectedItem.GliderId).FirstOrDefault();
+            if (l_OldGlider != null)
+            {
+                int l_Index = m_flightLog.Gliders.IndexOf(l_OldGlider);
+                m_flightLog.Gliders[l_Index] = selectedItem.Glider;
+            }
+        }
+
+        public void AddSite(SiteViewModel svm)
+        {
+            m_flightLog.Sites.Add(svm.Site);
+        }
+
+        
+        
 
         private void BuildSiteListViewModel()
         {

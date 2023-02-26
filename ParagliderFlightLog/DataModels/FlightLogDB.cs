@@ -160,6 +160,9 @@ namespace ParagliderFlightLog.DataModels
                 case NotifyCollectionChangedAction.Remove:
                     DeleteGlidersInDB(e.OldItems);
                     break;
+                case NotifyCollectionChangedAction.Replace:
+                    ReplaceGlidersInDB(e.NewItems);
+                    break;
                 default:
                     throw new NotSupportedException();
             }
@@ -270,7 +273,31 @@ namespace ParagliderFlightLog.DataModels
         {
             throw new NotImplementedException();
         }
+        private void ReplaceGlidersInDB(IList? newItems)
+        {
+            if (!File.Exists(m_Settings.DbPath))
+                CreateFlightLogDB();
+            if (newItems != null)
+            {
+                string sqlReplaceGlider = "UPDATE Gliders SET " +
+                    "Manufacturer = @Manufacturer, " +
+                    "Model = @Model, " +
+                    "BuildYear = @BuildYear, " +
+                    "LastCheckDateTime = @LastCheckDateTime, " +
+                    "HomologationCategory = @HomologationCategory, " +
+                    "IGC_Name = @IGC_Name " +
+                    "WHERE Glider_ID = @Glider_ID";
+                using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(m_Settings.DbPath)))
+                {
 
+                    foreach (Glider glider in newItems)
+                    {
+                        conn.Execute(sqlReplaceGlider, glider);
+                    }
+
+                }
+            }
+        }
         private void WriteGlidersInDB(IList? newItems)
         {
             if (!File.Exists(m_Settings.DbPath))
