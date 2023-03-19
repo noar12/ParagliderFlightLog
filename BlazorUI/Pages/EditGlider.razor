@@ -2,8 +2,18 @@
 
 <div class="container">
     <div class="col-4">
+        <strong>Manufacturer</strong>
+        <RadzenTextBox @bind-Value=@GliderToEdit.Manufactuer DateFormat="d" class="w-100" />
+        <strong>Model</strong>
+        <RadzenTextBox @bind-Value=@GliderToEdit.Model DateFormat="d" class="w-100" />
+        <strong>Igc Name</strong>
+        <RadzenTextBox @bind-Value=@GliderToEdit.IgcName DateFormat="d" class="w-100" />
+        <strong>Build year</strong>
+        <RadzenNumeric @bind-Value=@GliderToEdit.BuildYear DateFormat="d" class="w-100" />
         <strong>Last check date</strong>
         <RadzenDatePicker @bind-Value=@GliderToEdit.LastCheckDateTime DateFormat="d" class="w-100" />
+        @*<strong>Homologation category</strong>
+        <RadzenTextBox @bind-Value=@GliderToEdit.HomologationCategory DateFormat="d" class="w-100" />*@
     </div>
 </div>
 @code {

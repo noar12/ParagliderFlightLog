@@ -170,8 +170,13 @@ namespace ParagliderFlightLog.ViewModels
             m_flightLog.Sites.Add(svm.Site);
         }
 
-        
-        
+        public void AddGlider(GliderViewModel  gvm)
+        {
+            m_flightLog.Gliders.Add(gvm.Glider);
+        }
+
+
+
 
         private void BuildSiteListViewModel()
         {

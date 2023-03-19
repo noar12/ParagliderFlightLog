@@ -23,6 +23,11 @@ namespace ParagliderFlightLog.ViewModels
         }
         public Glider Glider { get { return m_Glider; } set { m_Glider = value; } }
         public string GliderId { get => m_Glider.Glider_ID; }
+        public string Manufactuer { get => m_Glider.Manufacturer; set => m_Glider.Manufacturer = value; }
+        public string Model { get => m_Glider.Model; set => m_Glider.Model = value; }
+        public int BuildYear { get => m_Glider.BuildYear; set => m_Glider.BuildYear = value; }
+        public string IgcName { get => m_Glider.IGC_Name; set => m_Glider.IGC_Name = value; }
+
         public string FullName { get => m_Glider.FullName; }
         public int TotalFlightCount { get => m_FlightCollection.Where(f => f.REF_Glider_ID == m_Glider.Glider_ID).Count(); }
         public string TotalFlightTime
@@ -41,9 +46,9 @@ namespace ParagliderFlightLog.ViewModels
                 return $"{(int)l_TimeSinceLastCheck.TotalHours}:{l_TimeSinceLastCheck.Minutes.ToString().PadLeft(2, '0')}";
             }
         }
-        public int BuildYear { get => m_Glider.BuildYear; }
         public DateTime LastCheckDateTime { get => m_Glider.LastCheckDateTime; set => m_Glider.LastCheckDateTime = value; }
-        public EHomologationCategory HomologationCategory { get => m_Glider.HomologationCategory; }
+
+        public EHomologationCategory HomologationCategory { get => m_Glider.HomologationCategory; set => m_Glider.HomologationCategory = value; }
         private TimeSpan FlightTimeInPeriod(DateTime periodStart, DateTime periodEnd)
         {
             TimeSpan l_FlightTime = m_FlightCollection

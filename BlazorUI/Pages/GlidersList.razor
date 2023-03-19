@@ -26,6 +26,7 @@
                     <RadzenDataGridColumn TItem="GliderViewModel" Property="FlightTimeSinceLastCheck" Title="Flight time since last check" />
                 </Columns>
             </RadzenDataGrid>
+            <RadzenButton Click=@OnAddGlider Text="Add Glider" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
         </div>
     </div>
 </div>
@@ -74,6 +75,12 @@
                 new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider } },
                 new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
         mvm.EditGlider(LastSelectedGlider);
+    }
+
+    async Task OnAddGlider()
+    {
+        GliderViewModel newGlider = new();
+        mvm.AddGlider(newGlider);
     }
 
 }
