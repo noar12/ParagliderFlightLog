@@ -18,8 +18,11 @@ namespace ParagliderFlightLog.ViewModels
         public TimeSpan MedianFlightsDuration { get; private set; }
         public string MedianFlightDurationText { get { return $"{(int)MedianFlightsDuration.TotalHours}:{MedianFlightsDuration.Minutes}"; } }
         public int FlightsCount { get; private set; }
-        public HistData FlightsDurationHistData { get; private set; }
+        public HistData FlightsDurationHistData { get; private set; } = new(Array.Empty<double>(),Array.Empty<double>());
 
+        public FlightsStatisticsViewModel() {
+        m_MainViewModel = new MainViewModel();
+        }
         public FlightsStatisticsViewModel(MainViewModel mainViewModel, DateTime AnalyzeStart, DateTime AnalyzeEnd)
         {
             m_MainViewModel = mainViewModel;

@@ -49,6 +49,28 @@ namespace ParagliderFlightLog.ViewModels
         public DateTime LastCheckDateTime { get => m_Glider.LastCheckDateTime; set => m_Glider.LastCheckDateTime = value; }
 
         public EHomologationCategory HomologationCategory { get => m_Glider.HomologationCategory; set => m_Glider.HomologationCategory = value; }
+        public string HomologationCategoryDisplay
+        {
+            get => m_Glider.HomologationCategory.ToString();
+            set
+            {
+                Enum.TryParse<EHomologationCategory>(value, out EHomologationCategory homologation);
+                m_Glider.HomologationCategory = homologation;
+            }
+
+        }
+
+
+        public static string[] HomologationCategories { get => Enum.GetNames(typeof(EHomologationCategory)); }
+        public void SetHomologationCategoryByName(string categoryName)
+        {
+            if(Enum.TryParse<EHomologationCategory>(categoryName, out EHomologationCategory parsedCat))
+            {
+                m_Glider.HomologationCategory = parsedCat;
+            }
+
+
+        }
         private TimeSpan FlightTimeInPeriod(DateTime periodStart, DateTime periodEnd)
         {
             TimeSpan l_FlightTime = m_FlightCollection

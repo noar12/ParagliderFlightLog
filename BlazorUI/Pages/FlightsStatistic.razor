@@ -84,7 +84,7 @@
 
     }
 
-    FlightsStatisticsViewModel fsvm;
+    FlightsStatisticsViewModel fsvm = new();
     StatisticalFlightsAnalysis AnalysisToDo;
     int YearToAnalyse;
 
@@ -166,7 +166,6 @@
                 return "Monthly median";
             case StatisticalFlightsAnalysis.DurationDistribution:
                 return "Duration Distribution";
-                break;
             case StatisticalFlightsAnalysis.MonthlyFlightDuration:
                 return "Monthly flight duration";
             default:

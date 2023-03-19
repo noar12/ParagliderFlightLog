@@ -21,12 +21,17 @@
                     <RadzenDataGridColumn TItem="GliderViewModel" Property="FullName" Title="Glider name" />
                     <RadzenDataGridColumn TItem="GliderViewModel" Property="BuildYear" Title="Build year" />
                     <RadzenDataGridColumn TItem="GliderViewModel" Property="LastCheckDateTime" Title="Last check date" FormatString="{0:d}" />
-                    <RadzenDataGridColumn TItem="GliderViewModel" Property="TotalFlightCount" Title="Total flight count" />
-                    <RadzenDataGridColumn TItem="GliderViewModel" Property="TotalFlightTime" Title="Total flight time" />
-                    <RadzenDataGridColumn TItem="GliderViewModel" Property="FlightTimeSinceLastCheck" Title="Flight time since last check" />
                 </Columns>
             </RadzenDataGrid>
             <RadzenButton Click=@OnAddGlider Text="Add Glider" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
+        </div>
+        <div class="col-4">
+            <div class="row"><strong>Total flight count:</strong> @LastSelectedGlider.TotalFlightCount</div>
+            <div class="row"> <strong>Total flight time:</strong> @LastSelectedGlider.TotalFlightTime</div>
+            <div class="row"><strong>Total flight count:</strong> @LastSelectedGlider.FlightTimeSinceLastCheck</div>
+            
+           
+            
         </div>
     </div>
 </div>
@@ -77,7 +82,7 @@
         mvm.EditGlider(LastSelectedGlider);
     }
 
-    async Task OnAddGlider()
+    void OnAddGlider()
     {
         GliderViewModel newGlider = new();
         mvm.AddGlider(newGlider);

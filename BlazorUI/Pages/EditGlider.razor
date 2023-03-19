@@ -12,13 +12,15 @@
         <RadzenNumeric @bind-Value=@GliderToEdit.BuildYear DateFormat="d" class="w-100" />
         <strong>Last check date</strong>
         <RadzenDatePicker @bind-Value=@GliderToEdit.LastCheckDateTime DateFormat="d" class="w-100" />
-        @*<strong>Homologation category</strong>
-        <RadzenTextBox @bind-Value=@GliderToEdit.HomologationCategory DateFormat="d" class="w-100" />*@
+        <strong>Homologation category</strong>
+        <RadzenDropDown TValue="string" @bind-Value=@GliderToEdit.HomologationCategoryDisplay Data=@GliderViewModel.HomologationCategories/>
     </div>
 </div>
 @code {
     [Parameter]
-    public GliderViewModel GliderToEdit { get; set; }
+    public GliderViewModel GliderToEdit { get; set; } = new();
+
+
 
 
 
