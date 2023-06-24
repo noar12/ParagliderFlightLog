@@ -19,7 +19,7 @@
                             SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedFlights
                             ContextMenu=@(args => ShowContextMenuWithItems(args))>
                 <Columns>
-                    <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffDateTime" Title="Date/Time" Width="150px" />
+                    <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffDateTime" Title="Date/Time" Width="150px" SortOrder="SortOrder.Descending"/>
                     <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffSiteName" Title="Site" />
                     <RadzenDataGridColumn TItem="FlightViewModel" Property="FlightDuration" Title="Duration" />
                 </Columns>
