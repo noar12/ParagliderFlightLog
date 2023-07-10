@@ -376,9 +376,11 @@ namespace ParagliderFlightLog.DataModels
         l_Newflight.REF_TakeOffSite_ID = l_TakeOffSite.Site_ID;
       else
       {
+        List<Site> unknownSiteNames = Sites.Where(s => s.Name.Contains("Unknown site")).ToList();
+        int nextUnknownSite = unknownSiteNames.Count;
         l_TakeOffSite = new Site()
         {
-          Name = "Unknown site",
+          Name = $"Unknown site {nextUnknownSite++}",
           Latitude = l_Newflight.TakeOffPoint.Latitude,
           Longitude = l_Newflight.TakeOffPoint.Longitude,
           Altitude = l_Newflight.TakeOffAltitude,
