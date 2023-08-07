@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Reflection;
 
-namespace ParagliderFlightLog.DataModels
+namespace ParagliderFlightLog.Models
 {
     public class Settings
     { 

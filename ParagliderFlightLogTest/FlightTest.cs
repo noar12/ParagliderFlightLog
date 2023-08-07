@@ -1,4 +1,4 @@
-using ParagliderFlightLog.DataModels;
+using ParagliderFlightLog.Models;
 
 namespace ParagliderFlightLogTest
 {

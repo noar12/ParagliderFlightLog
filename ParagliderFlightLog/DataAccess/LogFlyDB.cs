@@ -6,21 +6,24 @@ using System.Threading.Tasks;
 using System.Data;
 using System.Data.SQLite;
 using Dapper;
+using ParagliderFlightLog.Models;
+using Microsoft.Extensions.Configuration;
 
-namespace ParagliderFlightLog.DataModels
+namespace ParagliderFlightLog.DataAccess
 {
     /// <summary>
     /// Provide a data model to read and convert SQLite database from LogFly 5.
     /// </summary>
     public class LogFlyDB
     {
+
+        private FlightLogDB _flightLogDB;
         private List<LogFlyVol> m_LogFlyVolCollection = new List<LogFlyVol>();
         private List<LogFlySite> m_LogFlySiteCollection = new List<LogFlySite>();
-        private Settings m_Settings;
 
-        public LogFlyDB(Settings settings)
+        public LogFlyDB(FlightLogDB flightLogDb)
         {
-            m_Settings = settings;
+            _flightLogDB = flightLogDb;
         }
         // Define arbitrary glider because there are not define in logfly db
         private List<Glider> m_LogFlyGliderCollection = new List<Glider>()
@@ -60,7 +63,7 @@ namespace ParagliderFlightLog.DataModels
             {
                 m_LogFlySiteCollection = conn.Query<LogFlySite>(SqlGetAllSite).ToList();
                 m_LogFlyVolCollection = conn.Query<LogFlyVol>(SqlGetAllVol).ToList();
-                
+
             }
 
         }
@@ -70,14 +73,14 @@ namespace ParagliderFlightLog.DataModels
         /// <returns></returns>
         public FlightLogDB BuildFlightLogDB()
         {
-            System.Collections.ObjectModel.ObservableCollection<Site> l_sites = new System.Collections.ObjectModel.ObservableCollection<Site>();
-            System.Collections.ObjectModel.ObservableCollection<Flight> l_flights = new System.Collections.ObjectModel.ObservableCollection<Flight> ();
-            
+            List<Site> l_sites = new List<Site>();
+            List<Flight> l_flights = new List<Flight>();
+
 
             foreach (var site in m_LogFlySiteCollection)
             {
                 l_sites.Add(site.ToFlightLogSite());
-                
+
             }
 
 
@@ -86,18 +89,17 @@ namespace ParagliderFlightLog.DataModels
                 l_flights.Add(vol.ToFlightLogDBFlight(l_sites, m_LogFlyGliderCollection));
             }
 
-            FlightLogDB l_FlightLogDB = new FlightLogDB(m_Settings);
-            l_FlightLogDB.Flights = l_flights;
-            l_FlightLogDB.Sites = l_sites;
-            l_FlightLogDB.Gliders = new System.Collections.ObjectModel.ObservableCollection<Glider>(m_LogFlyGliderCollection);
-            
-            return l_FlightLogDB;
+            _flightLogDB.Flights = l_flights;
+            _flightLogDB.Sites = l_sites;
+            _flightLogDB.Gliders = new List<Glider>(m_LogFlyGliderCollection);
+
+            return _flightLogDB;
         }
 
         private static string LoadConnectionString(string DB_Path)
         {
             // "Data Source=./<relativePathToSqliteDataBase;Version=3;"
-            return $"Data Source={ DB_Path };Version=3;";
+            return $"Data Source={DB_Path};Version=3;";
 
         }
     }
@@ -168,13 +170,13 @@ namespace ParagliderFlightLog.DataModels
         public int V_League { get => m_V_League; set => m_V_League = value; }
         public string V_Score { get => m_V_Score; set => m_V_Score = value; }
 
-        internal Flight ToFlightLogDBFlight(System.Collections.ObjectModel.ObservableCollection<Site> sites, List<Glider> gliders)
+        internal Flight ToFlightLogDBFlight(List<Site> sites, List<Glider> gliders)
         {
             Flight l_Flight = new Flight();
             l_Flight.Flight_ID = Guid.NewGuid().ToString();
-            l_Flight.FlightDuration = new TimeSpan(0,0,(int)V_Duree);
+            l_Flight.FlightDuration = new TimeSpan(0, 0, (int)V_Duree);
             l_Flight.Comment = V_Commentaire;
-            if (V_IGC=="")
+            if (V_IGC == "")
             {
                 l_Flight.TakeOffDateTime = V_Date;
             }

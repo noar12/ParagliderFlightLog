@@ -5,6 +5,7 @@
 @using Microsoft.Extensions.Logging
 @inject IWebHostEnvironment Environment
 @inject MainViewModel mvm
+@inject FlightsStatisticsViewModel fsvm
 @using ParagliderFlightLog.ViewModels
 <PageTitle>Flights statistic</PageTitle>
 
@@ -77,14 +78,14 @@
     protected override void OnInitialized()
     {
         YearToAnalyse = DateTime.Now.Year;
-        fsvm = new FlightsStatisticsViewModel(mvm, new DateTime(YearToAnalyse, 1, 1), new DateTime(YearToAnalyse, 12, 31));
+        
         if (fsvm.FlightsCount == 0)
             return;
         DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
 
     }
 
-    FlightsStatisticsViewModel fsvm = new();
+
     StatisticalFlightsAnalysis AnalysisToDo;
     int YearToAnalyse;
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ParagliderFlightLog.DataModels;
+using ParagliderFlightLog.Models;
 
 
 namespace ParagliderFlightLog.ViewModels
@@ -20,8 +20,8 @@ namespace ParagliderFlightLog.ViewModels
         public int FlightsCount { get; private set; }
         public HistData FlightsDurationHistData { get; private set; } = new(Array.Empty<double>(),Array.Empty<double>());
 
-        public FlightsStatisticsViewModel() {
-        m_MainViewModel = new MainViewModel();
+        public FlightsStatisticsViewModel(MainViewModel mvm) {
+        m_MainViewModel = mvm;
         }
         public FlightsStatisticsViewModel(MainViewModel mainViewModel, DateTime AnalyzeStart, DateTime AnalyzeEnd)
         {
