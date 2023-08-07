@@ -21,112 +21,19 @@ namespace ParagliderFlightLog.ViewModels
             _flightLog = new FlightLogDB(_config);
         }
 
- 
 
-        private void Flights_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    foreach (var item in e.NewItems ?? new List<Flight>())
-                    {
-                        if (item is Flight flight)
-                        {
-                            FlightListViewModel.Add(new FlightViewModel(flight, _flightLog.Flights, _flightLog.Sites, _flightLog.Gliders));
-                        }
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    foreach (var item in e.OldItems ?? new List<Flight>())
-                    {
-                        if (item is Flight flight)
-                        {
-                            FlightListViewModel.Remove(FlightListViewModel.Where(f => f.FlightID == flight.Flight_ID).FirstOrDefault(new FlightViewModel()));
-                        }
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Replace:
-                    foreach (var item in e.NewItems ?? new List<Flight>())
-                    {
-                        if (item is Flight flight)
-                        {
-                            FlightViewModel? l_OldFlgihtViewModel = FlightListViewModel.Where(f => f.FlightID == flight.Flight_ID).FirstOrDefault();
-                            if (l_OldFlgihtViewModel != null)
-                            {
-                                int l_Index = FlightListViewModel.IndexOf(l_OldFlgihtViewModel);
-                                FlightListViewModel[l_Index].Flight = flight;
-                            }
-                        }
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        private void Sites_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    foreach (var item in e.NewItems ?? new List<Site>())
-                    {
-                        // if the site is not in the data model yet we add it
-                        if (item is Site site)
-                        {
-                            SiteListViewModel.Add(new SiteViewModel(site, _flightLog.Flights));
-                        }
-                    }
-                    break;
-                case NotifyCollectionChangedAction.Remove:
-                    throw new NotImplementedException();
-                case NotifyCollectionChangedAction.Replace:
-                    foreach (var item in e.NewItems ?? new List<Site>())
-                    {
-                        if (item is Site site)
-                        {
-                            SiteViewModel? l_OldSiteViewModel = SiteListViewModel.Where(s => s.Site_ID == site.Site_ID).FirstOrDefault();
-                            if (l_OldSiteViewModel != null)
-                            {
-                                int l_Index = SiteListViewModel.IndexOf(l_OldSiteViewModel);
-                                SiteListViewModel[l_Index].Site = site;
-                            }
-                        }
-                    }
-                    break;
 
-                default:
-                    break;
-            }
-        }
-        private void Gliders_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Replace:
-                    foreach (var item in e.NewItems ?? new List<Glider>())
-                    {
-                        if( item is Glider glider)
-                        {
-                            GliderViewModel? gliderViewModel = GliderListViewModel.Where(g => g.GliderId == glider.Glider_ID).FirstOrDefault();
-                            if (gliderViewModel != null)
-                            {
-                                int l_Index = GliderListViewModel.IndexOf(gliderViewModel);
-                                GliderListViewModel[l_Index].Glider = glider;
-                            }
-                        }
-                    }
-                    break;
-            }
-        }
+
+
         public void EditFlight(FlightViewModel selectedItem)
         {
-            Flight? l_OldFlight= _flightLog.Flights.Where(f => f.Flight_ID == selectedItem.FlightID).FirstOrDefault();
+            Flight? l_OldFlight = _flightLog.Flights.Where(f => f.Flight_ID == selectedItem.FlightID).FirstOrDefault();
             if (l_OldFlight != null)
             {
                 int l_Index = _flightLog.Flights.IndexOf(l_OldFlight);
                 _flightLog.Flights[l_Index] = selectedItem.Flight;
             }
-            
+
         }
 
         public void EditSite(SiteViewModel selectedItem)
@@ -138,8 +45,8 @@ namespace ParagliderFlightLog.ViewModels
                 int l_Index = _flightLog.Sites.IndexOf(l_OldSite);
                 _flightLog.Sites[l_Index] = selectedItem.Site;
             }
-            
-            
+
+
         }
 
         public void EditGlider(GliderViewModel selectedItem)
@@ -157,7 +64,7 @@ namespace ParagliderFlightLog.ViewModels
             _flightLog.Sites.Add(svm.Site);
         }
 
-        public void AddGlider(GliderViewModel  gvm)
+        public void AddGlider(GliderViewModel gvm)
         {
             _flightLog.Gliders.Add(gvm.Glider);
         }
@@ -190,7 +97,9 @@ namespace ParagliderFlightLog.ViewModels
         {
             foreach (string filePath in filePaths)
             {
-                _flightLog.ImportFlightFromIGC(filePath);
+                Flight flight = _flightLog.ImportFlightFromIGC(filePath);
+                FlightListViewModel.Add(new FlightViewModel(flight, _flightLog.Flights, _flightLog.Sites, _flightLog.Gliders));
+                
             }
         }
 

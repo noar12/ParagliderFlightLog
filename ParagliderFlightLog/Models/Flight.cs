@@ -27,13 +27,13 @@ namespace ParagliderFlightLog.Models
 		/// <summary>
 		/// The altitude of the take off if an igc content is available. NaN otherwise
 		/// </summary>
-		public double TakeOffAltitude { get; }
+		public double TakeOffAltitude { get; set; }
 
 		/// <summary>
 		/// The flightPoint of the take off if an igc content is available. NaN otherwise
 		/// </summary>
-		public FlightPoint TakeOffPoint { get; }
-		public List<FlightPoint> FlightPoints { get; } = new List<FlightPoint>();
-		public string IGC_GliderName { get; } = "Unknown glider";
+		public FlightPoint TakeOffPoint { get; set; }
+		public List<FlightPoint> FlightPoints { get; set; } = new List<FlightPoint>();
+		public string IGC_GliderName { get; set; } = "Unknown glider";
 	}
 }
