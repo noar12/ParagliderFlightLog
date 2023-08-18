@@ -15,12 +15,9 @@ namespace ParagliderFlightLog.ViewModels
         private ICollection<Site> m_SiteCollection = new List<Site>();
         private ICollection<Glider> m_GliderCollection = new List<Glider>();
         
-        public FlightViewModel(Flight flight, ICollection<Flight> flights, ICollection<Site> sites, ICollection<Glider> gliders)
+        public FlightViewModel(Flight flight)
         {
             m_Flight = flight;
-            m_FlightCollection = flights;
-            m_SiteCollection = sites;
-            m_GliderCollection = gliders;
 
         }
         public FlightViewModel() { }
@@ -36,35 +33,19 @@ namespace ParagliderFlightLog.ViewModels
         //}
 
 
-        // to do: property have to get from flight ref et set to flight ref
+        // to do: property have to get from flight ref and set to flight ref
         public string FlightID { get { return m_Flight.Flight_ID; } }
         public Flight Flight
         {
             get { return m_Flight; }
-            set
-            {
-                m_Flight = value;
-            }
         }
         public DateTime TakeOffDateTime { get { return m_Flight.TakeOffDateTime; } }
         public TimeSpan FlightDuration { get { return m_Flight.FlightDuration; } }
         public string TakeOffSiteID { get { return m_Flight.REF_TakeOffSite_ID; } }
         public string TakeOffSiteName
         {
-            get { return m_SiteCollection.Where(s => s.Site_ID == m_Flight.REF_TakeOffSite_ID).FirstOrDefault(new Site()).Name; }
-            set
-            {
-                Site? l_ProposedSite = m_SiteCollection.Where(s => s.Name == value).FirstOrDefault();
-                if ( l_ProposedSite != null)
-                {
-                    m_Flight.REF_TakeOffSite_ID = l_ProposedSite.Site_ID;
-                }
-                else
-                {
-                    throw new ArgumentException("The proposed site was not found in the data");
-                }
-                
-            }
+            get;// todo connect to dataacess to update
+            set;
         }
         public string GliderName
         {

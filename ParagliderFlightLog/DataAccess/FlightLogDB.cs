@@ -30,6 +30,7 @@ namespace ParagliderFlightLog.DataAccess
 			{
 				CreateFlightLogDB();
 			}
+			LoadFlightLogDB();
 		}
 
 
@@ -257,43 +258,8 @@ namespace ParagliderFlightLog.DataAccess
 			newFlight.FlightDuration = GetFlightDurationFromPointList(newFlight.FlightPoints);
 			newFlight.TakeOffDateTime = GetTakeOffTimeFromIgcContent(newFlight.IgcFileContent);
 			newFlight.IGC_GliderName = GetGliderNameFromIgcContent(newFlight.IgcFileContent);
-			//todo: make that in sql
-			if (newFlight.IGC_GliderName != "")
-			{
-				// A glider is defined in the IGC so we will try to match it with an existing one
-				Glider? l_Glider = Gliders.FirstOrDefault(g => g.IGC_Name == newFlight.IGC_GliderName);
-				if (l_Glider != null)
-				{
-					newFlight.REF_Glider_ID = l_Glider.Glider_ID;
-				}
-			}
 
-			// search for a take off site
-			// todo make that in sql
-			Site? takeOffSite = Sites.
-				Where(s => newFlight.TakeOffPoint.DistanceFrom(new FlightPoint() { Longitude = s.Longitude, Latitude = s.Latitude, Height = s.Altitude }) < s.SiteRadius).
-				FirstOrDefault();
-			if (takeOffSite != null)
-				newFlight.REF_TakeOffSite_ID = takeOffSite.Site_ID;
-			else
-			{
-				List<Site> unknownSiteNames = Sites.Where(s => s.Name.Contains("Unknown site")).ToList();
-				int nextUnknownSite = unknownSiteNames.Count;
-				takeOffSite = new Site()
-				{
-					Name = $"Unknown site {nextUnknownSite++}",
-					Latitude = newFlight.TakeOffPoint.Latitude,
-					Longitude = newFlight.TakeOffPoint.Longitude,
-					Altitude = newFlight.TakeOffAltitude,
-				};
-				Sites.Add(takeOffSite);
-				newFlight.REF_TakeOffSite_ID = takeOffSite.Site_ID;
-				WriteSitesInDB(new List<Site> { takeOffSite });
-			}
-
-
-
-			// check if we were able to parse some point before inserting the new flight
+			// check if we were able to parse some point before continuing the insert
 			if (newFlight.FlightPoints.Any())
 			{
 				Flights.Add(newFlight);
@@ -303,9 +269,68 @@ namespace ParagliderFlightLog.DataAccess
 			{
 				throw new Exception();
 			}
+
+			//Search for glider
+			if (!string.IsNullOrEmpty(newFlight.IGC_GliderName))
+			{
+				Glider? glider = FindGliderFromGliderIgcName(newFlight.IGC_GliderName);
+				if (glider != null)
+				{
+					newFlight.REF_Glider_ID = glider.Glider_ID;
+					WriteGlidersInDB(new List<Glider> { glider });
+				}
+			}
+
+			// search for a take off site
+			Site takeOffSite = FindOrCreateTakeOffSiteByLocation(newFlight.TakeOffPoint);
+			newFlight.REF_TakeOffSite_ID = takeOffSite.Site_ID;
+		   
+
+			// insert the flight if everything is ok here
 			WriteFlightsInDB(new List<Flight> { newFlight });
 			return newFlight;
-			// to do : write in sql a procedure that check glider and site and create all that we 
+		}
+
+		private Glider? FindGliderFromGliderIgcName(string IGC_Name)
+		{
+			Glider? output = null;
+			string sqlGetGlider = @"SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name
+								FROM Gliders
+								WHERE IGC_Name = @IGC_Name;";
+			output = _db.LoadData<Glider, dynamic>(sqlGetGlider, new { IGC_Name }, LoadConnectionString()).FirstOrDefault();
+
+			return output;
+		}
+
+		private Site FindOrCreateTakeOffSiteByLocation(FlightPoint takeOffPoint)
+		{
+			Site? output = null;
+			string sqlGetAllSites = @"SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude
+									FROM Sites";
+			List<Site> sites = _db.LoadData<Site, dynamic>(sqlGetAllSites, new { }, LoadConnectionString());
+
+			output = sites.Where(s => takeOffPoint
+			.DistanceFrom(new FlightPoint()
+			{
+				Longitude = s.Longitude,
+				Latitude = s.Latitude,
+				Height = s.Altitude
+			}) < s.SiteRadius).
+				FirstOrDefault();
+			if (output == null)
+			{
+				List<Site> unknownSiteNames = Sites.Where(s => s.Name.Contains("Unknown site")).ToList();
+				int nextUnknownSite = unknownSiteNames.Count;
+				output = new Site()
+				{
+					Altitude = takeOffPoint.Height,
+					Latitude = takeOffPoint.Latitude,
+					Longitude = takeOffPoint.Longitude,
+					Name = $"Unknown site {nextUnknownSite}"
+				};
+				WriteSitesInDB(new List<Site> { output });
+			}
+			return output;
 		}
 
 		private string LoadConnectionString(string connectionStringName = "Sqlite")

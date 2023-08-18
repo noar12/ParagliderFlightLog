@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BlazorUI.ViewModels;
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
 
@@ -18,7 +19,8 @@ namespace ParagliderFlightLog.ViewModels
         public MainViewModel(IConfiguration config)
         {
             _config = config;
-            _flightLog = new FlightLogDB(_config);
+            _flightLog = new FlightLogDB(_config); //todo move to DI
+            FlightListViewModel = _flightLog.Flights.Select(f => f.ToVM()).ToList();
         }
 
 
@@ -98,7 +100,7 @@ namespace ParagliderFlightLog.ViewModels
             foreach (string filePath in filePaths)
             {
                 Flight flight = _flightLog.ImportFlightFromIGC(filePath);
-                FlightListViewModel.Add(new FlightViewModel(flight, _flightLog.Flights, _flightLog.Sites, _flightLog.Gliders));
+                FlightListViewModel.Add(new FlightViewModel(flight));
                 
             }
         }
