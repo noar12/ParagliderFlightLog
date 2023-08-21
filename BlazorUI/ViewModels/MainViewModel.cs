@@ -20,7 +20,7 @@ namespace ParagliderFlightLog.ViewModels
         {
             _config = config;
             _flightLog = new FlightLogDB(_config); //todo move to DI
-            FlightListViewModel = _flightLog.Flights.Select(f => f.ToVM()).ToList();
+            FlightListViewModel = _flightLog.Flights.Select(f => f.ToVM(_flightLog)).ToList();
         }
 
 
@@ -100,7 +100,7 @@ namespace ParagliderFlightLog.ViewModels
             foreach (string filePath in filePaths)
             {
                 Flight flight = _flightLog.ImportFlightFromIGC(filePath);
-                FlightListViewModel.Add(new FlightViewModel(flight));
+                FlightListViewModel.Add(new FlightViewModel(flight, _flightLog));
                 
             }
         }
@@ -145,8 +145,8 @@ namespace ParagliderFlightLog.ViewModels
         {
             return FlightListViewModel.Where(f => f.TakeOffDateTime > start && f.TakeOffDateTime < end).ToList();
         }
-        public List<FlightViewModel> FlightListViewModel { get; set; } = new List<FlightViewModel>();
-        public List<SiteViewModel> SiteListViewModel { get; set; } = new List<SiteViewModel>();
-        public List<GliderViewModel> GliderListViewModel { get; set; } = new List<GliderViewModel>();
+        public List<FlightViewModel> FlightListViewModel { get; set; }
+        public List<SiteViewModel> SiteListViewModel { get; set; }
+        public List<GliderViewModel> GliderListViewModel { get; set; }
     }
 }

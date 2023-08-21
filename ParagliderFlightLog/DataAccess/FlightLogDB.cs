@@ -290,6 +290,14 @@ namespace ParagliderFlightLog.DataAccess
 			WriteFlightsInDB(new List<Flight> { newFlight });
 			return newFlight;
 		}
+		public Site? FlightTakeOffSite(Flight flight)
+		{
+			string sqlStatement = "SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude " +
+			"FROM Sites " +
+			"WHERE Site_ID = @Id;";
+			Site? site = _db.LoadData<Site, dynamic>(sqlStatement, new { Id = flight.REF_TakeOffSite_ID },LoadConnectionString()).FirstOrDefault();
+			return site;
+		}
 
 		private Glider? FindGliderFromGliderIgcName(string IGC_Name)
 		{
