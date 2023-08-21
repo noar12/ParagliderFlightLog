@@ -1,6 +1,6 @@
 ﻿@using ParagliderFlightLog.ViewModels
 <strong>Glider:</strong>
-<RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ViewModel.GliderNameList @bind-Value=@FlightToEdit.GliderName
+<RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ViewModel.GliderListViewModel @bind-Value=@FlightToEdit.Glider
                 Class="w-100" />
 <strong>Site:</strong>
 <RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ViewModel.SiteNameList @bind-Value=@FlightToEdit.TakeOffSite

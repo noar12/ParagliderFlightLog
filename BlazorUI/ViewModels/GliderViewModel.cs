@@ -1,4 +1,5 @@
-﻿using ParagliderFlightLog.Models;
+﻿using ParagliderFlightLog.DataAccess;
+using ParagliderFlightLog.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,16 +11,13 @@ namespace ParagliderFlightLog.ViewModels
     public class GliderViewModel
     {
         private Glider m_Glider;
+        private readonly FlightLogDB _db;
         private ICollection<Flight> m_FlightCollection = new List<Flight>();
 
-        public GliderViewModel(Glider glider, ICollection<Flight> flightCollection)
+        public GliderViewModel(Glider glider, FlightLogDB db)
         {
             m_Glider = glider;
-            m_FlightCollection = flightCollection;
-        }
-        public GliderViewModel()
-        {
-            m_Glider = new Glider();
+            _db = db;
         }
         public Glider Glider { get { return m_Glider; } set { m_Glider = value; } }
         public string GliderId { get => m_Glider.Glider_ID; }
@@ -79,7 +77,10 @@ namespace ParagliderFlightLog.ViewModels
             return l_FlightTime;
         }
 
-
+        public override string ToString()
+        {
+            return FullName;
+        }
 
     }
 }

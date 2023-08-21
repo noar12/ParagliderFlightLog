@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
 
 namespace ParagliderFlightLog.ViewModels
@@ -10,15 +11,15 @@ namespace ParagliderFlightLog.ViewModels
     public class SiteViewModel
     {
         private Site m_Site = new Site();
-        private ICollection<Flight> m_FlightsCollection = new List<Flight>();
+        private readonly FlightLogDB _db;
 
-        public SiteViewModel(Site site, ICollection<Flight> flightsCollection)
+        public SiteViewModel(Site site, FlightLogDB db)
         {
             m_Site = site;
-            m_FlightsCollection = flightsCollection;
+            _db = db;
+            
             
         }
-        public SiteViewModel() { m_Site = new Site(); }
 
         public Site Site { get { return m_Site; } set { m_Site = value; } }
         public string Site_ID { get { return m_Site.Site_ID; } }
@@ -75,11 +76,17 @@ namespace ParagliderFlightLog.ViewModels
                 m_Site.WindOrientationEnd = l_EWindOrientation;
             }
         }
-        public int SiteUseCount { get => m_FlightsCollection.Where(f => f.REF_TakeOffSite_ID == m_Site.Site_ID).Count(); }
+        public int SiteUseCount { get {
+                return _db.GetSiteDoneFlights(Site).Count;
+        } }
 
         public string[] AvailableWindOrientation { get => Enum.GetNames(typeof(EWindOrientation)); }
         public string[] AvailableCountry { get => Enum.GetNames(typeof(ECountry)); }
 
+        public override string ToString()
+        {
+            return Name;
+        }
 
     }
 }

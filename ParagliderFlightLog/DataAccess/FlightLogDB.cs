@@ -43,14 +43,19 @@ namespace ParagliderFlightLog.DataAccess
 			Sites = _db.LoadData<Site, dynamic>(sqlGetAllSite, new { }, LoadConnectionString());
 			Gliders = _db.LoadData<Glider, dynamic>(sqlGetAllGlider, new { }, LoadConnectionString());
 			Flights = _db.LoadData<Flight, dynamic>(sqlGetAllFlight, new { }, LoadConnectionString());
-            foreach (var flight in Flights)
-            {
-				flight.FlightPoints = GetFlightPointsFromIgcContent(flight.IgcFileContent);
-				flight.TakeOffPoint = GetTakeOffPointFromPointList(flight.FlightPoints);
-				flight.FlightDuration = GetFlightDurationFromPointList(flight.FlightPoints);
-				flight.IGC_GliderName = GetGliderNameFromIgcContent(flight.IgcFileContent);
+			foreach (var flight in Flights)
+			{
+				AddFlightProperties(flight);
 			}
-        }
+		}
+
+		private void AddFlightProperties(Flight flight)
+		{
+			flight.FlightPoints = GetFlightPointsFromIgcContent(flight.IgcFileContent);
+			flight.TakeOffPoint = GetTakeOffPointFromPointList(flight.FlightPoints);
+			flight.FlightDuration = GetFlightDurationFromPointList(flight.FlightPoints);
+			flight.IGC_GliderName = GetGliderNameFromIgcContent(flight.IgcFileContent);
+		}
 
 		private void CreateFlightLogDB()
 		{
@@ -450,6 +455,41 @@ namespace ParagliderFlightLog.DataAccess
 			"WHERE Glider_ID = @Id;";
 			Glider? output = _db.LoadData<Glider, dynamic>(sqlStatement, new { Id = flight.REF_Glider_ID }, LoadConnectionString()).FirstOrDefault();
 			return output;
+		}
+
+		public List<Flight> GetSiteDoneFlights(Site site)
+		{
+			string sqlStatement = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime " +
+			"FROM Flights " +
+			"WHERE REF_TakeOffSite_ID = @Id;";
+			List<Flight> output = _db.LoadData<Flight, dynamic>(sqlStatement, new{ Id = site.Site_ID }, LoadConnectionString());
+			foreach (var flight in output)
+			{
+				AddFlightProperties(flight);
+			}
+			return output;
+		}
+
+		public string? GetFlightComment(Flight flight)
+		{
+			string sqlStatement = "SELECT Comment FROM Flights WHERE Flight_ID = @Id;";
+			return _db.LoadData<string, dynamic>(sqlStatement, new { Id = flight.Flight_ID }, LoadConnectionString()).FirstOrDefault();
+		}
+
+		public void UpdateFlightComment(Flight flight, string value)
+		{
+			string sqlStatement = "UPDATE Flights SET Comment = @Comment WHERE Flight_ID = @Id;";
+			_db.SaveData(sqlStatement, new {Comment = value, Id = flight.Flight_ID},LoadConnectionString());
+		}
+
+		public void UpdateFlightGlider(Flight flight, Glider? value)
+		{
+			if (value == null)
+			{
+				throw new ArgumentNullException("value");
+			}
+			string sqlStatement = "UPDATE Flights SET REF_Glider_ID = @Glider_ID WHERE Flight_ID = @Id;";
+			_db.SaveData(sqlStatement, new { Glider_ID = value.Glider_ID, Id = flight.Flight_ID }, LoadConnectionString());
 		}
 	}
 }

@@ -21,6 +21,7 @@ namespace ParagliderFlightLog.ViewModels
             _config = config;
             _flightLog = new FlightLogDB(_config); //todo move to DI
             FlightListViewModel = _flightLog.Flights.Select(f => f.ToVM(_flightLog)).ToList();
+            SiteListViewModel = _flightLog.Sites.Select(s => s.ToVM(_flightLog)).ToList();
         }
 
 
@@ -66,9 +67,10 @@ namespace ParagliderFlightLog.ViewModels
             _flightLog.Sites.Add(svm.Site);
         }
 
-        public void AddGlider(GliderViewModel gvm)
+        public void AddGlider()
         {
-            _flightLog.Gliders.Add(gvm.Glider);
+
+            throw new NotImplementedException();
         }
 
         public void ImportLogFlyDB(string fileName)
@@ -124,7 +126,7 @@ namespace ParagliderFlightLog.ViewModels
         }
 
         public IEnumerable<String> SiteNameList { get { return SiteListViewModel.Select(s => s.Name); } }
-        public IEnumerable<String> GliderNameList { get { return _flightLog.Gliders.Select(g => g.FullName); } }
+        
         /// <summary>
         /// Return a TimeSpan representing the cumulative flight duration in the period between start and end
         /// </summary>
@@ -147,6 +149,6 @@ namespace ParagliderFlightLog.ViewModels
         }
         public List<FlightViewModel> FlightListViewModel { get; set; }
         public List<SiteViewModel> SiteListViewModel { get; set; }
-        public List<GliderViewModel> GliderListViewModel { get; set; }
+        public List<GliderViewModel> GliderListViewModel { get => _flightLog.Gliders.Select(g => g.ToVM(_flightLog)).ToList(); }
     }
 }

@@ -11,5 +11,13 @@ namespace BlazorUI.ViewModels
         {
             return new FlightViewModel(flight, db);
         }
+        public static SiteViewModel ToVM(this Site site, FlightLogDB db)
+        {
+            return new SiteViewModel(site, db);
+        }
+        public static GliderViewModel ToVM(this Glider glider, FlightLogDB db)
+        {
+            return new GliderViewModel(glider, db);
+        }
     }
 }
