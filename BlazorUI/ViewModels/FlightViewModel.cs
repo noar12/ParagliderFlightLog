@@ -49,24 +49,19 @@ namespace ParagliderFlightLog.ViewModels
 		{
 			get
 			{
-				return _db.FlightTakeOffSite(Flight)?.Name ?? "Site not found";
+				return _db.GetFlightTakeOffSite(Flight)?.Name ?? "Site not found";
 			}
 			
 		}
 		public string GliderName
 		{
-			get { return m_GliderCollection.Where(g => g.Glider_ID == m_Flight.REF_Glider_ID).FirstOrDefault(new Glider()).FullName; }
+			get
+			{
+				return _db.GetFlightGlider(Flight)?.FullName ?? "Glider not found";
+			}
 			set
 			{
-				Glider? l_ProposedGlider = m_GliderCollection.Where(g => g.FullName == value).FirstOrDefault();
-				if (l_ProposedGlider != null)
-				{
-					m_Flight.REF_Glider_ID = l_ProposedGlider.Glider_ID;
-				}
-				else
-				{
-					throw new ArgumentException("The proposed glider was not found in the data");
-				}
+				throw new NotImplementedException();
 			}
 		}
 		public double MaxHeight

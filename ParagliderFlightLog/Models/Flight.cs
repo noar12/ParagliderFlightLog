@@ -24,9 +24,11 @@ namespace ParagliderFlightLog.Models
 		/// or on the content of a backing field if no igc content is available
 		/// </summary>
 		public TimeSpan FlightDuration { get; set; }
+
 		/// <summary>
 		/// The altitude of the take off if an igc content is available. NaN otherwise
 		/// </summary>
+		public int FlightDuration_s { get; set; }
 		public double TakeOffAltitude { get; set; }
 
 		/// <summary>

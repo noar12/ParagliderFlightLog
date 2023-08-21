@@ -43,7 +43,14 @@ namespace ParagliderFlightLog.DataAccess
 			Sites = _db.LoadData<Site, dynamic>(sqlGetAllSite, new { }, LoadConnectionString());
 			Gliders = _db.LoadData<Glider, dynamic>(sqlGetAllGlider, new { }, LoadConnectionString());
 			Flights = _db.LoadData<Flight, dynamic>(sqlGetAllFlight, new { }, LoadConnectionString());
-		}
+            foreach (var flight in Flights)
+            {
+				flight.FlightPoints = GetFlightPointsFromIgcContent(flight.IgcFileContent);
+				flight.TakeOffPoint = GetTakeOffPointFromPointList(flight.FlightPoints);
+				flight.FlightDuration = GetFlightDurationFromPointList(flight.FlightPoints);
+				flight.IGC_GliderName = GetGliderNameFromIgcContent(flight.IgcFileContent);
+			}
+        }
 
 		private void CreateFlightLogDB()
 		{
@@ -290,7 +297,7 @@ namespace ParagliderFlightLog.DataAccess
 			WriteFlightsInDB(new List<Flight> { newFlight });
 			return newFlight;
 		}
-		public Site? FlightTakeOffSite(Flight flight)
+		public Site? GetFlightTakeOffSite(Flight flight)
 		{
 			string sqlStatement = "SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude " +
 			"FROM Sites " +
@@ -434,6 +441,15 @@ namespace ParagliderFlightLog.DataAccess
 			parsedFlightPoint = new FlightPoint() { Height = double.NaN, Latitude = double.NaN, Longitude = double.NaN };
 			return false;
 
+		}
+
+		public Glider? GetFlightGlider(Flight flight)
+		{
+			string sqlStatement = "SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name " +
+			"FROM Gliders " +
+			"WHERE Glider_ID = @Id;";
+			Glider? output = _db.LoadData<Glider, dynamic>(sqlStatement, new { Id = flight.REF_Glider_ID }, LoadConnectionString()).FirstOrDefault();
+			return output;
 		}
 	}
 }
