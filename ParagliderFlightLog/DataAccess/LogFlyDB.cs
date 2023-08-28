@@ -89,9 +89,9 @@ namespace ParagliderFlightLog.DataAccess
                 l_flights.Add(vol.ToFlightLogDBFlight(l_sites, m_LogFlyGliderCollection));
             }
 
-            _flightLogDB.Flights = l_flights;
-            _flightLogDB.Sites = l_sites;
-            _flightLogDB.Gliders = new List<Glider>(m_LogFlyGliderCollection);
+            //_flightLogDB.Flights = l_flights;
+            //_flightLogDB.Sites = l_sites;
+            //_flightLogDB.Gliders = new List<Glider>(m_LogFlyGliderCollection);
 
             return _flightLogDB;
         }

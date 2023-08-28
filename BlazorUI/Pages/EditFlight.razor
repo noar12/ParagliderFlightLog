@@ -3,7 +3,7 @@
 <RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ViewModel.GliderListViewModel @bind-Value=@FlightToEdit.Glider
                 Class="w-100" />
 <strong>Site:</strong>
-<RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ViewModel.SiteNameList @bind-Value=@FlightToEdit.TakeOffSite
+<RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ViewModel.SiteListViewModel @bind-Value=@FlightToEdit.TakeOffSite
                 Class="w-100" />
 <strong>Comment:</strong>
 <RadzenTextArea @bind-Value=FlightToEdit.Comment Class="w-100" Rows="10"/>

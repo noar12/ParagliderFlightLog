@@ -30,24 +30,24 @@ namespace ParagliderFlightLog.DataAccess
 			{
 				CreateFlightLogDB();
 			}
-			LoadFlightLogDB();
+			//LoadFlightLogDB();
 		}
 
 
-		public void LoadFlightLogDB()
-		{
-			string sqlGetAllSite = "SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude FROM Sites";
-			string sqlGetAllGlider = "SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name FROM Gliders";
-			string sqlGetAllFlight = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights";
+		//public void LoadFlightLogDB()
+		//{
+		//	string sqlGetAllSite = "SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude FROM Sites";
+		//	string sqlGetAllGlider = "SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name FROM Gliders";
+		//	string sqlGetAllFlight = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights";
 
-			Sites = _db.LoadData<Site, dynamic>(sqlGetAllSite, new { }, LoadConnectionString());
-			Gliders = _db.LoadData<Glider, dynamic>(sqlGetAllGlider, new { }, LoadConnectionString());
-			Flights = _db.LoadData<Flight, dynamic>(sqlGetAllFlight, new { }, LoadConnectionString());
-			foreach (var flight in Flights)
-			{
-				AddFlightProperties(flight);
-			}
-		}
+		//	Sites = _db.LoadData<Site, dynamic>(sqlGetAllSite, new { }, LoadConnectionString());
+		//	Gliders = _db.LoadData<Glider, dynamic>(sqlGetAllGlider, new { }, LoadConnectionString());
+		//	Flights = _db.LoadData<Flight, dynamic>(sqlGetAllFlight, new { }, LoadConnectionString());
+		//	foreach (var flight in Flights)
+		//	{
+		//		AddFlightProperties(flight);
+		//	}
+		//}
 
 		private void AddFlightProperties(Flight flight)
 		{
@@ -94,31 +94,9 @@ namespace ParagliderFlightLog.DataAccess
 			_db.SaveData(sqlCreateSites, new { }, LoadConnectionString());
 		}
 
-		private void ReplaceFlightInDB(IList? newItems)
-		{
-			if (newItems != null)
-			{
-				string sqlReplaceFlight = "UPDATE Flights SET Comment = @Comment, REF_TakeOffSite_ID = @REF_TakeOffSite_ID, REF_Glider_ID = @REF_Glider_ID, FlightDuration_s = @FlightDuration_s, TakeOffDateTime = @TakeOffDateTime, IgcFileContent = @IgcFileContent WHERE Flight_ID = @Flight_ID";
-				foreach (Flight flight in newItems)
-				{
-					_db.SaveData(sqlReplaceFlight, flight, LoadConnectionString());
-				}
 
-			}
-		}
 
-		private void ReplaceSitesInDB(IList? newItems)
-		{
-			if (newItems != null)
-			{
-				string sqlReplaceSite = "UPDATE Sites SET Name = @Name, Town = @Town, Country = @Country, WindOrientationBegin = @WindOrientationBegin, WindOrientationEnd = @WindOrientationEnd, Altitude = @Altitude, Latitude = @Latitude, Longitude = @Longitude WHERE Site_ID = @Site_ID";
 
-				foreach (Site site in newItems)
-				{
-					_db.SaveData(sqlReplaceSite, site, LoadConnectionString());
-				}
-			}
-		}
 
 		private void DeleteSitesInDB(IList? oldItems)
 		{
@@ -187,28 +165,6 @@ namespace ParagliderFlightLog.DataAccess
 		{
 			throw new NotImplementedException();
 		}
-		private void ReplaceGlidersInDB(IList? newItems)
-		{
-			if (newItems != null)
-			{
-				string sqlReplaceGlider = "UPDATE Gliders SET " +
-					"Manufacturer = @Manufacturer, " +
-					"Model = @Model, " +
-					"BuildYear = @BuildYear, " +
-					"LastCheckDateTime = @LastCheckDateTime, " +
-					"HomologationCategory = @HomologationCategory, " +
-					"IGC_Name = @IGC_Name " +
-					"WHERE Glider_ID = @Glider_ID";
-
-
-				foreach (Glider glider in newItems)
-				{
-					_db.SaveData(sqlReplaceGlider, glider, LoadConnectionString());
-				}
-
-
-			}
-		}
 		private void WriteGlidersInDB(IList? newItems)
 		{
 			if (newItems != null)
@@ -224,9 +180,9 @@ namespace ParagliderFlightLog.DataAccess
 			}
 		}
 
-		public List<Flight> Flights { get; set; } = new List<Flight>();
-		public List<Site> Sites { get; set; } = new List<Site>();
-		public List<Glider> Gliders { get; set; } = new List<Glider>();
+		//public List<Flight> Flights { get; set; } = new List<Flight>();
+		//public List<Site> Sites { get; set; } = new List<Site>();
+		//public List<Glider> Gliders { get; set; } = new List<Glider>();
 		/// <summary>
 		/// Get the cumulative flight duration of all the flight between analyzePeriodStart and analyszePeriodEnd
 		/// </summary>
@@ -243,12 +199,18 @@ namespace ParagliderFlightLog.DataAccess
 			{
 				analyzePeriodEnd = DateTime.Now;
 			}
-			TimeSpan l_totalFlightDuration = new TimeSpan(0, 0, 0, 0);
+			string sqlStatement = @"SELECT SUM(FlightDuration_s) FROM Flights WHERE TakeOffDateTime BETWEEN @PeriodStartDate AND @PeriodEndDate;";
 
-			l_totalFlightDuration = Flights.Where(flight => flight.TakeOffDateTime > analyzePeriodStart && flight.TakeOffDateTime < analyzePeriodEnd)
-				.Aggregate(TimeSpan.Zero, (subtotal, flight) => subtotal.Add(flight.FlightDuration));
 
-			return l_totalFlightDuration;
+			int l_totalFlightDuration_s = _db.LoadData<int, dynamic>(sqlStatement,
+															new
+															{
+																PeriodStartDate = analyzePeriodStart?.ToString("u"),
+																PeriodEndDate = analyzePeriodEnd?.ToString("u")
+															},
+															LoadConnectionString()).First();
+
+			return TimeSpan.FromSeconds(l_totalFlightDuration_s);
 		}
 		/// <summary>
 		/// Import a IGC file and put it as a Flight in the datamodel.
@@ -271,17 +233,6 @@ namespace ParagliderFlightLog.DataAccess
 			newFlight.TakeOffDateTime = GetTakeOffTimeFromIgcContent(newFlight.IgcFileContent);
 			newFlight.IGC_GliderName = GetGliderNameFromIgcContent(newFlight.IgcFileContent);
 
-			// check if we were able to parse some point before continuing the insert
-			if (newFlight.FlightPoints.Any())
-			{
-				Flights.Add(newFlight);
-
-			}
-			else
-			{
-				throw new Exception();
-			}
-
 			//Search for glider
 			if (!string.IsNullOrEmpty(newFlight.IGC_GliderName))
 			{
@@ -296,7 +247,7 @@ namespace ParagliderFlightLog.DataAccess
 			// search for a take off site
 			Site takeOffSite = FindOrCreateTakeOffSiteByLocation(newFlight.TakeOffPoint);
 			newFlight.REF_TakeOffSite_ID = takeOffSite.Site_ID;
-		   
+
 
 			// insert the flight if everything is ok here
 			WriteFlightsInDB(new List<Flight> { newFlight });
@@ -307,7 +258,7 @@ namespace ParagliderFlightLog.DataAccess
 			string sqlStatement = "SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude " +
 			"FROM Sites " +
 			"WHERE Site_ID = @Id;";
-			Site? site = _db.LoadData<Site, dynamic>(sqlStatement, new { Id = flight.REF_TakeOffSite_ID },LoadConnectionString()).FirstOrDefault();
+			Site? site = _db.LoadData<Site, dynamic>(sqlStatement, new { Id = flight.REF_TakeOffSite_ID }, LoadConnectionString()).FirstOrDefault();
 			return site;
 		}
 
@@ -339,7 +290,7 @@ namespace ParagliderFlightLog.DataAccess
 				FirstOrDefault();
 			if (output == null)
 			{
-				List<Site> unknownSiteNames = Sites.Where(s => s.Name.Contains("Unknown site")).ToList();
+				List<Site> unknownSiteNames = GetUnknownSites();//Sites.Where(s => s.Name.Contains("Unknown site")).ToList();
 				int nextUnknownSite = unknownSiteNames.Count;
 				output = new Site()
 				{
@@ -351,6 +302,15 @@ namespace ParagliderFlightLog.DataAccess
 				WriteSitesInDB(new List<Site> { output });
 			}
 			return output;
+		}
+
+		private List<Site> GetUnknownSites()
+		{
+			string sqlStatement = @"SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude
+									FROM Sites
+									WHERE Name LIKE '%Unknown site%';";
+			List<Site> ouput = _db.LoadData<Site, dynamic>(sqlStatement, new { }, LoadConnectionString());
+			return ouput;
 		}
 
 		private string LoadConnectionString(string connectionStringName = "Sqlite")
@@ -462,7 +422,7 @@ namespace ParagliderFlightLog.DataAccess
 			string sqlStatement = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime " +
 			"FROM Flights " +
 			"WHERE REF_TakeOffSite_ID = @Id;";
-			List<Flight> output = _db.LoadData<Flight, dynamic>(sqlStatement, new{ Id = site.Site_ID }, LoadConnectionString());
+			List<Flight> output = _db.LoadData<Flight, dynamic>(sqlStatement, new { Id = site.Site_ID }, LoadConnectionString());
 			foreach (var flight in output)
 			{
 				AddFlightProperties(flight);
@@ -479,17 +439,87 @@ namespace ParagliderFlightLog.DataAccess
 		public void UpdateFlightComment(Flight flight, string value)
 		{
 			string sqlStatement = "UPDATE Flights SET Comment = @Comment WHERE Flight_ID = @Id;";
-			_db.SaveData(sqlStatement, new {Comment = value, Id = flight.Flight_ID},LoadConnectionString());
+			_db.SaveData(sqlStatement, new { Comment = value, Id = flight.Flight_ID }, LoadConnectionString());
 		}
 
-		public void UpdateFlightGlider(Flight flight, Glider? value)
+		public void UpdateFlightGlider(Flight flight, Glider glider)
 		{
-			if (value == null)
-			{
-				throw new ArgumentNullException("value");
-			}
 			string sqlStatement = "UPDATE Flights SET REF_Glider_ID = @Glider_ID WHERE Flight_ID = @Id;";
-			_db.SaveData(sqlStatement, new { Glider_ID = value.Glider_ID, Id = flight.Flight_ID }, LoadConnectionString());
+			_db.SaveData(sqlStatement, new { Glider_ID = glider.Glider_ID, Id = flight.Flight_ID }, LoadConnectionString());
+		}
+
+		public void UpdateFlightTakeOffSite(Flight flight, Site site)
+		{
+			string sqlStatement = "UPDATE Flights SET REF_TakeOffSite_ID = @Site_ID WHERE Flight_ID = @Id;";
+			_db.SaveData(sqlStatement, new { Site_ID = site.Site_ID, Id = flight.Flight_ID }, LoadConnectionString());
+		}
+		public List<Flight> GetAllFlights()
+		{
+			string sqlStatement = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights;";
+			var output = _db.LoadData<Flight, dynamic>(sqlStatement, new { }, LoadConnectionString());
+			foreach (var flight in output)
+			{
+				AddFlightProperties(flight);
+			}
+			return output;
+
+		}
+		public List<Site> GetAllSites()
+		{
+			string sqlStatement = @"SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude
+									FROM Sites;";
+			var output = _db.LoadData<Site, dynamic>(sqlStatement, new { }, LoadConnectionString());
+			return output;
+		}
+		public List<Glider> GetAllGliders()
+		{
+			string sqlStatement = @"SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name
+								FROM Gliders;";
+			var output = _db.LoadData<Glider, dynamic>(sqlStatement, new { }, LoadConnectionString());
+			return output;
+
+		}
+
+
+		public void UpdateFlight(Flight flight)
+		{
+			string sqlStatement = @"UPDATE Flights 
+									Comment = @Comment,
+									REF_TakeOffSite_ID = @REF_TakeOffSite_ID,
+									REF_Glider_ID = @REF_Glider_ID,
+									FlightDuration_s = @FlightDuration_s,
+									TakeOffDateTime = @TakeOffDateTIme,
+									IgcFileContent = @IgcFileContent
+									WHERE Flight_ID = @Flight_ID;";
+			_db.SaveData(sqlStatement, new { flight }, LoadConnectionString());
+		}
+
+		public void UpdateSite(Site site)
+		{
+			string sqlStatement = @"UPDATE Sites
+			SET Name = @Name,
+			Town = @Town,
+			Country = @Country,
+			WindOrientationBegin = @WindOrientationBegin,
+			WindOrientationEnd = @WindOrientationEnd,
+			Altitude = @Altitude,
+			Latitude = @Latitude,
+			Longitude = @Longitude
+			WHERE Site_ID = @Site_ID;";
+			_db.SaveData(sqlStatement, new { site }, LoadConnectionString());
+		}
+
+		public void UpdateGlider(Glider glider)
+		{
+			string sqlStatement = @"UPDATE Gliders
+									SET	Manufacturer = @Manufacturer,
+									Model = @Model,
+									BuildYear = @BuildYear,
+									LastCheckDateTime = @LastCheckDateTime,
+									HomologationCategory = @HomologationCategory,
+									IGC_Name = @IGC_Name
+									WHERE Glider_ID = @Glider_ID;";
+			_db.SaveData(sqlStatement, new { glider }, LoadConnectionString());
 		}
 	}
 }

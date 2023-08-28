@@ -20,52 +20,44 @@ namespace ParagliderFlightLog.ViewModels
         {
             _config = config;
             _flightLog = new FlightLogDB(_config); //todo move to DI
-            FlightListViewModel = _flightLog.Flights.Select(f => f.ToVM(_flightLog)).ToList();
-            SiteListViewModel = _flightLog.Sites.Select(s => s.ToVM(_flightLog)).ToList();
+            FlightListViewModel = _flightLog.GetAllFlights().Select(f => f.ToVM(_flightLog)).ToList();
+            SiteListViewModel = _flightLog.GetAllSites().Select(s => s.ToVM(_flightLog)).ToList();
+            GliderListViewModel = _flightLog.GetAllGliders().Select(g => g.ToVM(_flightLog)).ToList();
         }
 
 
 
 
 
-        public void EditFlight(FlightViewModel selectedItem)
+        public void UpdateFlight(FlightViewModel flight)
         {
-            Flight? l_OldFlight = _flightLog.Flights.Where(f => f.Flight_ID == selectedItem.FlightID).FirstOrDefault();
-            if (l_OldFlight != null)
+            if (flight.Flight != null)
             {
-                int l_Index = _flightLog.Flights.IndexOf(l_OldFlight);
-                _flightLog.Flights[l_Index] = selectedItem.Flight;
+                _flightLog.UpdateFlight(flight.Flight);
             }
 
         }
 
-        public void EditSite(SiteViewModel selectedItem)
+        public void EditSite(SiteViewModel site)
         {
 
-            Site? l_OldSite = _flightLog.Sites.Where(s => s.Site_ID == selectedItem.Site_ID).FirstOrDefault();
-            if (l_OldSite != null)
+            if (site.Site != null)
             {
-                int l_Index = _flightLog.Sites.IndexOf(l_OldSite);
-                _flightLog.Sites[l_Index] = selectedItem.Site;
+                _flightLog.UpdateSite(site.Site);
             }
 
 
         }
 
-        public void EditGlider(GliderViewModel selectedItem)
+        public void EditGlider(GliderViewModel glider)
         {
-            Glider? l_OldGlider = _flightLog.Gliders.Where(g => g.Glider_ID == selectedItem.GliderId).FirstOrDefault();
-            if (l_OldGlider != null)
+            if (glider != null)
             {
-                int l_Index = _flightLog.Gliders.IndexOf(l_OldGlider);
-                _flightLog.Gliders[l_Index] = selectedItem.Glider;
+                _flightLog.UpdateGlider(glider.Glider);
             }
         }
 
-        public void AddSite(SiteViewModel svm)
-        {
-            _flightLog.Sites.Add(svm.Site);
-        }
+ 
 
         public void AddGlider()
         {
@@ -73,26 +65,26 @@ namespace ParagliderFlightLog.ViewModels
             throw new NotImplementedException();
         }
 
-        public void ImportLogFlyDB(string fileName)
-        {
-            LogFlyDB l_logFlyDB = new LogFlyDB(_flightLog);//todo: put it in DI
-            l_logFlyDB.LoadLogFlyDB(fileName);
-            FlightLogDB l_FlightLogDB = l_logFlyDB.BuildFlightLogDB();
-            foreach (Glider glider in l_FlightLogDB.Gliders)
-            {
-                _flightLog.Gliders.Add(glider);
-            }
-            foreach (Site site in l_FlightLogDB.Sites)
-            {
-                _flightLog.Sites.Add(site);
-            }
-            foreach (Flight flight in l_FlightLogDB.Flights)
-            {
-                _flightLog.Flights.Add(flight);
-            }
+        //public void ImportLogFlyDB(string fileName)
+        //{
+        //    LogFlyDB l_logFlyDB = new LogFlyDB(_flightLog);//todo: put it in DI
+        //    l_logFlyDB.LoadLogFlyDB(fileName);
+        //    FlightLogDB l_FlightLogDB = l_logFlyDB.BuildFlightLogDB();
+        //    foreach (Glider glider in l_FlightLogDB.Gliders)
+        //    {
+        //        _flightLog.Gliders.Add(glider);
+        //    }
+        //    foreach (Site site in l_FlightLogDB.Sites)
+        //    {
+        //        _flightLog.Sites.Add(site);
+        //    }
+        //    foreach (Flight flight in l_FlightLogDB.Flights)
+        //    {
+        //        _flightLog.Flights.Add(flight);
+        //    }
 
 
-        }
+        //}
         /// <summary>
         /// Import an IGC file in the data model and use the result to instanciate and add a new FlightViewModel in the FlightListViewModel to update the UI and do the same with the takeoff site if it doesn't exist yet.
         /// </summary>
@@ -147,8 +139,8 @@ namespace ParagliderFlightLog.ViewModels
         {
             return FlightListViewModel.Where(f => f.TakeOffDateTime > start && f.TakeOffDateTime < end).ToList();
         }
-        public List<FlightViewModel> FlightListViewModel { get; set; }
-        public List<SiteViewModel> SiteListViewModel { get; set; }
-        public List<GliderViewModel> GliderListViewModel { get => _flightLog.Gliders.Select(g => g.ToVM(_flightLog)).ToList(); }
+        public List<FlightViewModel> FlightListViewModel { get; }
+        public List<SiteViewModel> SiteListViewModel { get; }
+        public List<GliderViewModel> GliderListViewModel { get; }
     }
 }
