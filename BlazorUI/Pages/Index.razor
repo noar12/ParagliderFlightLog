@@ -14,7 +14,7 @@
 	<div class="row">
 		<div class="col-8">
 			<InputFile OnChange="@OnAddFlights" multiple />
-			<RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
+			<RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
 							AllowSorting="true" Data="@mvm.FlightListViewModel" TItem="FlightViewModel"
 							SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedFlights
 							ContextMenu=@(args => ShowContextMenuWithItems(args))>
@@ -53,6 +53,9 @@
 </div>
 
 @code {
+
+	private RadzenDataGrid<FlightViewModel> dataGrid = new();
+
 	protected override void OnInitialized()
 	{ }
 	IList<FlightViewModel> SelectedFlights = new List<FlightViewModel>();
@@ -101,17 +104,18 @@
 		{
 			foreach (FlightViewModel fvm in flightsToRemove)
 			{
-				fvm.RemoveFlight();
+				mvm.RemoveFlight(fvm);
 			}
 		}
 		StateHasChanged();
+		await dataGrid.Reload();
 	}
 	async Task OnEditFlight()
 	{
 		await DialogService.OpenAsync<EditFlight>($"Edit flight",
 				new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight }, { "ViewModel", mvm } },
 				new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
-		
+
 		StateHasChanged();
 	}
 	async Task OnAddFlights(InputFileChangeEventArgs e)
@@ -153,6 +157,6 @@
 		}
 
 		StateHasChanged();
-
+		await dataGrid.Reload();
 	}
 }

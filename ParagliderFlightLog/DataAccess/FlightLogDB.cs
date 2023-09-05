@@ -521,6 +521,12 @@ namespace ParagliderFlightLog.DataAccess
 									WHERE Glider_ID = @Glider_ID;";
 			_db.SaveData(sqlStatement, new { glider }, LoadConnectionString());
 		}
+
+		public void DeleteFlight(Flight m_Flight)
+		{
+			string sqlStatement = "DELETE FROM Flights WHERE Flight_ID = @Flight_ID";
+			_db.SaveData(sqlStatement, m_Flight, LoadConnectionString());
+		}
 	}
 }
 

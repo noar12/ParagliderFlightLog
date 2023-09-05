@@ -144,15 +144,8 @@ namespace ParagliderFlightLog.ViewModels
 					return 0.0;
 			}
 		}
-		public void RemoveFlight()
-		{
-			m_FlightCollection.Remove(m_Flight);
-		}
-		public void AddFlight()
-		{
-			m_FlightCollection.Add(m_Flight);
-		}
 
+		
 		private double[] GetVerticalRate(int integrationStep)
 		{
 			if (FlightPoints.Count != 0)
