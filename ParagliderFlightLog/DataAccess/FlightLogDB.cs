@@ -53,7 +53,7 @@ namespace ParagliderFlightLog.DataAccess
 		{
 			flight.FlightPoints = GetFlightPointsFromIgcContent(flight.IgcFileContent);
 			flight.TakeOffPoint = GetTakeOffPointFromPointList(flight.FlightPoints);
-			flight.FlightDuration = GetFlightDurationFromPointList(flight.FlightPoints);
+			flight.FlightDuration = GetFlightDurationFromPointList(flight.FlightPoints) ?? TimeSpan.FromSeconds(flight.FlightDuration_s);
 			flight.IGC_GliderName = GetGliderNameFromIgcContent(flight.IgcFileContent);
 		}
 
@@ -227,11 +227,10 @@ namespace ParagliderFlightLog.DataAccess
 				newFlight.IgcFileContent = sr.ReadToEnd();
 			}
 
-			newFlight.FlightPoints = GetFlightPointsFromIgcContent(newFlight.IgcFileContent);
-			newFlight.TakeOffPoint = GetTakeOffPointFromPointList(newFlight.FlightPoints);
-			newFlight.FlightDuration = GetFlightDurationFromPointList(newFlight.FlightPoints);
+			AddFlightProperties(newFlight);
+
+
 			newFlight.TakeOffDateTime = GetTakeOffTimeFromIgcContent(newFlight.IgcFileContent);
-			newFlight.IGC_GliderName = GetGliderNameFromIgcContent(newFlight.IgcFileContent);
 
 			//Search for glider
 			if (!string.IsNullOrEmpty(newFlight.IGC_GliderName))
@@ -344,9 +343,9 @@ namespace ParagliderFlightLog.DataAccess
 			}
 			return DateTime.MinValue;
 		}
-		private TimeSpan GetFlightDurationFromPointList(List<FlightPoint> flightPoints)
+		private TimeSpan? GetFlightDurationFromPointList(List<FlightPoint> flightPoints)
 		{
-			return flightPoints.Count > 0 ? new TimeSpan(0, 0, flightPoints.Count) : TimeSpan.MinValue;
+			return flightPoints.Count > 0 ? new TimeSpan(0, 0, flightPoints.Count) : null;
 		}
 
 		private double GetTakeOffAltitudeFromPointList(List<FlightPoint> flightPoints)
