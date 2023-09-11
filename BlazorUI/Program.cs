@@ -15,7 +15,8 @@ builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
 
 // Register our own injectables
-builder.Services.AddSingleton<MainViewModel>();
+builder.Services.AddScoped<MainViewModel>();
+builder.Services.AddScoped<FlightsStatisticsViewModel>();
 
 var app = builder.Build();
 // Otherwise base WWW files like CSS are not found
