@@ -84,6 +84,7 @@
 				new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider } },
 				new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
 		mvm.EditGlider(LastSelectedGlider);
+		StateHasChanged();
 	}
 
 	void OnAddGlider()

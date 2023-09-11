@@ -27,7 +27,7 @@ namespace ParagliderFlightLog.ViewModels
         public string IgcName { get => m_Glider.IGC_Name; set => m_Glider.IGC_Name = value; }
 
         public string FullName { get => m_Glider.FullName; }
-        public int TotalFlightCount { get => m_FlightCollection.Where(f => f.REF_Glider_ID == m_Glider.Glider_ID).Count(); }
+        public int TotalFlightCount { get => _db.GetFlightDoneWithGlider(m_Glider).Count; }
         public string TotalFlightTime
         {
             get
@@ -71,7 +71,8 @@ namespace ParagliderFlightLog.ViewModels
         }
         private TimeSpan FlightTimeInPeriod(DateTime periodStart, DateTime periodEnd)
         {
-            TimeSpan l_FlightTime = m_FlightCollection
+            var gliderFlights = _db.GetFlightDoneWithGlider(m_Glider);
+            TimeSpan l_FlightTime = gliderFlights
                 .Where(f=> f.TakeOffDateTime >= periodStart && f.TakeOffDateTime <= periodEnd && f.REF_Glider_ID == m_Glider.Glider_ID)
                 .Aggregate(TimeSpan.Zero,(sub,f) => sub + f.FlightDuration);
             return l_FlightTime;

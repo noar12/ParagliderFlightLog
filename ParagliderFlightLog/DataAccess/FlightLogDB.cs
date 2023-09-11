@@ -480,6 +480,19 @@ namespace ParagliderFlightLog.DataAccess
 
 		}
 
+		public List<Flight> GetFlightDoneWithGlider(Glider glider)
+		{
+			string sqlStatement = @"SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime
+									FROM Flights
+									WHERE REF_Glider_ID = @Glider_ID;";
+			var output = _db.LoadData<Flight, dynamic>(sqlStatement, glider, LoadConnectionString()).ToList();
+			foreach (var flight in output)
+			{
+				AddFlightProperties(flight);
+			}
+			return output;
+		}
+
 
 		public void UpdateFlight(Flight flight)
 		{
