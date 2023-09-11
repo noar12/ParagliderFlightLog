@@ -491,7 +491,7 @@ namespace ParagliderFlightLog.DataAccess
 									TakeOffDateTime = @TakeOffDateTIme,
 									IgcFileContent = @IgcFileContent
 									WHERE Flight_ID = @Flight_ID;";
-			_db.SaveData(sqlStatement, new { flight }, LoadConnectionString());
+			_db.SaveData(sqlStatement, flight, LoadConnectionString());
 		}
 
 		public void UpdateSite(Site site)
@@ -506,7 +506,7 @@ namespace ParagliderFlightLog.DataAccess
 			Latitude = @Latitude,
 			Longitude = @Longitude
 			WHERE Site_ID = @Site_ID;";
-			_db.SaveData(sqlStatement, new { site }, LoadConnectionString());
+			_db.SaveData(sqlStatement, site, LoadConnectionString());
 		}
 
 		public void UpdateGlider(Glider glider)
@@ -519,7 +519,7 @@ namespace ParagliderFlightLog.DataAccess
 									HomologationCategory = @HomologationCategory,
 									IGC_Name = @IGC_Name
 									WHERE Glider_ID = @Glider_ID;";
-			_db.SaveData(sqlStatement, new { glider }, LoadConnectionString());
+			_db.SaveData(sqlStatement, glider, LoadConnectionString());
 		}
 
 		public void DeleteFlight(Flight m_Flight)
