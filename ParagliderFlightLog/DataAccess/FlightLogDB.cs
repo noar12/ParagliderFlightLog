@@ -22,11 +22,13 @@ namespace ParagliderFlightLog.DataAccess
 	{
 		private readonly SqliteDataAccess _db;
 		private readonly IConfiguration _config;
+		private readonly ILogger<FlightLogDB> _logger;
 
-		public FlightLogDB(IConfiguration config)
+		public FlightLogDB(IConfiguration config, ILogger<FlightLogDB> logger)
 		{
 			_db = new();
 			_config = config;
+			_logger = logger;
 			if (!_db.DbExists(LoadConnectionString()))
 			{
 				CreateFlightLogDB();
@@ -225,15 +227,15 @@ namespace ParagliderFlightLog.DataAccess
 			using (var sr = new StreamReader(IGC_FilePath))
 			{
 				// to be done: check if it is a correct igc file before injecting
-				Console.WriteLine($"Parsing {IGC_FilePath}");
+				_logger.LogDebug("Parsing {IGC_FilePath}", IGC_FilePath);
 				newFlight.IgcFileContent = sr.ReadToEnd();
 			}
 
 			AddFlightProperties(newFlight);
 
-			Console.WriteLine("Finding take off date time");
+			
 			newFlight.TakeOffDateTime = GetTakeOffTimeFromIgcContent(newFlight.IgcFileContent);
-
+			_logger.LogDebug("Find take off date time: {TakeOffDateTime}", newFlight.TakeOffDateTime);
 			//Search for glider
 			if (!string.IsNullOrEmpty(newFlight.IGC_GliderName))
 			{

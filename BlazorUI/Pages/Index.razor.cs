@@ -93,7 +93,7 @@ namespace BlazorUI.Pages
 
         async Task OnAddFlights(InputFileChangeEventArgs e)
         {
-            Console.WriteLine($"ContentRootPath is : {Environment.ContentRootPath}");
+            _logger.LogInformation($"ContentRootPath is : {Environment.ContentRootPath}");
             List<string> l_IgcFilePaths = new List<string>();
             foreach (var file in e.GetMultipleFiles())
             {
@@ -105,11 +105,11 @@ namespace BlazorUI.Pages
                     await using FileStream fs = new(path, FileMode.Create);
                     await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
                     l_IgcFilePaths.Add(fs.Name);
-                    Console.WriteLine($"File copied to {fs.Name}");
+                    _logger.LogDebug("File copied to {fs.Name}", fs.Name);
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("File: {Filename} Error: {Error}", file.Name, ex.Message);
+                    _logger.LogError("File: {Filename} Error: {Error}", file.Name, ex.Message);
                 }
             }
 
@@ -122,7 +122,7 @@ namespace BlazorUI.Pages
                 }
                 catch (System.IO.IOException ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    _logger.LogError(ex.Message);
                 }
             }
 
