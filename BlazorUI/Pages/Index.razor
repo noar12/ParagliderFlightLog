@@ -68,11 +68,15 @@
 	}
 	void ShowContextMenuWithItems(MouseEventArgs args)
 	{
-		ContextMenuService.Open(args,
+		if (SelectedFlights is not null && SelectedFlights.Count == 1)
+		{
+					ContextMenuService.Open(args,
 			new List<ContextMenuItem> {
 				new ContextMenuItem(){ Text = "Edit flight", Value = flightAction.Edit },
 				new ContextMenuItem(){ Text = "Remove flights", Value = flightAction.Remove },
 					 }, OnMenuItemClick);
+		}
+
 	}
 	void OnMenuItemClick(MenuItemEventArgs args)
 	{

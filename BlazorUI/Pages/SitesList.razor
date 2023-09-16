@@ -60,10 +60,13 @@
         }
     }
     void ShowContextMenuWithItems(MouseEventArgs args){
-        ContextMenuService.Open(args,
-            new List<ContextMenuItem> {
+        if (SelectedSites is not null && SelectedSites.Count == 1)
+        {
+            ContextMenuService.Open(args,
+    new List<ContextMenuItem> {
                 new ContextMenuItem(){ Text = "Edit site", Value = siteAction.Edit },
-             }, OnMenuItemClick);
+         }, OnMenuItemClick);
+        }
     }
     void OnMenuItemClick(MenuItemEventArgs args)
     {
