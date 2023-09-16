@@ -241,7 +241,6 @@ namespace ParagliderFlightLog.DataAccess
 				if (glider != null)
 				{
 					newFlight.REF_Glider_ID = glider.Glider_ID;
-					WriteGlidersInDB(new List<Glider> { glider });
 				}
 			}
 
