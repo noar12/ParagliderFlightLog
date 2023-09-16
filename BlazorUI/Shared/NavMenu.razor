@@ -7,30 +7,18 @@
     </div>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Flights list
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="SitesList" Match="NavLinkMatch.All">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Sites list
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="FlightsStatistic" Match="NavLinkMatch.All">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Flights statistic
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="Gliderslist" Match="NavLinkMatch.All">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Gliders
-            </NavLink>
-        </div>
-    </nav>
-</div>
+@if (!collapseNavMenu)
+{
+    <RadzenPanelMenu>
+        <RadzenPanelMenuItem Text="Flights List" Icon="menu_book" Path="/"></RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Sites List" Icon="place" Path="SitesList"></RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Flights Statistic" Icon="bar_chart" Path="FlightsStatistic"></RadzenPanelMenuItem>
+        <RadzenPanelMenuItem Text="Glider" Icon="paragliding" Path="Gliderslist"></RadzenPanelMenuItem>
+    </RadzenPanelMenu>
+}
+
+
+
 
 @code {
     private bool collapseNavMenu = true;

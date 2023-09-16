@@ -15,7 +15,7 @@
 	<div class="row">
 		<div class="col-8">
 			<InputFile OnChange="@OnAddFlights" multiple />
-			<RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
+			<RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="18"
 							AllowSorting="true" Data="@mvm.FlightListViewModel" TItem="FlightViewModel"
 							SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedFlights
 							ContextMenu=@(args => ShowContextMenuWithItems(args))>
