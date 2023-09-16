@@ -16,10 +16,10 @@ namespace ParagliderFlightLog.ViewModels
 		FlightLogDB _flightLog;
 		IConfiguration _config;
 
-		public MainViewModel(IConfiguration config)
+		public MainViewModel(IConfiguration config, FlightLogDB flightLogDB)
 		{
 			_config = config;
-			_flightLog = new FlightLogDB(_config); //todo move to DI
+			_flightLog = flightLogDB; //todo move to DI
 			FlightListViewModel = _flightLog.GetAllFlights().Select(f => f.ToVM(_flightLog)).ToList();
 			SiteListViewModel = _flightLog.GetAllSites().Select(s => s.ToVM(_flightLog)).ToList();
 			GliderListViewModel = _flightLog.GetAllGliders().Select(g => g.ToVM(_flightLog)).ToList();
@@ -98,7 +98,8 @@ namespace ParagliderFlightLog.ViewModels
 		{
 			foreach (string filePath in filePaths)
 			{
-				Flight flight = _flightLog.ImportFlightFromIGC(filePath);
+                Console.WriteLine($"importing {filePath}");
+                Flight flight = _flightLog.ImportFlightFromIGC(filePath);
 				FlightListViewModel.Add(new FlightViewModel(flight, _flightLog));
 				
 			}

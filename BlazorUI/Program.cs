@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.Extensions.FileProviders;
 using Radzen;
 using ParagliderFlightLog.ViewModels;
+using ParagliderFlightLog.DataAccess;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,7 @@ builder.Services.AddScoped<ContextMenuService>();
 // Register our own injectables
 builder.Services.AddScoped<MainViewModel>();
 builder.Services.AddScoped<FlightsStatisticsViewModel>();
+builder.Services.AddScoped<FlightLogDB>();
 
 var app = builder.Build();
 // Otherwise base WWW files like CSS are not found

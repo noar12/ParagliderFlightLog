@@ -14,6 +14,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using ParagliderFlightLog.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace ParagliderFlightLog.DataAccess
 {
@@ -224,12 +225,13 @@ namespace ParagliderFlightLog.DataAccess
 			using (var sr = new StreamReader(IGC_FilePath))
 			{
 				// to be done: check if it is a correct igc file before injecting
+				Console.WriteLine($"Parsing {IGC_FilePath}");
 				newFlight.IgcFileContent = sr.ReadToEnd();
 			}
 
 			AddFlightProperties(newFlight);
 
-
+			Console.WriteLine("Finding take off date time");
 			newFlight.TakeOffDateTime = GetTakeOffTimeFromIgcContent(newFlight.IgcFileContent);
 
 			//Search for glider
