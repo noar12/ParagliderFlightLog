@@ -1,6 +1,8 @@
 ﻿@page "/SitesList"
 @inject ContextMenuService ContextMenuService
 @inject DialogService DialogService
+@inject IJSRuntime jsRuntime
+@inject ILogger<SitesList> _logger;
 @using System
 @using System.IO
 @using Microsoft.AspNetCore.Hosting
@@ -13,11 +15,12 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-8">
+        <div class="col-6">
             <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="19"
                             AllowSorting="true" Data="@mvm.SiteListViewModel" TItem="SiteViewModel"
-                            SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedSites
-                            ContextMenu=@(args => ShowContextMenuWithItems(args))>
+                            SelectionMode="DataGridSelectionMode.Single"
+                            ContextMenu=@(args => ShowContextMenuWithItems(args))
+                            ValueChanged="UpdateSiteDetails">
                 <Columns>
                     <RadzenDataGridColumn TItem="SiteViewModel" Property="Name" Title="Site name" Width="150px" />
                     <RadzenDataGridColumn TItem="SiteViewModel" Property="Altitude" Title="Altitude" />
@@ -26,22 +29,25 @@
                 </Columns>
             </RadzenDataGrid>
         </div>
-        @if (LastSelectedSite != null)
-        {
-            <div class="col-4">
-                <div class="row">
-                    <strong>Site name:</strong> @LastSelectedSite.Name
-                </div>
-                <RadzenGoogleMap style="height: 500px"
-                                 Zoom=12 Center=@(new GoogleMapPosition() { Lat = LastSelectedSite.Latitude, Lng = LastSelectedSite.Longitude })>
-                    <Markers>
-                        <RadzenGoogleMapMarker Title="SiteMarker" Label=@LastSelectedSite.Name Position=@(new GoogleMapPosition() { Lat = LastSelectedSite.Latitude, Lng = LastSelectedSite.Longitude }) />
-                    </Markers>
-                </RadzenGoogleMap>
+        <div class="col-6">
+
+            <div class="row">
+                <strong>Site name:</strong>
+                @if (LastSelectedSite is not null)
+                {
+                    <p>@LastSelectedSite.Name</p>
+                }
+                else
+                {
+                    <p>Please select a site</p>
+                }
             </div>
-        }
-        
+
+
+            <div class="row" id="map" style="height: 500px"></div>
+        </div>
     </div>
 </div>
+
 
 

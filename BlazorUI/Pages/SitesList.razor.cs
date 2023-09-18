@@ -19,11 +19,26 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using ParagliderFlightLog.ViewModels;
+using Microsoft.JSInterop;
 
 namespace BlazorUI.Pages
 {
-    public partial class SitesList
+    public partial class SitesList : IAsyncDisposable
     {
+        private const int SITE_MAP_ZOOM_LEVEL = 12;
+        private IJSObjectReference? module;
+        private object? map;
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmap.js");
+                if (module != null)
+                {
+                    map = await module.InvokeAsync<IJSObjectReference>("load_map", "map", 0, 0, 2);
+                }
+            }
+        }
         protected override void OnInitialized()
         {
         }
@@ -59,7 +74,28 @@ namespace BlazorUI.Pages
 
             ContextMenuService.Close();
         }
+        async Task UpdateSiteDetails(object arg)
+        {
+            if (arg is IList<SiteViewModel> sites)
+            {
+                SelectedSites = sites;
+                if (module is not null)
+                {
+                    map = await module.InvokeAsync<IJSObjectReference>("modify_map",
+                                                            map,
+                                                            sites[^1].Latitude,
+                                                            sites[^1].Longitude,
+                                                            SITE_MAP_ZOOM_LEVEL);
+                    map = await module.InvokeAsync<IJSObjectReference>("add_marker",
+                                                            map,
+                                                            sites[^1].Latitude,
+                                                            sites[^1].Longitude,
+                                                            sites[^1].Name
+                    );
+                }
+            }
 
+        }
         enum siteAction
         {
             Edit,
@@ -69,6 +105,23 @@ namespace BlazorUI.Pages
         {
             await DialogService.OpenAsync<EditSite>($"Edit site", new Dictionary<string, object>() { { "SiteToEdit", LastSelectedSite }, { "ViewModel", mvm } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
             StateHasChanged();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (module != null)
+            {
+                try
+                {
+                    await module.DisposeAsync();
+                }
+                catch (Exception e)
+                {
+
+                    _logger.LogError(e.Message);
+                }
+
+            }
         }
 
         int SiteUseCount
