@@ -110,7 +110,7 @@ namespace ParagliderFlightLog.ViewModels
 		{
 			get
 			{
-				return _db.GetSiteDoneFlights(Site).Count;
+				return _db.GetSiteFlightCount(Site);
 			}
 		}
 

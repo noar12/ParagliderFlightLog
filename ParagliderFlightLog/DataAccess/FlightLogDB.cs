@@ -419,16 +419,15 @@ namespace ParagliderFlightLog.DataAccess
 			return output;
 		}
 
-		public List<Flight> GetSiteDoneFlights(Site site)
+		public int GetSiteFlightCount(Site site)
 		{
-			string sqlStatement = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime " +
-			"FROM Flights " +
-			"WHERE REF_TakeOffSite_ID = @Id;";
-			List<Flight> output = _db.LoadData<Flight, dynamic>(sqlStatement, new { Id = site.Site_ID }, LoadConnectionString());
-			foreach (var flight in output)
-			{
-				AddFlightProperties(flight);
-			}
+			string sqlStatement = @"SELECT COUNT(1)
+									FROM Flights f
+									WHERE f.REF_TakeOffSite_ID = @Site_ID
+									GROUP BY f.REF_TakeOffSite_ID;";
+
+			int output = _db.LoadData<int, dynamic>(sqlStatement, new { site.Site_ID }, LoadConnectionString()).FirstOrDefault();
+
 			return output;
 		}
 
