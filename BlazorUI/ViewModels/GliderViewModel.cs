@@ -27,12 +27,12 @@ namespace ParagliderFlightLog.ViewModels
         public string IgcName { get => m_Glider.IGC_Name; set => m_Glider.IGC_Name = value; }
 
         public string FullName { get => m_Glider.FullName; }
-        public int TotalFlightCount { get => _db.GetFlightDoneWithGlider(m_Glider).Count; }
+        public int TotalFlightCount { get => _db.GetFlightDoneCountWithGlider(m_Glider); }
         public string TotalFlightTime
         {
             get
             {
-                TimeSpan l_TotalFlightTime = FlightTimeInPeriod(DateTime.MinValue, DateTime.MaxValue);
+                TimeSpan l_TotalFlightTime = _db.FlightTimeInPeriodWithGlider(Glider, DateTime.MinValue, DateTime.MaxValue);
                 return $"{(int)l_TotalFlightTime.TotalHours}:{l_TotalFlightTime.Minutes.ToString().PadLeft(2,'0')}";
             }
         }
@@ -40,7 +40,7 @@ namespace ParagliderFlightLog.ViewModels
         {
             get
             {
-                TimeSpan l_TimeSinceLastCheck = FlightTimeInPeriod(m_Glider.LastCheckDateTime, DateTime.MaxValue);
+                TimeSpan l_TimeSinceLastCheck = _db.FlightTimeInPeriodWithGlider(Glider, m_Glider.LastCheckDateTime, DateTime.MaxValue);
                 return $"{(int)l_TimeSinceLastCheck.TotalHours}:{l_TimeSinceLastCheck.Minutes.ToString().PadLeft(2, '0')}";
             }
         }
@@ -68,14 +68,6 @@ namespace ParagliderFlightLog.ViewModels
             }
 
 
-        }
-        private TimeSpan FlightTimeInPeriod(DateTime periodStart, DateTime periodEnd)
-        {
-            var gliderFlights = _db.GetFlightDoneWithGlider(m_Glider);
-            TimeSpan l_FlightTime = gliderFlights
-                .Where(f=> f.TakeOffDateTime >= periodStart && f.TakeOffDateTime <= periodEnd && f.REF_Glider_ID == m_Glider.Glider_ID)
-                .Aggregate(TimeSpan.Zero,(sub,f) => sub + f.FlightDuration);
-            return l_FlightTime;
         }
 
         public override string ToString()

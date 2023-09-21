@@ -64,8 +64,8 @@ namespace BlazorUI.Pages
 
         async Task OnEditGlider()
         {
-            await DialogService.OpenAsync<EditGlider>($"Edit glider", new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
-            mvm.EditGlider(LastSelectedGlider);
+            await DialogService.OpenAsync<EditGlider>($"Edit glider", new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider! } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
+            mvm.EditGlider(LastSelectedGlider!);
             StateHasChanged();
         }
 

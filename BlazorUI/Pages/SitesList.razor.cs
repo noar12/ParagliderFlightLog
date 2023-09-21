@@ -1,25 +1,7 @@
-using global::System.Collections.Generic;
-using global::System.Linq;
-using global::System.Threading.Tasks;
-using global::Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
 using Microsoft.JSInterop;
-using BlazorUI;
-using BlazorUI.Shared;
 using Radzen;
-using Radzen.Blazor;
-using System;
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
 using ParagliderFlightLog.ViewModels;
-using Microsoft.JSInterop;
 
 namespace BlazorUI.Pages
 {
@@ -103,7 +85,7 @@ namespace BlazorUI.Pages
 
         async Task OnEditSite()
         {
-            await DialogService.OpenAsync<EditSite>($"Edit site", new Dictionary<string, object>() { { "SiteToEdit", LastSelectedSite }, { "ViewModel", mvm } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
+            await DialogService.OpenAsync<EditSite>($"Edit site", new Dictionary<string, object>() { { "SiteToEdit", LastSelectedSite! }, { "ViewModel", mvm } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
             StateHasChanged();
         }
 
@@ -124,12 +106,5 @@ namespace BlazorUI.Pages
             }
         }
 
-        int SiteUseCount
-        {
-            get
-            {
-                return LastSelectedSite.SiteUseCount;
-            }
-        }
     }
 }

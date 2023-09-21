@@ -222,7 +222,7 @@ namespace ParagliderFlightLog.DataAccess
 		/// <exception cref="NotImplementedException"></exception>
 		public Flight ImportFlightFromIGC(string IGC_FilePath)
 		{
-			Flight newFlight = new Flight();
+			var newFlight = new Flight();
 
 			using (var sr = new StreamReader(IGC_FilePath))
 			{
@@ -266,11 +266,10 @@ namespace ParagliderFlightLog.DataAccess
 
 		private Glider? FindGliderFromGliderIgcName(string IGC_Name)
 		{
-			Glider? output = null;
 			string sqlGetGlider = @"SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name
 								FROM Gliders
 								WHERE IGC_Name = @IGC_Name;";
-			output = _db.LoadData<Glider, dynamic>(sqlGetGlider, new { IGC_Name }, LoadConnectionString()).FirstOrDefault();
+			var output = _db.LoadData<Glider, dynamic>(sqlGetGlider, new { IGC_Name }, LoadConnectionString()).FirstOrDefault();
 
 			return output;
 		}
@@ -480,20 +479,26 @@ namespace ParagliderFlightLog.DataAccess
 			return output;
 
 		}
-
-		public List<Flight> GetFlightDoneWithGlider(Glider glider)
+		public int GetFlightDoneCountWithGlider(Glider glider)
 		{
-			string sqlStatement = @"SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime
-									FROM Flights
-									WHERE REF_Glider_ID = @Glider_ID;";
-			var output = _db.LoadData<Flight, dynamic>(sqlStatement, glider, LoadConnectionString()).ToList();
-			foreach (var flight in output)
-			{
-				AddFlightProperties(flight);
-			}
+			string sqlStatement = @"SELECT COUNT(1)
+									FROM Flights f
+									WHERE f.REF_Glider_ID = @Glider_ID
+									GROUP BY f.REF_Glider_ID";
+			var output = _db.LoadData<int,dynamic>(sqlStatement,glider, LoadConnectionString()).FirstOrDefault();
 			return output;
 		}
+		public TimeSpan FlightTimeInPeriodWithGlider(Glider glider, DateTime start, DateTime end)
+		{
+			string sqlStatement = @"SELECT SUM(FlightDuration_s)
+									FROM Flights f
+									WHERE f.REF_Glider_ID = @Glider_ID AND
+									f.TakeOffDateTime >= @start AND
+									f.TakeOffDateTime <= @end";
+			var result = _db.LoadData<int?, dynamic>(sqlStatement, new { glider.Glider_ID, start, end }, LoadConnectionString()).FirstOrDefault();
+			return TimeSpan.FromSeconds(result ?? 0);
 
+		}
 
 		public void UpdateFlight(Flight flight)
 		{
