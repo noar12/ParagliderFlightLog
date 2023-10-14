@@ -5,10 +5,8 @@
         <MyTextInput Label="Manufacturer" @bind-Value=@GliderToEdit.Manufactuer />
         <MyTextInput Label="Model" @bind-Value=@GliderToEdit.Model />
         <MyTextInput Label="Igc Name" @bind-Value=@GliderToEdit.IgcName />
-        <strong>Build year</strong>
         <MyIntegerInput Label="BuildYear" @bind-Value=@GliderToEdit.BuildYear />
-        <strong>Last check date</strong>
-        <RadzenDatePicker @bind-Value=@GliderToEdit.LastCheckDateTime DateFormat="d" class="w-100" />
+        <MyDatePicker Label="Last Check Date" @bind-Value=@GliderToEdit.LastCheckDateTime DateFormat="d" />
         <strong>Homologation category</strong>
         <RadzenDropDown TValue="string" @bind-Value=@GliderToEdit.HomologationCategoryDisplay Data=@GliderViewModel.HomologationCategories/>
     </div>

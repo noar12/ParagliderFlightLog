@@ -1,0 +1,25 @@
+﻿<RadzenFormField Text="@Label" Variant="@Variant">
+    <RadzenDatePicker TValue="DateTime" Value="@Value" DateFormat="@DateFormat" Change="OnChange" />
+</RadzenFormField>
+@code {
+    [Parameter]
+    public DateTime Value { get; set; }
+    [Parameter]
+    public string Label { get; set; } = "";
+    [Parameter]
+    public Variant Variant { get; set; } = Variant.Outlined;
+    [Parameter]
+    public EventCallback<DateTime> ValueChanged { get; set; }
+    [Parameter]
+    public string DateFormat { get; set; } = "d";
+    private void OnChange(DateTime? newValue)
+    {
+        if (newValue != null)
+        {
+            Value = (DateTime)newValue;
+            ValueChanged.InvokeAsync((DateTime)newValue);
+        }
+        
+        
+    }
+}
