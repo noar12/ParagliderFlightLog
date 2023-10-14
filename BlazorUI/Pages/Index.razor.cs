@@ -25,7 +25,6 @@ namespace BlazorUI.Pages
     public partial class Index
     {
         private RadzenDataGrid<FlightViewModel> dataGrid = new();
-        private Variant variant = Variant.Outlined;
         protected override void OnInitialized()
         {
         }
@@ -129,6 +128,11 @@ namespace BlazorUI.Pages
 
             StateHasChanged();
             await dataGrid.Reload();
+        }
+        private string text = "";
+        void InputTextChanged(string newText)
+        {
+            text = newText;
         }
     }
 }
