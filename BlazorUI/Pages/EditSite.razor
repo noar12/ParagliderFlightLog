@@ -5,18 +5,16 @@
     <div class="col-4">
         <MyTextInput Label="Name" @bind-Value=@SiteToEdit.Name />
         <MyTextInput Label="Town" @bind-Value=@SiteToEdit.Town />
-        <strong>Country</strong>
-                <RadzenDropDown AllowFiltering="false" Data=@SiteToEdit.AvailableCountry @bind-Value=@SiteToEdit.Country
-                        Class="w-100" />
+        <RadzenFormField Text="Country" Variant="Variant.Outlined">
+            <RadzenDropDown AllowFiltering="false" Data=@SiteToEdit.AvailableCountry @bind-Value=@SiteToEdit.Country />
+        </RadzenFormField>
+            <RadzenFormField Text="Wind From" Variant="Variant.Outlined">
+                <RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@SiteToEdit.AvailableWindOrientation @bind-Value=@SiteToEdit.WindOrientationBegin />
+            </RadzenFormField>
+            <RadzenFormField Text="Wind To" Variant="Variant.Outlined">
+                <RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@SiteToEdit.AvailableWindOrientation @bind-Value=@SiteToEdit.WindOrientationEnd />
+            </RadzenFormField>
 
-        <strong>Wind</strong>
-
-        <strong>From</strong>
-        <RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@SiteToEdit.AvailableWindOrientation @bind-Value=@SiteToEdit.WindOrientationBegin
-                        Class="w-100" />
-        <strong>To</strong>
-        <RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@SiteToEdit.AvailableWindOrientation @bind-Value=@SiteToEdit.WindOrientationEnd
-                        Class="w-100" />
     </div>
     <div class="col-8">
         <div class="row">
@@ -27,11 +25,11 @@
     </div>
 </div>
 @code {
-    [Parameter] 
+    [Parameter]
     public SiteViewModel SiteToEdit { get; set; }
     [Parameter]
     public MainViewModel ViewModel { get; set; }
-    
+
 
 
 }

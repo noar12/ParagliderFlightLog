@@ -1,14 +1,25 @@
 ﻿@using ParagliderFlightLog.ViewModels
-<strong>Glider:</strong>
-<RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ViewModel.GliderListViewModel @bind-Value=@FlightToEdit.Glider
-                Class="w-100" />
-<strong>Site:</strong>
-<RadzenDropDown AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" Data=@ViewModel.SiteListViewModel @bind-Value=@FlightToEdit.TakeOffSite
-                Class="w-100" />
-<strong>Comment:</strong>
-<RadzenTextArea @bind-Value=FlightToEdit.Comment Class="w-100" Rows="10"/>
+        <RadzenFormField Text="Glider" Variant="Variant.Outlined">
+            <RadzenDropDown AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            Data=@ViewModel.GliderListViewModel
+            @bind-Value=@FlightToEdit.Glider Class="w-100" />
+        </RadzenFormField>
+        <RadzenFormField Text="Site" Variant="Variant.Outlined">
+            <RadzenDropDown AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            Data=@ViewModel.SiteListViewModel
+            @bind-Value=@FlightToEdit.TakeOffSite Class="w-100" />
+        </RadzenFormField>
+
+
+    <RadzenTextArea Placeholder="Comment" @bind-Value=FlightToEdit.Comment Class="w-100" Rows="10" />
+
+
+
+
 @code {
-    [Parameter] 
+    [Parameter]
     public FlightViewModel FlightToEdit { get; set; }
     [Parameter]
     public MainViewModel ViewModel { get; set; }

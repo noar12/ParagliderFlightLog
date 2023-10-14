@@ -7,8 +7,9 @@
         <MyTextInput Label="Igc Name" @bind-Value=@GliderToEdit.IgcName />
         <MyIntegerInput Label="BuildYear" @bind-Value=@GliderToEdit.BuildYear />
         <MyDatePicker Label="Last Check Date" @bind-Value=@GliderToEdit.LastCheckDateTime DateFormat="d" />
-        <strong>Homologation category</strong>
-        <RadzenDropDown TValue="string" @bind-Value=@GliderToEdit.HomologationCategoryDisplay Data=@GliderViewModel.HomologationCategories/>
+        <RadzenFormField Text="Homologation Category" Variant="Variant.Outlined">
+            <RadzenDropDown TValue="string" @bind-Value=@GliderToEdit.HomologationCategoryDisplay Data=@GliderViewModel.HomologationCategories />
+        </RadzenFormField>
     </div>
 </div>
 @code {
