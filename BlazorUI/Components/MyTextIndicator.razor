@@ -1,0 +1,17 @@
+﻿<RadzenText TextStyle="TextStyle.Overline" Text="@Label" />
+@if (Bold)
+{
+    <RadzenText TextStyle="TextStyle.Body1"><b>@Text</b></RadzenText>
+}
+else
+{
+    <RadzenText TextStyle="TextStyle.Body1">@Text</RadzenText>
+}
+@code {
+    [Parameter]
+    public string Label { get; set; } = "";
+    [Parameter]
+    public string Text { get; set; } = "";
+    [Parameter]
+    public bool Bold { get; set; } = true;
+}

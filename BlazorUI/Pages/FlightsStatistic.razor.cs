@@ -31,7 +31,7 @@ namespace BlazorUI.Pages
                 return;
             DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
         }
-
+        private Variant variant = Variant.Outlined;
         StatisticalFlightsAnalysis AnalysisToDo;
         int YearToAnalyse;
         void OnAnalyze()

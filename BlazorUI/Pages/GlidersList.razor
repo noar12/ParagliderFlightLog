@@ -5,6 +5,7 @@
 @using System.IO
 @using Microsoft.AspNetCore.Hosting
 @using Microsoft.Extensions.Logging
+@using BlazorUI.Components
 @inject IWebHostEnvironment Environment
 @inject MainViewModel mvm
 @using ParagliderFlightLog.ViewModels
@@ -28,9 +29,9 @@
 		@if (LastSelectedGlider != null)
 		{
 			<div class="col-4">
-				<div class="row"><strong>Total flight count:</strong> @LastSelectedGlider.TotalFlightCount</div>
-				<div class="row"> <strong>Total flight time:</strong> @LastSelectedGlider.TotalFlightTime</div>
-				<div class="row"><strong>Flight time since last check:</strong> @LastSelectedGlider.FlightTimeSinceLastCheck</div>
+				<MyNumericIndicator Label="Total flight count" Value="@LastSelectedGlider.TotalFlightCount" Format="F0"/>
+				<MyTextIndicator Label="Total flight time" Text="@LastSelectedGlider.TotalFlightTime" />
+				<MyTextIndicator Label="Flight time since last check" Text="@LastSelectedGlider.FlightTimeSinceLastCheck" />
 			</div>
 		}
 

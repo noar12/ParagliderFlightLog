@@ -3,6 +3,7 @@
 @inject DialogService DialogService
 @using System
 @using System.IO
+@using BlazorUI.Components
 @using Microsoft.AspNetCore.Hosting
 @using Microsoft.Extensions.Logging
 @inject IWebHostEnvironment Environment
@@ -28,25 +29,15 @@
 		</div>
 		@if (LastSelectedFlight != null)
 		{
+
 			<div class="col-4">
-				<div class="row">
-					<strong>Glider:</strong> @LastSelectedFlight.GliderName
-				</div>
-				<div class="row">
-					<strong>Max height [m]:</strong> @LastSelectedFlight.MaxHeight
-				</div>
-				<div class="row">
-					<strong>Trace length [km]:</strong> @LastSelectedFlight.TraceLength
-				</div>
-				<div class="row">
-					<strong>Max climb (8s) [m/s]:</strong> @LastSelectedFlight.MaxClimb
-				</div>
-				<div class="row">
-					<strong>Max sink (8s) [m/s]:</strong> @LastSelectedFlight.MaxSink
-				</div>
-				<div class="row">
-					<strong>Comment:</strong> @LastSelectedFlight.Comment
-				</div>
+				<MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName"/>
+				<MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxHeight" UnitSymbol="m" Format="F0"/>
+				<MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2"/>
+				<MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1"/>
+				<MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1"/>
+				<MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false/>
+
 			</div>
 		}
 

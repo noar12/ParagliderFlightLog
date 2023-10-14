@@ -3,6 +3,7 @@
 @using System.IO
 @using Microsoft.AspNetCore.Hosting
 @using Microsoft.Extensions.Logging
+@using BlazorUI.Components
 @inject IWebHostEnvironment Environment
 @inject MainViewModel mvm
 @inject FlightsStatisticsViewModel fsvm
@@ -12,29 +13,29 @@
 <div class="container">
     <div class="row">
         <div class="col-4">
-            <strong>Analyze</strong>
-            <RadzenDropDown TValue="StatisticalFlightsAnalysis" AllowFiltering="false" Data=@Enum.GetValues(typeof(StatisticalFlightsAnalysis)) @bind-Value=AnalysisToDo
-                            Class="w-100">
-                <Template>
-                    @(GetAnalyseName(context))
-                </Template>
-            </RadzenDropDown>
-
-            <strong>Year to analyze</strong>
-            <RadzenDropDown AllowFiltering="false" Data=@mvm.YearsOfFlying @bind-Value=@YearToAnalyse
-                            Class="w-100" />
-            <RadzenButton Click=@(args => OnAnalyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
-
+            <RadzenStack Orientation="Orientation.Vertical">
+                <RadzenFormField Text="Analyze" Variant="@variant">
+                    <RadzenDropDown TValue="StatisticalFlightsAnalysis" AllowFiltering="false" Data=@Enum.GetValues(typeof(StatisticalFlightsAnalysis)) @bind-Value=AnalysisToDo
+                                    Class="w-100">
+                        <Template>
+                            @(GetAnalyseName(context))
+                        </Template>
+                    </RadzenDropDown>
+                </RadzenFormField>
+                <RadzenFormField Text="Year to analyze" Variant="@variant">
+                    <RadzenDropDown AllowFiltering="false" Data=@mvm.YearsOfFlying @bind-Value=@YearToAnalyse
+                                    Class="w-100" />
+                </RadzenFormField>
+                <RadzenButton Click=@(args => OnAnalyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
+            </RadzenStack>
         </div>
         <div class="col-4">
-            <div class="row"><strong>Flights count:</strong> @fsvm.FlightsCount</div>
-            <div class="row"><strong>Flights total duration:</strong> @fsvm.FlightsDurationText</div>
-
-
+            <MyNumericIndicator Label="Flight Count" Value="@fsvm.FlightsCount" Format="F0" />
+            <MyTextIndicator Label="Flights total duration" Text="@fsvm.FlightsDurationText" />
         </div>
         <div class="col-4">
-            <div class="row"><strong>Flights mean duration:</strong>@fsvm.MeanFlightsDurationText</div>
-            <div class="row"><strong>Flights median duration:</strong>@fsvm.MedianFlightDurationText</div>
+            <MyTextIndicator Label="Flights mean duration" Text="@fsvm.MeanFlightsDurationText" />
+            <MyTextIndicator Label="Flights median duration" Text="@fsvm.MedianFlightDurationText" />
         </div>
     </div>
     <div class="row-cols-auto">
@@ -42,9 +43,9 @@
             @if (AnalysisToDo == StatisticalFlightsAnalysis.DurationDistribution)
             {
                 <RadzenColumnSeries Data="@DurationAnalysisResult"
-                                Title="Flight duration repartition"
-                                CategoryProperty="BarLocation"
-                                ValueProperty="BarValue" />
+                                    Title="Flight duration repartition"
+                                    CategoryProperty="BarLocation"
+                                    ValueProperty="BarValue" />
             }
             @if (AnalysisToDo == StatisticalFlightsAnalysis.MontlyMedian)
             {
@@ -52,9 +53,9 @@
                 foreach (YearMonthlyStatistic item in MonthlyMedianAnalysisResult)
                 {
                     <RadzenColumnSeries Data="@item.MonthlyMedianItems"
-                                Title="@mvm.YearsOfFlying[i].ToString()"
-                                CategoryProperty="Month"
-                                ValueProperty="BarValue" />
+                                        Title="@mvm.YearsOfFlying[i].ToString()"
+                                        CategoryProperty="Month"
+                                        ValueProperty="BarValue" />
                     i++;
                 }
             }
@@ -64,9 +65,9 @@
                 foreach (YearMonthlyStatistic item in MonthlyDurationAnalysisResult)
                 {
                     <RadzenColumnSeries Data="@item.MonthlyMedianItems"
-                                Title="@mvm.YearsOfFlying[i].ToString()"
-                                CategoryProperty="Month"
-                                ValueProperty="BarValue" />
+                                        Title="@mvm.YearsOfFlying[i].ToString()"
+                                        CategoryProperty="Month"
+                                        ValueProperty="BarValue" />
                     i++;
                 }
             }
