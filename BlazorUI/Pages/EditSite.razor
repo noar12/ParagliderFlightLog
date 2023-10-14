@@ -1,11 +1,10 @@
 ﻿@using ParagliderFlightLog.ViewModels
+@using BlazorUI.Components
 
 <div class="container">
     <div class="col-4">
-        <strong>Name</strong>
-                <RadzenTextBox @bind-Value=@SiteToEdit.Name Class="w-100" />
-        <strong>Town</strong>
-                <RadzenTextBox @bind-Value=@SiteToEdit.Town Class="w-100" />
+        <MyTextInput Label="Name" @bind-Value=@SiteToEdit.Name />
+        <MyTextInput Label="Town" @bind-Value=@SiteToEdit.Town />
         <strong>Country</strong>
                 <RadzenDropDown AllowFiltering="false" Data=@SiteToEdit.AvailableCountry @bind-Value=@SiteToEdit.Country
                         Class="w-100" />
@@ -21,13 +20,9 @@
     </div>
     <div class="col-8">
         <div class="row">
-            <strong>
-                Latitude</strong>
-            <RadzenNumeric ShowUpDown="false" @bind-Value=@SiteToEdit.Latitude Class="w-100" />
-            <strong>Longitude</strong>
-            <RadzenNumeric ShowUpDown="false" @bind-Value=@SiteToEdit.Longitude Class="w-100" />
-            <strong>Altitude</strong>
-            <RadzenNumeric ShowUpDown="false" @bind-Value=@SiteToEdit.Altitude Class="w-100" />
+            <MyNumericInput Label="Latitude [°]" @bind-Value=@SiteToEdit.Latitude />
+            <MyNumericInput Label="Longitude [°]" @bind-Value=@SiteToEdit.Longitude />
+            <MyNumericInput Label="Altiude [m]" @bind-Value=@SiteToEdit.Altitude />
         </div>
     </div>
 </div>
@@ -36,7 +31,7 @@
     public SiteViewModel SiteToEdit { get; set; }
     [Parameter]
     public MainViewModel ViewModel { get; set; }
-
     
+
 
 }

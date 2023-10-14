@@ -1,15 +1,12 @@
 ﻿@using ParagliderFlightLog.ViewModels
-
+@using BlazorUI.Components
 <div class="container">
     <div class="col-4">
-        <strong>Manufacturer</strong>
-        <RadzenTextBox @bind-Value=@GliderToEdit.Manufactuer DateFormat="d" class="w-100" />
-        <strong>Model</strong>
-        <RadzenTextBox @bind-Value=@GliderToEdit.Model DateFormat="d" class="w-100" />
-        <strong>Igc Name</strong>
-        <RadzenTextBox @bind-Value=@GliderToEdit.IgcName DateFormat="d" class="w-100" />
+        <MyTextInput Label="Manufacturer" @bind-Value=@GliderToEdit.Manufactuer />
+        <MyTextInput Label="Model" @bind-Value=@GliderToEdit.Model />
+        <MyTextInput Label="Igc Name" @bind-Value=@GliderToEdit.IgcName />
         <strong>Build year</strong>
-        <RadzenNumeric @bind-Value=@GliderToEdit.BuildYear DateFormat="d" class="w-100" />
+        <MyIntegerInput Label="BuildYear" @bind-Value=@GliderToEdit.BuildYear />
         <strong>Last check date</strong>
         <RadzenDatePicker @bind-Value=@GliderToEdit.LastCheckDateTime DateFormat="d" class="w-100" />
         <strong>Homologation category</strong>

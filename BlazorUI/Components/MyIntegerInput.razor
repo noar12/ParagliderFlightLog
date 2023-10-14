@@ -1,19 +1,18 @@
 ﻿<RadzenFormField Text="@Label" Variant="@Variant">
-    <RadzenTextBox Value="@Value" Change="OnChange"/>
+    <RadzenNumeric TValue="int" Value="@Value" Change="OnChange" />
 </RadzenFormField>
 @code {
     [Parameter]
-    public string Value { get; set; } = "";
+    public int Value { get; set; }
     [Parameter]
     public string Label { get; set; } = "";
     [Parameter]
     public Variant Variant { get; set; } = Variant.Outlined;
     [Parameter]
-    public EventCallback<string> ValueChanged { get; set; }
-    private void OnChange(string newValue)
+    public EventCallback<int> ValueChanged { get; set; }
+    private void OnChange(int newValue)
     {
         Value = newValue;
         ValueChanged.InvokeAsync(newValue);
     }
-
 }
