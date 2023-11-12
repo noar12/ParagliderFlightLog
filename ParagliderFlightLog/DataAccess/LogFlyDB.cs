@@ -69,7 +69,7 @@ namespace ParagliderFlightLog.DataAccess
 
             foreach (var gliderName in gliderNames)
             {
-                Glider glider = new() { Model = gliderName };
+                Glider glider = new() { Model = gliderName, IGC_Name = gliderName };
                 output.Add(glider);
             }
             return output;
@@ -155,10 +155,9 @@ namespace ParagliderFlightLog.DataAccess
             l_Flight.Flight_ID = Guid.NewGuid().ToString();
             l_Flight.FlightDuration = new TimeSpan(0, 0, (int)V_Duree);
             l_Flight.Comment = V_Commentaire;
-            if (V_IGC == "")
-            {
-                l_Flight.TakeOffDateTime = V_Date;
-            }
+
+            l_Flight.TakeOffDateTime = V_Date;
+
             l_Flight.IgcFileContent = V_IGC;
 
             // find the guid ref in glider and in site corresponding to m_V_Engin and m_V_Site

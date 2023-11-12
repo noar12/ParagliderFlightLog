@@ -551,7 +551,7 @@ namespace ParagliderFlightLog.DataAccess
         public async Task BackupDb()
         {
 			string dbPath = GetDbPath();
-			string backupPath = Path.Combine(new FileInfo(dbPath).Directory!.FullName, $"FlightLogBackup{DateTime.Now:yyyymmdd_HHMMSS}.db");
+			string backupPath = Path.Combine(new FileInfo(dbPath).Directory!.FullName, $"FlightLogBackup{DateTime.Now:yyyyMMdd_HHmmss}.db");
 			await Task.Run(() => File.Copy(dbPath, backupPath));
         }
 
