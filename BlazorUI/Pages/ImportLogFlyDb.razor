@@ -1,0 +1,20 @@
+﻿@page "/ImportLogFlyDb"
+
+<InputFile OnChange="@OnLogFlyDbChosen" />
+
+
+@if (_success)
+{
+    <p>Importation done:</p>
+    <ul>
+        <li>
+            Imported flight count: @_importedFlightCount
+        </li>
+        <li>
+            Imported site count:  @_importedSiteCount
+        </li>
+        <li>
+            Imported glider count: @_importedGliderCount
+        </li>
+    </ul>
+}

@@ -8,6 +8,7 @@ using System.Data.SQLite;
 using Dapper;
 using ParagliderFlightLog.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace ParagliderFlightLog.DataAccess
 {
@@ -16,39 +17,15 @@ namespace ParagliderFlightLog.DataAccess
     /// </summary>
     public class LogFlyDB
     {
-
+        private readonly ILogger<LogFlyDB> _logger;
         private FlightLogDB _flightLogDB;
         private List<LogFlyVol> m_LogFlyVolCollection = new List<LogFlyVol>();
         private List<LogFlySite> m_LogFlySiteCollection = new List<LogFlySite>();
-
-        public LogFlyDB(FlightLogDB flightLogDb)
+        public LogFlyDB(ILogger<LogFlyDB> logger, FlightLogDB flightLogDb)
         {
+            _logger = logger;
             _flightLogDB = flightLogDb;
         }
-        // Define arbitrary glider because there are not define in logfly db
-        private List<Glider> m_LogFlyGliderCollection = new List<Glider>()
-        {
-            new Glider(){
-                Glider_ID = Guid.NewGuid().ToString(),
-                Manufacturer = "Skywalk",
-                Model = "Mescal 4",
-                IGC_Name = "Mescal 4",
-                BuildYear = 2015,
-                HomologationCategory = EHomologationCategory.ENALow,
-                LastCheckDateTime = DateTime.Parse("2019-11-01"),
-                LastCheckDateTimeSpecified = true // Is it realy necessary ?
-            },
-            new Glider(){
-                Glider_ID = Guid.NewGuid().ToString(),
-                Manufacturer = "Advance",
-                Model = "Epsilon 9",
-                IGC_Name = "Epsilon 9",
-                BuildYear = 2019,
-                HomologationCategory = EHomologationCategory.ENBLow,
-                LastCheckDateTime = DateTime.Parse("2021-02-01"),
-                LastCheckDateTimeSpecified = true // Is it realy necessary ?
-            }
-        };
 
         /// <summary>
         /// Load all the data from a LogFly DB and put them in the instance field.
@@ -68,32 +45,34 @@ namespace ParagliderFlightLog.DataAccess
 
         }
         /// <summary>
-        /// Return a FlightLogDB based on the LogFly Site and Flight collection of the instance. Glider is a constant arbitrary collection (to be changed...).
+        /// Import in FlightLogDB based on the LogFly Site and Flight collection of the instance. Glider are created based on thier name in V_Engin
         /// </summary>
         /// <returns></returns>
-        public FlightLogDB BuildFlightLogDB()
+        public (int importedSitesCount, int importedGlidersCount, int importedFlightsCount) ImportInFlightLogDB()
         {
-            List<Site> l_sites = new List<Site>();
-            List<Flight> l_flights = new List<Flight>();
+            List<Site> l_sites = m_LogFlySiteCollection.Select(s => s.ToFlightLogSite()).ToList();
+            List<Glider> l_gliders = GetAllGlidersAsFlightLogDbGlider();
+            List<Flight> l_flights = m_LogFlyVolCollection.Select(v => v.ToFlightLogDBFlight(l_sites, l_gliders)).ToList();
 
+            _flightLogDB.WriteSitesInDB(l_sites);
+            _flightLogDB.WriteGlidersInDB(l_gliders);
+            _flightLogDB.WriteFlightsInDB(l_flights);
 
-            foreach (var site in m_LogFlySiteCollection)
+            return (l_sites.Count, l_gliders.Count, l_flights.Count);
+
+        }
+
+        private List<Glider> GetAllGlidersAsFlightLogDbGlider()
+        {
+            List<Glider> output = new();
+            List<string> gliderNames = m_LogFlyVolCollection.Select(v => v.V_Engin).Distinct().ToList();
+
+            foreach (var gliderName in gliderNames)
             {
-                l_sites.Add(site.ToFlightLogSite());
-
+                Glider glider = new() { Model = gliderName };
+                output.Add(glider);
             }
-
-
-            foreach (var vol in m_LogFlyVolCollection)
-            {
-                l_flights.Add(vol.ToFlightLogDBFlight(l_sites, m_LogFlyGliderCollection));
-            }
-
-            //_flightLogDB.Flights = l_flights;
-            //_flightLogDB.Sites = l_sites;
-            //_flightLogDB.Gliders = new List<Glider>(m_LogFlyGliderCollection);
-
-            return _flightLogDB;
+            return output;
         }
 
         private static string LoadConnectionString(string DB_Path)

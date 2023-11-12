@@ -19,6 +19,7 @@ builder.Services.AddScoped<ContextMenuService>();
 builder.Services.AddScoped<MainViewModel>();
 builder.Services.AddScoped<FlightsStatisticsViewModel>();
 builder.Services.AddScoped<FlightLogDB>();
+builder.Services.AddScoped<LogFlyDB>();
 
 var app = builder.Build();
 // Otherwise base WWW files like CSS are not found

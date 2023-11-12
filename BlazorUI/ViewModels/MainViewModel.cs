@@ -15,13 +15,15 @@ namespace ParagliderFlightLog.ViewModels
 	{
 		FlightLogDB _flightLog;
         private readonly ILogger<MainViewModel> _logger;
+        private readonly LogFlyDB _logFlyDB;
         IConfiguration _config;
 
-		public MainViewModel(IConfiguration config, FlightLogDB flightLogDB, ILogger<MainViewModel> logger)
+		public MainViewModel(IConfiguration config, FlightLogDB flightLogDB, ILogger<MainViewModel> logger, LogFlyDB logFlyDB)
 		{
 			_config = config;
 			_flightLog = flightLogDB; //todo move to DI
             _logger = logger;
+            _logFlyDB = logFlyDB;
             FlightListViewModel = _flightLog.GetAllFlights().Select(f => f.ToVM(_flightLog)).ToList();
 			SiteListViewModel = _flightLog.GetAllSites().Select(s => s.ToVM(_flightLog)).ToList();
 			GliderListViewModel = _flightLog.GetAllGliders().Select(g => g.ToVM(_flightLog)).ToList();
@@ -146,7 +148,17 @@ namespace ParagliderFlightLog.ViewModels
 		{
 			return FlightListViewModel.Where(f => f.TakeOffDateTime > start && f.TakeOffDateTime < end).ToList();
 		}
-		public List<FlightViewModel> FlightListViewModel { get; }
+
+        internal async Task<(int importedSitesCount, int improtedGlidersCount, int importedFlightCount)> ImportLogFlyDb(string path)
+        {
+			await _flightLog.BackupDb();
+            await Task.Run(() => _logFlyDB.LoadLogFlyDB(path));
+			(int importedSitesCount, int improtedGlidersCount, int importedFlightCount) = await Task.Run(_logFlyDB.ImportInFlightLogDB);
+
+			return (importedSitesCount, improtedGlidersCount, importedFlightCount);
+        }
+
+        public List<FlightViewModel> FlightListViewModel { get; }
 		public List<SiteViewModel> SiteListViewModel { get; }
 		public List<GliderViewModel> GliderListViewModel { get; }
 	}

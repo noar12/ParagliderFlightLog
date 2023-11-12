@@ -15,6 +15,7 @@ using System.Collections.Specialized;
 using ParagliderFlightLog.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Runtime.CompilerServices;
 
 namespace ParagliderFlightLog.DataAccess
 {
@@ -106,7 +107,7 @@ namespace ParagliderFlightLog.DataAccess
 			throw new NotImplementedException();
 		}
 
-		private void WriteSitesInDB(IList? newItems)
+		internal void WriteSitesInDB(IList? newItems)
 		{
 			if (newItems != null)
 			{
@@ -133,7 +134,7 @@ namespace ParagliderFlightLog.DataAccess
 			}
 		}
 
-		private void WriteFlightsInDB(IList? newItems)
+		internal void WriteFlightsInDB(IList? newItems)
 		{
 			if (newItems != null)
 			{
@@ -168,7 +169,7 @@ namespace ParagliderFlightLog.DataAccess
 		{
 			throw new NotImplementedException();
 		}
-		private void WriteGlidersInDB(IList? newItems)
+		internal void WriteGlidersInDB(IList? newItems)
 		{
 			if (newItems != null)
 			{
@@ -546,7 +547,24 @@ namespace ParagliderFlightLog.DataAccess
 			string sqlStatement = "DELETE FROM Flights WHERE Flight_ID = @Flight_ID";
 			_db.SaveData(sqlStatement, m_Flight, LoadConnectionString());
 		}
-	}
+
+        public async Task BackupDb()
+        {
+			string dbPath = GetDbPath();
+			string backupPath = Path.Combine(new FileInfo(dbPath).Directory!.FullName, $"FlightLogBackup{DateTime.Now:yyyymmdd_HHMMSS}.db");
+			await Task.Run(() => File.Copy(dbPath, backupPath));
+        }
+
+        private string GetDbPath()
+        {
+            string pattern = @"(?<=Data Source=).*?(?=;)";
+            Regex rgx = new Regex(pattern);
+            Match match = rgx.Match(LoadConnectionString());
+            string dbPath = match.Value;
+            
+            return dbPath;
+        }
+    }
 }
 
 
