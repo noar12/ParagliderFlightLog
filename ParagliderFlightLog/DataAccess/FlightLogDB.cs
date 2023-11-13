@@ -234,7 +234,7 @@ namespace ParagliderFlightLog.DataAccess
 
 			AddFlightProperties(newFlight);
 
-			
+
 			newFlight.TakeOffDateTime = GetTakeOffTimeFromIgcContent(newFlight.IgcFileContent);
 			_logger.LogDebug("Find take off date time: {TakeOffDateTime}", newFlight.TakeOffDateTime);
 			//Search for glider
@@ -486,7 +486,7 @@ namespace ParagliderFlightLog.DataAccess
 									FROM Flights f
 									WHERE f.REF_Glider_ID = @Glider_ID
 									GROUP BY f.REF_Glider_ID";
-			var output = _db.LoadData<int,dynamic>(sqlStatement,glider, LoadConnectionString()).FirstOrDefault();
+			var output = _db.LoadData<int, dynamic>(sqlStatement, glider, LoadConnectionString()).FirstOrDefault();
 			return output;
 		}
 		public TimeSpan FlightTimeInPeriodWithGlider(Glider glider, DateTime start, DateTime end)
@@ -548,23 +548,38 @@ namespace ParagliderFlightLog.DataAccess
 			_db.SaveData(sqlStatement, m_Flight, LoadConnectionString());
 		}
 
-        public async Task BackupDb()
-        {
+		public async Task BackupDb()
+		{
 			string dbPath = GetDbPath();
 			string backupPath = Path.Combine(new FileInfo(dbPath).Directory!.FullName, $"FlightLogBackup{DateTime.Now:yyyyMMdd_HHmmss}.db");
 			await Task.Run(() => File.Copy(dbPath, backupPath));
-        }
+		}
 
-        private string GetDbPath()
-        {
-            string pattern = @"(?<=Data Source=).*?(?=;)";
-            Regex rgx = new Regex(pattern);
-            Match match = rgx.Match(LoadConnectionString());
-            string dbPath = match.Value;
-            
-            return dbPath;
-        }
-    }
+		private string GetDbPath()
+		{
+			string pattern = @"(?<=Data Source=).*?(?=;)";
+			Regex rgx = new Regex(pattern);
+			Match match = rgx.Match(LoadConnectionString());
+			string dbPath = match.Value;
+
+			return dbPath;
+		}
+		public List<Site> GetSitesUsedInTimeRange(DateTime start, DateTime end)
+		{
+			string sqlStatement = "SELECT DISTINCT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude " +
+			"FROM Sites s " +
+			"JOIN Flights f ON s.Site_ID = f.REF_TakeOffSite_ID " +
+            "WHERE f.TakeOffDateTime < @end AND f.TakeOffDateTime > @start;";
+			var output = _db.LoadData<Site, dynamic>(sqlStatement,
+                new
+                {
+                    start = start.ToString("s"),
+                    end = end.ToString("s")
+                },
+                LoadConnectionString());
+			return output;
+		}
+	}
 }
 
 

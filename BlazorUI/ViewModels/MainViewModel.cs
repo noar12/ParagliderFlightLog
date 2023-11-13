@@ -158,6 +158,18 @@ namespace ParagliderFlightLog.ViewModels
 			return (importedSitesCount, improtedGlidersCount, importedFlightCount);
         }
 
+        internal List<SiteViewModel> SiteUsedInTimeRange(DateTime startDate, DateTime endDate)
+        {
+			List<SiteViewModel> output = new();
+            var sites = _flightLog.GetSitesUsedInTimeRange(startDate, endDate);
+            foreach (var item in sites)
+            {
+                var siteVm = new SiteViewModel(item, _flightLog);
+				output.Add(siteVm);
+            }
+			return output;
+        }
+
         public List<FlightViewModel> FlightListViewModel { get; }
 		public List<SiteViewModel> SiteListViewModel { get; }
 		public List<GliderViewModel> GliderListViewModel { get; }

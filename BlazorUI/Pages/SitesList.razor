@@ -14,6 +14,11 @@
 <PageTitle>Sites list</PageTitle>
 
 <div class="container">
+    <RadzenRow>
+        <BlazorUI.Components.MyDatePicker @bind-Value=_startDate Label="From" />
+        <BlazorUI.Components.MyDatePicker @bind-Value=_endDate Label="To"/>
+        <RadzenButton Text="Show sites in time range" Click=@(arg => OnShowSiteTimeRange(arg))/>
+    </RadzenRow>
     <div class="row">
         <div class="col-6">
             <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="19"

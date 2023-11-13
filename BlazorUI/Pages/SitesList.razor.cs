@@ -10,6 +10,9 @@ namespace BlazorUI.Pages
         private const int SITE_MAP_ZOOM_LEVEL = 12;
         private IJSObjectReference? module;
         private object? map;
+        private DateTime _startDate = DateTime.Today - TimeSpan.FromDays(365);
+        private DateTime _endDate = DateTime.Today;
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -56,7 +59,7 @@ namespace BlazorUI.Pages
 
             ContextMenuService.Close();
         }
-        async Task UpdateSiteDetails(object arg)
+        private async Task UpdateSiteDetails(object arg)
         {
             if (arg is IList<SiteViewModel> sites)
             {
@@ -76,6 +79,23 @@ namespace BlazorUI.Pages
                     );
                 }
             }
+
+        }
+
+        private async Task OnShowSiteTimeRange(object arg){
+            List<SiteViewModel> siteToShow = mvm.SiteUsedInTimeRange(_startDate, _endDate);
+            foreach (SiteViewModel site in siteToShow) {
+                if (module is not null)
+                {
+                    map = await module.InvokeAsync<IJSObjectReference>("add_marker",
+                                                            map,
+                                                            site.Latitude,
+                                                            site.Longitude,
+                                                            site.Name
+                    );
+                }
+            }
+
 
         }
         enum siteAction
