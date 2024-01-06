@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 using ParagliderFlightLog.Models;
 using Microsoft.Extensions.Configuration;
@@ -36,7 +36,7 @@ namespace ParagliderFlightLog.DataAccess
             string SqlGetAllSite = "SELECT S_ID, S_Nom, S_Alti, S_Latitude, S_Longitude, S_Commentaire FROM Site";
             string SqlGetAllVol = "SELECT V_ID, V_Date, V_Duree, V_LatDeco, V_LongDeco, V_AltDeco, V_Site, V_Commentaire, V_IGC, UTC, V_Engin, V_League, V_Score FROM Vol";
 
-            using (SQLiteConnection conn = new SQLiteConnection(LoadConnectionString(DB_Path)))
+            using (SqliteConnection conn = new SqliteConnection(LoadConnectionString(DB_Path)))
             {
                 m_LogFlySiteCollection = conn.Query<LogFlySite>(SqlGetAllSite).ToList();
                 m_LogFlyVolCollection = conn.Query<LogFlyVol>(SqlGetAllVol).ToList();

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using System.Data;
 using System.Linq;
 using System.Text;
@@ -25,7 +25,7 @@ namespace ParagliderFlightLog.DataAccess
 		public List<T> LoadData<T, U>(string sqlStatement, U parameters, string connectionString)
 		{
 			// T is the model of the data we want to load
-			using (IDbConnection connection = new SQLiteConnection(connectionString))// this will always close the connection when exiting the scope
+			using (IDbConnection connection = new SqliteConnection(connectionString))// this will always close the connection when exiting the scope
 			{
 				List<T> rows = connection.Query<T>(sqlStatement, parameters).ToList();
 				return rows;
@@ -33,7 +33,7 @@ namespace ParagliderFlightLog.DataAccess
 		}
 		public void SaveData<T>(string sqlStatement, T parameters, string connectionString)
 		{
-			using (IDbConnection connection = new SQLiteConnection(connectionString))
+			using (IDbConnection connection = new SqliteConnection(connectionString))
 			{
 				connection.Execute(sqlStatement, parameters);
 			}

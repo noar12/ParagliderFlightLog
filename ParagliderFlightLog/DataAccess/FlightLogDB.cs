@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Data;
-using System.Data.SQLite;
+using Microsoft.Data.Sqlite;
 using Dapper;
 using System.Collections;
 using System.Collections.Specialized;

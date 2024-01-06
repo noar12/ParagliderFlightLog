@@ -52,7 +52,7 @@ namespace BlazorUI.Pages
                 switch (action)
                 {
                     case siteAction.Edit:
-                        OnEditSite();
+                        _ = OnEditSite();
                         break;
                 }
             }
