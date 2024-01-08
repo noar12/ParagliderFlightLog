@@ -1,25 +1,34 @@
 ﻿@inherits LayoutComponentBase
-<PageTitle>BlazorUI</PageTitle>
-
-<div class="page">
-    <div class="sidebar" >
-        <NavMenu />
-    </div>
-
-    <main>
-
-        <article class="content px-0">
+<PageTitle>Paraglider Flight Log</PageTitle>
+<RadzenLayout>
+    <RadzenHeader>
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+            <RadzenLabel Text="Paraglider Flight Log" />
+        </RadzenStack>
+    </RadzenHeader>
+    <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute">
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="Flights List" Icon="menu_book" Path="/"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Sites List" Icon="place" Path="SitesList"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Flights Statistic" Icon="bar_chart" Path="FlightsStatistic"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Glider" Icon="paragliding" Path="Gliderslist"></RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Import from LogFly" Icon="input" Path="ImportLogFlyDb"></RadzenPanelMenuItem>
+        </RadzenPanelMenu>
+    </RadzenSidebar>
+    <RadzenBody>
             @Body
-        </article>
-        <footer class="text-center">
-            &copy; 2020 - @DateTime.Now.Year Arnaud Moretti
-        </footer>
-    </main>
-
-</div>
+    </RadzenBody>
+    <RadzenFooter>
+        <center>&copy; 2020 - @DateTime.Now.Year - Arnaud Moretti</center>
+    </RadzenFooter>
+</RadzenLayout>
 <RadzenDialog />
 <RadzenNotification />
 <RadzenContextMenu />
 <RadzenTooltip />
 
+@code {
+    bool sidebarExpanded = false;
+}
 
