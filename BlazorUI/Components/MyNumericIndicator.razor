@@ -1,12 +1,14 @@
-﻿<RadzenText TextStyle="TextStyle.Overline" Text="@Label" />
-@if (Bold)
-{
-    <RadzenText TextStyle="TextStyle.Body1"><b>@Value.ToString(@Format)</b></RadzenText>
-}
-else
-{
-    <RadzenText TextStyle="TextStyle.Body1">@Value.ToString(@Format)</RadzenText>
-}
+﻿<RadzenColumn>
+    <RadzenText TextStyle="TextStyle.Overline" Text="@Label" />
+    @if (Bold)
+    {
+        <RadzenText TextStyle="TextStyle.Body1"><b>@Value.ToString(@Format)</b></RadzenText>
+    }
+    else
+    {
+        <RadzenText TextStyle="TextStyle.Body1">@Value.ToString(@Format)</RadzenText>
+    }
+</RadzenColumn>
 @code {
     [Parameter]
     public string Label { get; set; } = "";

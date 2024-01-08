@@ -8,7 +8,7 @@
         </RadzenStack>
     </RadzenHeader>
     <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute">
-        <RadzenPanelMenu>
+        <RadzenPanelMenu Click="@(()=> sidebarExpanded = false)">
             <RadzenPanelMenuItem Text="Flights List" Icon="menu_book" Path="/"></RadzenPanelMenuItem>
             <RadzenPanelMenuItem Text="Sites List" Icon="place" Path="SitesList"></RadzenPanelMenuItem>
             <RadzenPanelMenuItem Text="Flights Statistic" Icon="bar_chart" Path="FlightsStatistic"></RadzenPanelMenuItem>

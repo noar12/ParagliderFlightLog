@@ -10,38 +10,45 @@
 @using ParagliderFlightLog.ViewModels
 <PageTitle>Flights statistic</PageTitle>
 
-<div class="container">
-    <div class="row">
-        <div class="col-4">
-            <RadzenStack Orientation="Orientation.Vertical">
-                <RadzenFormField Text="Analyze" Variant="@variant">
-                    <RadzenDropDown TValue="StatisticalFlightsAnalysis" AllowFiltering="false" Data=@Enum.GetValues(typeof(StatisticalFlightsAnalysis)) @bind-Value=AnalysisToDo
-                                    Class="w-100">
-                        <Template>
-                            @(GetAnalyseName(context))
-                        </Template>
-                    </RadzenDropDown>
-                </RadzenFormField>
-                <RadzenFormField Text="Year to analyze" Variant="@variant">
-                    <RadzenDropDown AllowFiltering="false" Data=@mvm.YearsOfFlying @bind-Value=@YearToAnalyse
-                                    Class="w-100" />
-                </RadzenFormField>
-                <RadzenButton Click=@(args => OnAnalyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
-            </RadzenStack>
-        </div>
-        <div class="col-4">
+<RadzenStack Orientation="Orientation.Horizontal">
+    <RadzenRow>
+        <RadzenColumn Size="12">
+            <RadzenFormField Text="Analyze" Variant="@variant">
+                <RadzenDropDown TValue="StatisticalFlightsAnalysis" AllowFiltering="false" Data=@Enum.GetValues(typeof(StatisticalFlightsAnalysis)) @bind-Value=AnalysisToDo
+                                Class="w-100">
+                    <Template>
+                        @(GetAnalyseName(context))
+                    </Template>
+                </RadzenDropDown>
+            </RadzenFormField>
+            <RadzenFormField Text="Year to analyze" Variant="@variant">
+                <RadzenDropDown AllowFiltering="false" Data=@mvm.YearsOfFlying @bind-Value=@YearToAnalyse
+                                Class="w-100" />
+            </RadzenFormField>
+            <RadzenButton Click=@(args => OnAnalyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
+        </RadzenColumn>
+
+
+
             <MyNumericIndicator Label="Flight Count" Value="@fsvm.FlightsCount" Format="F0" />
             <MyTextIndicator Label="Flights total duration" Text="@fsvm.FlightsDurationText" />
-        </div>
-        <div class="col-4">
+
             <MyTextIndicator Label="Flights mean duration" Text="@fsvm.MeanFlightsDurationText" />
             <MyTextIndicator Label="Flights median duration" Text="@fsvm.MedianFlightDurationText" />
-        </div>
-    </div>
-    <div class="row-cols-auto">
-        <RadzenChart style="height: 750px">
+
+    </RadzenRow>
+</RadzenStack>
+<RadzenRow>
+    <RadzenColumn>
+        <RadzenChart style="height: 700px">
+            <RadzenLegend Position="LegendPosition.Top" />
+            
+            
             @if (AnalysisToDo == StatisticalFlightsAnalysis.DurationDistribution)
             {
+                <RadzenValueAxis FormatString="{0:N2}">
+                    <RadzenAxisTitle Text="Number of Flight"/>
+                </RadzenValueAxis>
                 <RadzenColumnSeries Data="@DurationAnalysisResult"
                                     Title="Flight duration repartition"
                                     CategoryProperty="BarLocation"
@@ -49,6 +56,9 @@
             }
             @if (AnalysisToDo == StatisticalFlightsAnalysis.MontlyMedian)
             {
+                <RadzenValueAxis FormatString="{0:N2}">
+                    <RadzenAxisTitle Text="Median in Hours" />
+                </RadzenValueAxis>
                 int i = 0;
                 foreach (YearMonthlyStatistic item in MonthlyMedianAnalysisResult)
                 {
@@ -61,6 +71,9 @@
             }
             @if (AnalysisToDo == StatisticalFlightsAnalysis.MonthlyFlightDuration)
             {
+                <RadzenValueAxis FormatString="{0:N2}">
+                    <RadzenAxisTitle Text="Flight Hours" />
+                </RadzenValueAxis>
                 int i = 0;
                 foreach (YearMonthlyStatistic item in MonthlyDurationAnalysisResult)
                 {
@@ -72,7 +85,9 @@
                 }
             }
         </RadzenChart>
-    </div>
-</div>
+    </RadzenColumn>
+
+</RadzenRow>
+
 
 
