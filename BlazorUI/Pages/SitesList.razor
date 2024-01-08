@@ -13,16 +13,17 @@
 
 <PageTitle>Sites list</PageTitle>
 
-<div class="container">
+<RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
     <RadzenRow>
         <BlazorUI.Components.MyDatePicker @bind-Value=_startDate Label="From" />
         <BlazorUI.Components.MyDatePicker @bind-Value=_endDate Label="To"/>
-        <RadzenButton Text="Show sites in time range" Click=@(arg => OnShowSiteTimeRange(arg))/>
+        <RadzenButton Text="Show sites in time range" Click=@(arg => OnShowSiteTimeRange(arg)) Size="ButtonSize.Small"/>
     </RadzenRow>
-    <div class="row">
-        <div class="col-6">
-            <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="19"
+   <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="15"
                             AllowSorting="true" Data="@mvm.SiteListViewModel" TItem="SiteViewModel"
+                            style="height: calc(100vh - 200px)"
                             SelectionMode="DataGridSelectionMode.Single"
                             ContextMenu=@(args => ShowContextMenuWithItems(args))
                             ValueChanged="UpdateSiteDetails">
@@ -33,8 +34,8 @@
                     <RadzenDataGridColumn TItem="SiteViewModel" Property="SiteUseCount" Title="# Used" />
                 </Columns>
             </RadzenDataGrid>
-        </div>
-        <div class="col-6">
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
 
             <div class="row">
                 @if (LastSelectedSite is not null)
@@ -49,9 +50,9 @@
 
 
             <div class="row" id="map" style="height: 500px"></div>
-        </div>
-    </div>
-</div>
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
 
 
 
