@@ -12,35 +12,36 @@
 @using ParagliderFlightLog.ViewModels
 <PageTitle>Flight list</PageTitle>
 
-<div class="container">
-	<div class="row">
-		<div class="col-8">
-			<InputFile OnChange="@OnAddFlights" multiple />
-			<RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="18"
-							AllowSorting="true" Data="@mvm.FlightListViewModel" TItem="FlightViewModel"
-							SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedFlights
-							ContextMenu=@(args => ShowContextMenuWithItems(args))>
-				<Columns>
-					<RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffDateTime" Title="Date/Time" Width="150px" SortOrder="SortOrder.Descending" />
-					<RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffSiteName" Title="Site" />
-					<RadzenDataGridColumn TItem="FlightViewModel" Property="FlightDuration" Title="Duration" />
-				</Columns>
-			</RadzenDataGrid>
-		</div>
-		@if (LastSelectedFlight != null)
-		{
-
-			<div class="col-4">
-				<MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName"/>
-				<MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxHeight" UnitSymbol="m" Format="F0"/>
-				<MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2"/>
-				<MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1"/>
-				<MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1"/>
-				<MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false/>
-
-			</div>
-		}
-	</div>
-</div>
+<InputFile OnChange="@OnAddFlights" multiple />
+<RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+    <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="8">
+            <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            AllowPaging="true"
+                            PageSize="13"
+                            style="height: calc(100vh - 180px)"
+                            AllowSorting="true" Data="@mvm.FlightListViewModel" TItem="FlightViewModel"
+                            SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedFlights
+                            ContextMenu=@(args => ShowContextMenuWithItems(args))>
+                <Columns>
+                    <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffDateTime" Title="Date/Time" Width="150px" SortOrder="SortOrder.Descending" />
+                    <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffSiteName" Title="Site" />
+                    <RadzenDataGridColumn TItem="FlightViewModel" Property="FlightDuration" Title="Duration" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+        @if (LastSelectedFlight != null)
+        {
+            <RadzenColumn Size="12" SizeSM="4">
+                <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName" />
+                <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxHeight" UnitSymbol="m" Format="F0" />
+                <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2" />
+                <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1" />
+                <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1" />
+                <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false/>
+            </RadzenColumn>
+        }
+    </RadzenRow>
+</RadzenStack>
 
 
