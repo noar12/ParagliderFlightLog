@@ -13,7 +13,6 @@
 <PageTitle>Flight list</PageTitle>
 
 <InputFile OnChange="@OnAddFlights" multiple />
-<RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
     <RadzenRow>
         <RadzenColumn Size="12" SizeSM="8">
             <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -42,6 +41,5 @@
             </RadzenColumn>
         }
     </RadzenRow>
-</RadzenStack>
 
 
