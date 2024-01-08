@@ -48,6 +48,9 @@
                 <RadzenValueAxis FormatString="{0:N2}">
                     <RadzenAxisTitle Text="Number of Flight" />
                 </RadzenValueAxis>
+                <RadzenCategoryAxis>
+                    <RadzenAxisTitle Text="Flight Duration in Hours"/>
+                </RadzenCategoryAxis>
                 <RadzenColumnSeries Data="@DurationAnalysisResult"
                                     Title="Flight duration repartition"
                                     CategoryProperty="BarLocation"
