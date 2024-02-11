@@ -11,8 +11,7 @@ namespace ParagliderFlightLog.Models
 {
     public class Settings
     { 
-        private readonly string m_SettingsFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Settings.json");
-        public string DbPath { get; set; } = @"/home/noar/TestDB/ParagliderFlightLog.db";
+        private readonly string m_SettingsFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!, "Settings.json");
         public void Build()
         {
             if (File.Exists(m_SettingsFile))
@@ -20,7 +19,6 @@ namespace ParagliderFlightLog.Models
                 // read json settings and build settings with its content
                 string jsonString = File.ReadAllText(m_SettingsFile);
                 Settings settings = JsonSerializer.Deserialize<Settings>(jsonString) ?? new Settings();
-                DbPath = settings.DbPath;
             }
             else
             {
