@@ -12,7 +12,8 @@ namespace ParagliderFlightLog.ViewModels
 	public class FlightViewModel
 	{
 		private const int INTEGRATION_STEP = 8;
-		private Flight m_Flight = new Flight();
+		private Flight _flight = new Flight();
+		private FlightWithData? _flightWithData = null;
 		private readonly FlightLogDB _db;
 		private ICollection<Flight> m_FlightCollection = new List<Flight>();
 		private ICollection<Site> m_SiteCollection = new List<Site>();
@@ -20,7 +21,7 @@ namespace ParagliderFlightLog.ViewModels
 
 		public FlightViewModel(Flight flight, FlightLogDB db)
 		{
-			m_Flight = flight;
+			_flight = flight;
 			_db = db;
 		}
 		//public FlightViewModel(string flightID, DateTime takeOffDateTime, TimeSpan flightDuration, string takeOffSiteName, string gliderName, List<FlightPoint> flightPoints, string comment)
@@ -36,14 +37,14 @@ namespace ParagliderFlightLog.ViewModels
 
 
 		// to do: property have to get from flight ref and set to flight ref
-		public string FlightID { get { return m_Flight.Flight_ID; } }
+		public string FlightID { get { return _flight.Flight_ID; } }
 		public Flight Flight
 		{
-			get { return m_Flight; }
+			get { return _flight; }
 		}
-		public DateTime TakeOffDateTime { get { return m_Flight.TakeOffDateTime; } }
-		public TimeSpan FlightDuration { get { return m_Flight.FlightDuration; } }
-		public string TakeOffSiteID { get { return m_Flight.REF_TakeOffSite_ID; } }
+		public DateTime TakeOffDateTime { get { return _flight.TakeOffDateTime; } }
+		public TimeSpan FlightDuration { get { return _flight.FlightDuration; } }
+		public string TakeOffSiteID { get { return _flight.REF_TakeOffSite_ID; } }
 		public SiteViewModel? TakeOffSite
 		{
 			get { return _db.GetFlightTakeOffSite(Flight)?.ToVM(_db); }
@@ -87,9 +88,10 @@ namespace ParagliderFlightLog.ViewModels
 		{
 			get
 			{
-				if (FlightPoints.Count > 0)
+				_flightWithData ??= _db.GetFlightWithData(_flight);
+				if (_flightWithData is not null && FlightPoints.Count > 0)
 				{
-					return m_Flight.FlightPoints.Select(fp => fp.Height).ToList().Max();
+					return _flightWithData.FlightPoints.Select(fp => fp.Height).ToList().Max();
 				}
 				else
 				{
@@ -97,7 +99,10 @@ namespace ParagliderFlightLog.ViewModels
 				}
 			}
 		}
-		public List<FlightPoint> FlightPoints { get { return m_Flight.FlightPoints; } }
+		public List<FlightPoint> FlightPoints { get {
+				_flightWithData ??= _db.GetFlightWithData(_flight);
+
+				return _flightWithData?.FlightPoints ?? new(); } }
 		public string Comment { get { return _db.GetFlightComment(Flight) ?? ""; } set { _db.UpdateFlightComment(Flight, value); } }
 		/// <summary>
 		/// Get the trace length in km
@@ -148,19 +153,18 @@ namespace ParagliderFlightLog.ViewModels
 		
 		private double[] GetVerticalRate(int integrationStep)
 		{
-			if (FlightPoints.Count != 0)
+			_flightWithData ??= _db.GetFlightWithData(_flight);
+			if (_flightWithData is not null && FlightPoints.Count != 0)
 			{
 				List<double> l_verticalRates = new List<double>();
-				for (int i = integrationStep; i < m_Flight.FlightPoints.Count; i++)
+				for (int i = integrationStep; i < _flightWithData.FlightPoints.Count; i++)
 				{
 					l_verticalRates.Add((FlightPoints[i].Height - FlightPoints[i - INTEGRATION_STEP].Height) / INTEGRATION_STEP);
 				}
 				return l_verticalRates.ToArray();
 			}
-			return new double[0];
-
+			return Array.Empty<double>();
 		}
-
 	}
 
 

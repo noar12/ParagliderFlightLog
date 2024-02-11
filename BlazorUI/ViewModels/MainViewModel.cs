@@ -103,8 +103,8 @@ namespace ParagliderFlightLog.ViewModels
 			foreach (string filePath in filePaths)
 			{
                 _logger.LogDebug("importing {filePath}", filePath);
-                Flight flight = _flightLog.ImportFlightFromIGC(filePath);
-				FlightListViewModel.Add(new FlightViewModel(flight, _flightLog));
+                var flight = _flightLog.ImportFlightFromIGC(filePath);
+				FlightListViewModel.Add(new FlightViewModel(flight.ToFlight(), _flightLog));
 			}
 		}
 

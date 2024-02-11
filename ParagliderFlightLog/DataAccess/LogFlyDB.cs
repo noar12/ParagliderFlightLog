@@ -52,7 +52,7 @@ namespace ParagliderFlightLog.DataAccess
         {
             List<Site> l_sites = m_LogFlySiteCollection.Select(s => s.ToFlightLogSite()).ToList();
             List<Glider> l_gliders = GetAllGlidersAsFlightLogDbGlider();
-            List<Flight> l_flights = m_LogFlyVolCollection.Select(v => v.ToFlightLogDBFlight(l_sites, l_gliders)).ToList();
+            List<FlightWithData> l_flights = m_LogFlyVolCollection.Select(v => v.ToFlightLogDBFlightWithData(l_sites, l_gliders)).ToList();
 
             _flightLogDB.WriteSitesInDB(l_sites);
             _flightLogDB.WriteGlidersInDB(l_gliders);
@@ -149,9 +149,9 @@ namespace ParagliderFlightLog.DataAccess
         public int V_League { get => m_V_League; set => m_V_League = value; }
         public string V_Score { get => m_V_Score; set => m_V_Score = value; }
 
-        internal Flight ToFlightLogDBFlight(List<Site> sites, List<Glider> gliders)
+        internal FlightWithData ToFlightLogDBFlightWithData(List<Site> sites, List<Glider> gliders)
         {
-            Flight l_Flight = new Flight();
+            var l_Flight = new FlightWithData();
             l_Flight.Flight_ID = Guid.NewGuid().ToString();
             l_Flight.FlightDuration = new TimeSpan(0, 0, (int)V_Duree);
             l_Flight.Comment = V_Commentaire;

@@ -9,7 +9,7 @@ namespace ParagliderFlightLogTest
         public void TakeOffDateTime_CorrectIGC__ReturnsDateTime()
         {
             //Arrange
-            Flight flight = new Flight();
+            var flight = new FlightWithData();
             string TakeOffTimeIGC = "HFDTEDATE:010203,01\r\nB0405060000000N00000000EA000000000000\r\n"; // 01/02/03 at 04:05:06
             flight.IgcFileContent = TakeOffTimeIGC;
             DateTime ExpectedDateTime = new DateTime(2003,2,1,4,5,6);

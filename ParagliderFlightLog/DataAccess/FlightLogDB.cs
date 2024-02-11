@@ -34,7 +34,39 @@ namespace ParagliderFlightLog.DataAccess
 			{
 				CreateFlightLogDB();
 			}
+			else
+			{
+				var dbInfo = GetDbVersion();
+				if (dbInfo == null)
+				{
+					// Create missing column in Flights table
+					MigrateFromBetaTable();
+				}
+			}
 			//LoadFlightLogDB();
+		}
+
+		private void MigrateFromBetaTable()
+		{
+			string sqlCreateDbInfo = @"CREATE TABLE ""DbInformations"" (
+	""VersionMajor""	INTEGER NOT NULL,
+	""VersionMinor""	INTEGER NOT NULL,
+	""VersionFix""	INTEGER NOT NULL
+)";
+			_db.SaveData(sqlCreateDbInfo, new { }, LoadConnectionString());
+			var dbInfo = new DbInformations() { VersionMajor = 1, VersionMinor = 0, VersionFix = 0 };
+			string sql = "INSERT INTO DbInformations (VersionMajor, VersionMinor, VersionFix) VALUES (@VersionMajor, @VersionMinor, @VersionFix);";
+			_db.SaveData(sql, dbInfo, LoadConnectionString());
+		}
+
+		private DbInformations? GetDbVersion()
+		{
+			string dbInfoTable = "DbInformations";
+			string sql = "SELECT name FROM sqlite_master WHERE type='table' AND name=@dbInfoTable";
+			bool dbInfoExists = _db.LoadData<string, dynamic>(sql, new { dbInfoTable }, LoadConnectionString()).Count == 1;
+			if (!dbInfoExists) return null;
+			sql = "SELECT VersionMajor,VersionMinor, VersionFix FROM DbInformations";
+			return _db.LoadData<DbInformations, dynamic>(sql, new { }, LoadConnectionString())[0];
 		}
 
 
@@ -53,7 +85,7 @@ namespace ParagliderFlightLog.DataAccess
 		//	}
 		//}
 
-		private void AddFlightProperties(Flight flight)
+		private void AddFlightProperties(FlightWithData flight)
 		{
 			flight.FlightPoints = GetFlightPointsFromIgcContent(flight.IgcFileContent);
 			flight.TakeOffPoint = GetTakeOffPointFromPointList(flight.FlightPoints);
@@ -92,7 +124,13 @@ namespace ParagliderFlightLog.DataAccess
 	""TakeOffDateTime""    TEXT,
 	""IgcFileContent""    TEXT,
 	PRIMARY KEY(""Flight_ID""));";
+			string sqlCreateDbInfo = @"CREATE TABLE ""DbInformations"" (
+	""VersionMajor""	INTEGER NOT NULL,
+	""VersionMinor""	INTEGER NOT NULL,
+	""VersionFix""	INTEGER NOT NULL
+)";
 
+			_db.SaveData(sqlCreateDbInfo, new { }, LoadConnectionString());
 			_db.SaveData(sqlCreateFlights, new { }, LoadConnectionString());
 			_db.SaveData(sqlCreateGliders, new { }, LoadConnectionString());
 			_db.SaveData(sqlCreateSites, new { }, LoadConnectionString());
@@ -134,7 +172,7 @@ namespace ParagliderFlightLog.DataAccess
 			}
 		}
 
-		internal void WriteFlightsInDB(IList? newItems)
+		internal void WriteFlightsInDB(List<FlightWithData> newItems)
 		{
 			if (newItems != null)
 			{
@@ -143,7 +181,7 @@ namespace ParagliderFlightLog.DataAccess
 				VALUES
 				(@Flight_ID, @IgcFileContent, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s);";
 
-				foreach (Flight flight in newItems)
+				foreach (var flight in newItems)
 				{
 					int FlightDuration_s = (int)flight.FlightDuration.TotalSeconds;
 
@@ -221,9 +259,9 @@ namespace ParagliderFlightLog.DataAccess
 		/// </summary>
 		/// <param name="IGC_FilePath"></param>
 		/// <exception cref="NotImplementedException"></exception>
-		public Flight ImportFlightFromIGC(string IGC_FilePath)
+		public FlightWithData ImportFlightFromIGC(string IGC_FilePath)
 		{
-			var newFlight = new Flight();
+			var newFlight = new FlightWithData();
 
 			using (var sr = new StreamReader(IGC_FilePath))
 			{
@@ -253,7 +291,7 @@ namespace ParagliderFlightLog.DataAccess
 
 
 			// insert the flight if everything is ok here
-			WriteFlightsInDB(new List<Flight> { newFlight });
+			WriteFlightsInDB(new List<FlightWithData> { newFlight });
 			return newFlight;
 		}
 		public Site? GetFlightTakeOffSite(Flight flight)
@@ -456,12 +494,8 @@ namespace ParagliderFlightLog.DataAccess
 		}
 		public List<Flight> GetAllFlights()
 		{
-			string sqlStatement = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights;";
+			string sqlStatement = "SELECT Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights;";
 			var output = _db.LoadData<Flight, dynamic>(sqlStatement, new { }, LoadConnectionString());
-			foreach (var flight in output)
-			{
-				AddFlightProperties(flight);
-			}
 			return output;
 
 		}
@@ -569,14 +603,24 @@ namespace ParagliderFlightLog.DataAccess
 			string sqlStatement = "SELECT DISTINCT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude " +
 			"FROM Sites s " +
 			"JOIN Flights f ON s.Site_ID = f.REF_TakeOffSite_ID " +
-            "WHERE f.TakeOffDateTime < @end AND f.TakeOffDateTime > @start;";
+			"WHERE f.TakeOffDateTime < @end AND f.TakeOffDateTime > @start;";
 			var output = _db.LoadData<Site, dynamic>(sqlStatement,
-                new
-                {
-                    start = start.ToString("s"),
-                    end = end.ToString("s")
-                },
-                LoadConnectionString());
+				new
+				{
+					start = start.ToString("s"),
+					end = end.ToString("s")
+				},
+				LoadConnectionString());
+			return output;
+		}
+
+		public FlightWithData? GetFlightWithData(Flight flight)
+		{
+			string sql = @"SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s
+		FROM Flights
+		WHERE Flight_ID=@Flight_ID;";
+			var output = _db.LoadData<FlightWithData, dynamic>(sql, flight, LoadConnectionString())[0];
+			AddFlightProperties(output);
 			return output;
 		}
 	}
