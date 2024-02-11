@@ -18,7 +18,7 @@ namespace ParagliderFlightLog.Models
 		public DateTime LastCheckDateTime { get; set; }
 		public bool LastCheckDateTimeSpecified { get; set; }
 		public EHomologationCategory HomologationCategory { get; set; }
-		public string FullName { get { return $"{Manufacturer} {Model}"; } } // todo: this has to be moved in the viewmodel
+		public string FullName { get { return $"{Manufacturer} {Model}"; } }
     }
 }
 

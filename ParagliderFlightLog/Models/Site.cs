@@ -17,7 +17,7 @@ namespace ParagliderFlightLog.Models
 		public ECountry Country { get; set; }
 		public EWindOrientation WindOrientationBegin { get; set; }
 		public EWindOrientation WindOrientationEnd { get; set; }
-		public string WindOrientationText { get => $"{WindOrientationBegin} - {WindOrientationEnd}"; } // todo: move to the view model
+		public string WindOrientationText { get => $"{WindOrientationBegin} - {WindOrientationEnd}"; }
 		public bool WindOrientationSpecified { get; set; }
 		public double Altitude { get; set; }
 		public double Latitude { get; set; }

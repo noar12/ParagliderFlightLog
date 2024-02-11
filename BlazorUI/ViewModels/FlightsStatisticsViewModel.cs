@@ -56,7 +56,7 @@ namespace ParagliderFlightLog.ViewModels
             {
                 double l_CurrentBin = l_PreviousBin + l_BinWidth;
                 l_binEdges[i] = l_CurrentBin;
-                l_counts[i] = sample.Where(s => (s > l_PreviousBin) && (s <= l_CurrentBin)).Count();
+                l_counts[i] = sample.Count(s => (s > l_PreviousBin) && (s <= l_CurrentBin));
                 l_PreviousBin = l_CurrentBin;
             }
             return (l_counts, l_binEdges);

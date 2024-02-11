@@ -12,7 +12,7 @@ namespace ParagliderFlightLog.ViewModels
 	public class FlightViewModel
 	{
 		private const int INTEGRATION_STEP = 8;
-		private readonly Flight _flight = new();
+		private readonly Flight _flight;
 		private FlightWithData? _flightWithData = null;
 		private readonly FlightLogDB _db;
 
@@ -21,19 +21,7 @@ namespace ParagliderFlightLog.ViewModels
 			_flight = flight;
 			_db = db;
 		}
-		//public FlightViewModel(string flightID, DateTime takeOffDateTime, TimeSpan flightDuration, string takeOffSiteName, string gliderName, List<FlightPoint> flightPoints, string comment)
-		//{
-		//    FlightID = flightID;
-		//    TakeOffDateTime = takeOffDateTime;
-		//    FlightDuration = flightDuration;
-		//    TakeOffSiteName = takeOffSiteName;
-		//    GliderName = gliderName;
-		//    FlightPoints = flightPoints;
-		//    Comment = comment;
-		//}
 
-
-		// to do: property have to get from flight ref and set to flight ref
 		public string FlightID { get { return _flight.Flight_ID; } }
 		public Flight Flight
 		{
@@ -88,7 +76,7 @@ namespace ParagliderFlightLog.ViewModels
 				_flightWithData ??= _db.GetFlightWithData(_flight);
 				if (_flightWithData is not null && FlightPoints.Count > 0)
 				{
-					return _flightWithData.FlightPoints.Select(fp => fp.Height).ToList().Max();
+					return _flightWithData.FlightPoints.Select(fp => fp.Height).Max();
 				}
 				else
 				{

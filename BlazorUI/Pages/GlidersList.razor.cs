@@ -24,10 +24,6 @@ namespace BlazorUI.Pages
 {
     public partial class GlidersList
     {
-        protected override void OnInitialized()
-        {
-        }
-
         IList<GliderViewModel> SelectedGliders = new List<GliderViewModel>();
         GliderViewModel? LastSelectedGlider
         {

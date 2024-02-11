@@ -108,7 +108,7 @@ namespace BlazorUI.Pages
 
                     break;
                 case StatisticalFlightsAnalysis.DurationDistribution:
-                    fsvm = new FlightsStatisticsViewModel(mvm, new DateTime(YearToAnalyse, 1, 1), new DateTime(YearToAnalyse, 12, 31));
+                    fsvm = new FlightsStatisticsViewModel(mvm, new DateTime(YearToAnalyse, 1, 1,0,0,0,DateTimeKind.Utc), new DateTime(YearToAnalyse, 12, 31, 0, 0, 0, DateTimeKind.Utc));
                     if (fsvm.FlightsCount == 0)
                         return;
                     DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Radzen;
 using ParagliderFlightLog.ViewModels;
+using System.Linq;
 
 namespace BlazorUI.Pages
 {
@@ -23,9 +24,6 @@ namespace BlazorUI.Pages
                     map = await module.InvokeAsync<IJSObjectReference>("load_map", "map", 0, 0, 2);
                 }
             }
-        }
-        protected override void OnInitialized()
-        {
         }
 
         IList<SiteViewModel> SelectedSites = new List<SiteViewModel>();
@@ -86,19 +84,15 @@ namespace BlazorUI.Pages
 
         private async Task OnShowSiteTimeRange(){
             List<SiteViewModel> siteToShow = mvm.SiteUsedInTimeRange(_startDate, _endDate);
-            foreach (SiteViewModel site in siteToShow) {
-                if (module is not null)
-                {
-                    map = await module.InvokeAsync<IJSObjectReference>("add_marker",
-                                                            map,
-                                                            site.Latitude,
-                                                            site.Longitude,
-                                                            site.Name
-                    );
-                }
+            foreach (var site in siteToShow.Where(site => module is not null))
+            {
+                map = await module!.InvokeAsync<IJSObjectReference>("add_marker",
+                                                                        map,
+                                                                        site.Latitude,
+                                                                        site.Longitude,
+                                                                        site.Name
+                                );
             }
-
-
         }
         enum ESiteAction
         {

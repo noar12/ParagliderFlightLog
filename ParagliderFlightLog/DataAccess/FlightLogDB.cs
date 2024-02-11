@@ -43,7 +43,6 @@ namespace ParagliderFlightLog.DataAccess
 					MigrateFromBetaTable();
 				}
 			}
-			//LoadFlightLogDB();
 		}
 
 		private void MigrateFromBetaTable()
@@ -68,22 +67,6 @@ namespace ParagliderFlightLog.DataAccess
 			sql = "SELECT VersionMajor,VersionMinor, VersionFix FROM DbInformations";
 			return _db.LoadData<DbInformations, dynamic>(sql, new { }, LoadConnectionString())[0];
 		}
-
-
-		//public void LoadFlightLogDB()
-		//{
-		//	string sqlGetAllSite = "SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude FROM Sites";
-		//	string sqlGetAllGlider = "SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name FROM Gliders";
-		//	string sqlGetAllFlight = "SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights";
-
-		//	Sites = _db.LoadData<Site, dynamic>(sqlGetAllSite, new { }, LoadConnectionString());
-		//	Gliders = _db.LoadData<Glider, dynamic>(sqlGetAllGlider, new { }, LoadConnectionString());
-		//	Flights = _db.LoadData<Flight, dynamic>(sqlGetAllFlight, new { }, LoadConnectionString());
-		//	foreach (var flight in Flights)
-		//	{
-		//		AddFlightProperties(flight);
-		//	}
-		//}
 
 		private static void AddFlightProperties(FlightWithData flight)
 		{
@@ -208,9 +191,6 @@ namespace ParagliderFlightLog.DataAccess
 			}
 		}
 
-		//public List<Flight> Flights { get; set; } = new List<Flight>();
-		//public List<Site> Sites { get; set; } = new List<Site>();
-		//public List<Glider> Gliders { get; set; } = new List<Glider>();
 		/// <summary>
 		/// Get the cumulative flight duration of all the flight between analyzePeriodStart and analyszePeriodEnd
 		/// </summary>
@@ -233,10 +213,10 @@ namespace ParagliderFlightLog.DataAccess
 			int l_totalFlightDuration_s = _db.LoadData<int, dynamic>(sqlStatement,
 															new
 															{
-																PeriodStartDate = analyzePeriodStart?.ToString("u"),
-																PeriodEndDate = analyzePeriodEnd?.ToString("u")
+																PeriodStartDate = analyzePeriodStart.Value.ToString("u"),
+																PeriodEndDate = analyzePeriodEnd.Value.ToString("u")
 															},
-															LoadConnectionString()).First();
+															LoadConnectionString())[0];
 
 			return TimeSpan.FromSeconds(l_totalFlightDuration_s);
 		}
@@ -306,17 +286,16 @@ namespace ParagliderFlightLog.DataAccess
 									FROM Sites";
 			List<Site> sites = _db.LoadData<Site, dynamic>(sqlGetAllSites, new { }, LoadConnectionString());
 
-			output = sites.Where(s => takeOffPoint
+			output = sites.Find(s => takeOffPoint
 			.DistanceFrom(new FlightPoint()
 			{
 				Longitude = s.Longitude,
 				Latitude = s.Latitude,
 				Height = s.Altitude
-			}) < s.SiteRadius).
-				FirstOrDefault();
+			}) < s.SiteRadius);
 			if (output == null)
 			{
-				List<Site> unknownSiteNames = GetUnknownSites();//Sites.Where(s => s.Name.Contains("Unknown site")).ToList();
+				List<Site> unknownSiteNames = GetUnknownSites();
 				int nextUnknownSite = unknownSiteNames.Count;
 				output = new Site()
 				{
@@ -366,7 +345,7 @@ namespace ParagliderFlightLog.DataAccess
 				var l_FlightMinute = int.Parse((matchTime.Groups["m"].Value));
 				var l_FlightSecond = int.Parse((matchTime.Groups["s"].Value));
 
-				return new DateTime(l_FlightYear, l_FlightMonth, l_FlightDay, l_FlightHour, l_FlightMinute, l_FlightSecond);
+				return new DateTime(l_FlightYear, l_FlightMonth, l_FlightDay, l_FlightHour, l_FlightMinute, l_FlightSecond, DateTimeKind.Utc);
 			}
 			return DateTime.MinValue;
 		}

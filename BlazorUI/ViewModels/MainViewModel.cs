@@ -19,7 +19,7 @@ namespace ParagliderFlightLog.ViewModels
 
 		public MainViewModel(FlightLogDB flightLogDB, ILogger<MainViewModel> logger, LogFlyDB logFlyDB)
 		{
-			_flightLog = flightLogDB; //todo move to DI
+			_flightLog = flightLogDB;
             _logger = logger;
             _logFlyDB = logFlyDB;
             FlightListViewModel = _flightLog.GetAllFlights().Select(f => f.ToVM(_flightLog)).ToList();
@@ -72,26 +72,6 @@ namespace ParagliderFlightLog.ViewModels
 			throw new NotImplementedException();
 		}
 
-		//public void ImportLogFlyDB(string fileName)
-		//{
-		//    LogFlyDB l_logFlyDB = new LogFlyDB(_flightLog);//todo: put it in DI
-		//    l_logFlyDB.LoadLogFlyDB(fileName);
-		//    FlightLogDB l_FlightLogDB = l_logFlyDB.BuildFlightLogDB();
-		//    foreach (Glider glider in l_FlightLogDB.Gliders)
-		//    {
-		//        _flightLog.Gliders.Add(glider);
-		//    }
-		//    foreach (Site site in l_FlightLogDB.Sites)
-		//    {
-		//        _flightLog.Sites.Add(site);
-		//    }
-		//    foreach (Flight flight in l_FlightLogDB.Flights)
-		//    {
-		//        _flightLog.Flights.Add(flight);
-		//    }
-
-
-		//}
 		/// <summary>
 		/// Import an IGC file in the data model and use the result to instanciate and add a new FlightViewModel in the FlightListViewModel to update the UI and do the same with the takeoff site if it doesn't exist yet.
 		/// </summary>

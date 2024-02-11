@@ -9,9 +9,6 @@ namespace BlazorUI.Pages
     public partial class Index
     {
         private RadzenDataGrid<FlightViewModel> dataGrid = new();
-        protected override void OnInitialized()
-        {
-        }
 
         IList<FlightViewModel> SelectedFlights = new List<FlightViewModel>();
         FlightViewModel? LastSelectedFlight
