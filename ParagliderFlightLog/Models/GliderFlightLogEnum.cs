@@ -6,70 +6,73 @@ using System.Threading.Tasks;
 
 namespace ParagliderFlightLog.Models
 {
-	public enum ECountry
-	{
-		/// <remarks/>
-		Switzerland,
+    public enum ECountry
+    {
+        Undefined = -1,
+        /// <remarks/>
+        Switzerland,
 
-		/// <remarks/>
-		France,
+        /// <remarks/>
+        France,
 
-		/// <remarks/>
-		Italy,
+        /// <remarks/>
+        Italy,
 
-		/// <remarks/>
-		Austria,
+        /// <remarks/>
+        Austria,
 
-		/// <remarks/>
-		Spain,
-	}
-	public enum EWindOrientation
-	{
-		/// <remarks/>
-		North,
-		NorthEast,
+        /// <remarks/>
+        Spain,
+    }
+    public enum EWindOrientation
+    {
+        Undefined = -1,
+        /// <remarks/>
+        North,
+        NorthEast,
 
-		/// <remarks/>
-		East,
-		SouthEast,
+        /// <remarks/>
+        East,
+        SouthEast,
 
-		/// <remarks/>
-		South,
-		SouthWest,
+        /// <remarks/>
+        South,
+        SouthWest,
 
-		/// <remarks/>
-		West,
-		NorthWest,
-	}
-	public enum EHomologationCategory
-	{
-		ENALow,
+        /// <remarks/>
+        West,
+        NorthWest,
+    }
+    public enum EHomologationCategory
+    {
+        Undefined = -1,
+        ENALow,
 
-		/// <remarks/>
+        /// <remarks/>
 
-		ENAHigh,
+        ENAHigh,
 
-		/// <remarks/>
+        /// <remarks/>
 
-		ENBLow,
+        ENBLow,
 
-		/// <remarks/>
+        /// <remarks/>
 
-		ENBHigh,
+        ENBHigh,
 
-		/// <remarks/>
+        /// <remarks/>
 
-		ENCLow,
+        ENCLow,
 
-		/// <remarks/>
+        /// <remarks/>
 
-		ENCHigh,
+        ENCHigh,
 
-		/// <remarks/>
+        /// <remarks/>
 
-		END,
+        END,
 
-		/// <remarks/>
-		CCC,
-	}
+        /// <remarks/>
+        CCC,
+    }
 }

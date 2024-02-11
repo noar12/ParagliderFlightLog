@@ -13,10 +13,11 @@ namespace ParagliderFlightLog.DataAccess
 {
 	public class SqliteDataAccess
 	{
+#pragma warning disable CA1822 // Mark members as static: don't want this to be static
 		public bool DbExists(string connectionString)
 		{
 			string pattern = @"(?<=Data Source=).*?(?=;)";
-			Regex rgx = new Regex(pattern);
+			var rgx = new Regex(pattern);
 			Match match = rgx.Match(connectionString);
 			
 
@@ -24,19 +25,16 @@ namespace ParagliderFlightLog.DataAccess
 		}
 		public List<T> LoadData<T, U>(string sqlStatement, U parameters, string connectionString)
 		{
-			// T is the model of the data we want to load
-			using (IDbConnection connection = new SqliteConnection(connectionString))// this will always close the connection when exiting the scope
-			{
-				List<T> rows = connection.Query<T>(sqlStatement, parameters).ToList();
-				return rows;
-			}
-		}
+            // T is the model of the data we want to load
+            using IDbConnection connection = new SqliteConnection(connectionString);// this will always close the connection when exiting the scope
+            List<T> rows = connection.Query<T>(sqlStatement, parameters).ToList();
+            return rows;
+        }
 		public void SaveData<T>(string sqlStatement, T parameters, string connectionString)
 		{
-			using (IDbConnection connection = new SqliteConnection(connectionString))
-			{
-				connection.Execute(sqlStatement, parameters);
-			}
-		}
+            using IDbConnection connection = new SqliteConnection(connectionString);
+            connection.Execute(sqlStatement, parameters);
+        }
+#pragma warning restore CA1822 // Mark members as static
 	}
 }

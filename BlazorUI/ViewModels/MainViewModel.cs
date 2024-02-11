@@ -13,14 +13,12 @@ namespace ParagliderFlightLog.ViewModels
 {
 	public class MainViewModel
 	{
-		FlightLogDB _flightLog;
+		private readonly FlightLogDB _flightLog;
         private readonly ILogger<MainViewModel> _logger;
         private readonly LogFlyDB _logFlyDB;
-        IConfiguration _config;
 
-		public MainViewModel(IConfiguration config, FlightLogDB flightLogDB, ILogger<MainViewModel> logger, LogFlyDB logFlyDB)
+		public MainViewModel(FlightLogDB flightLogDB, ILogger<MainViewModel> logger, LogFlyDB logFlyDB)
 		{
-			_config = config;
 			_flightLog = flightLogDB; //todo move to DI
             _logger = logger;
             _logFlyDB = logFlyDB;

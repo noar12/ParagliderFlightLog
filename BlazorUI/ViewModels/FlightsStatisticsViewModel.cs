@@ -10,7 +10,7 @@ namespace ParagliderFlightLog.ViewModels
 {
     public class FlightsStatisticsViewModel
     {
-        private MainViewModel m_MainViewModel;
+        private readonly MainViewModel m_MainViewModel;
         public TimeSpan FlightsDuration { get; private set; }
         public string FlightsDurationText { get { return $"{(int)FlightsDuration.TotalHours}:{FlightsDuration.Minutes}"; } }
         public TimeSpan MeanFlightsDuration { get; private set; }
@@ -45,7 +45,7 @@ namespace ParagliderFlightLog.ViewModels
 
         }
 
-        private (double[] counts, double[] binEdges) ComputeHistData(double[] sample, int groupCount)
+        static private (double[] counts, double[] binEdges) ComputeHistData(double[] sample, int groupCount)
         {
             double[] l_counts = new double[groupCount];
             double[] l_binEdges = new double[groupCount];
@@ -72,7 +72,7 @@ namespace ParagliderFlightLog.ViewModels
                 if (l_MonthFlights.Length != 0)
                 {
                     int i = month -1;
-                    l_MonthMedian[i] = l_MonthFlights[l_MonthFlights.Count() / 2].FlightDuration.TotalHours;
+                    l_MonthMedian[i] = l_MonthFlights[l_MonthFlights.Length / 2].FlightDuration.TotalHours;
                 }
 
             }
@@ -95,7 +95,7 @@ namespace ParagliderFlightLog.ViewModels
         {
             get
             {
-                List<string> availableAnalysis = new List<string>();
+                var availableAnalysis = new List<string>();
                 foreach( StatisticalFlightsAnalysis analysis in Enum.GetValues(typeof(StatisticalFlightsAnalysis)))
                 {
                     switch (analysis)

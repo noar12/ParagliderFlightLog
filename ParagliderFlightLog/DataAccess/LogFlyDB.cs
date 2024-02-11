@@ -17,13 +17,11 @@ namespace ParagliderFlightLog.DataAccess
     /// </summary>
     public class LogFlyDB
     {
-        private readonly ILogger<LogFlyDB> _logger;
-        private FlightLogDB _flightLogDB;
-        private List<LogFlyVol> m_LogFlyVolCollection = new List<LogFlyVol>();
-        private List<LogFlySite> m_LogFlySiteCollection = new List<LogFlySite>();
-        public LogFlyDB(ILogger<LogFlyDB> logger, FlightLogDB flightLogDb)
+        private readonly FlightLogDB _flightLogDB;
+        private List<LogFlyVol> m_LogFlyVolCollection = new ();
+        private List<LogFlySite> m_LogFlySiteCollection = new ();
+        public LogFlyDB(FlightLogDB flightLogDb)
         {
-            _logger = logger;
             _flightLogDB = flightLogDb;
         }
 
@@ -36,12 +34,9 @@ namespace ParagliderFlightLog.DataAccess
             string SqlGetAllSite = "SELECT S_ID, S_Nom, S_Alti, S_Latitude, S_Longitude, S_Commentaire FROM Site";
             string SqlGetAllVol = "SELECT V_ID, V_Date, V_Duree, V_LatDeco, V_LongDeco, V_AltDeco, V_Site, V_Commentaire, V_IGC, UTC, V_Engin, V_League, V_Score FROM Vol";
 
-            using (SqliteConnection conn = new SqliteConnection(LoadConnectionString(DB_Path)))
-            {
-                m_LogFlySiteCollection = conn.Query<LogFlySite>(SqlGetAllSite).ToList();
-                m_LogFlyVolCollection = conn.Query<LogFlyVol>(SqlGetAllVol).ToList();
-
-            }
+            using var conn = new SqliteConnection(LoadConnectionString(DB_Path));
+            m_LogFlySiteCollection = conn.Query<LogFlySite>(SqlGetAllSite).ToList();
+            m_LogFlyVolCollection = conn.Query<LogFlyVol>(SqlGetAllVol).ToList();
 
         }
         /// <summary>
@@ -82,7 +77,7 @@ namespace ParagliderFlightLog.DataAccess
 
         }
     }
-
+#pragma warning disable IDE1006 // Naming Styles following legacy naming from LogFly original db
     class LogFlySite
     {
         //CREATE TABLE Site(S_ID integer NOT NULL primary key,S_Nom varchar(50),S_Localite varchar(50),S_CP varchar(8),S_Pays varchar(50),S_Type varchar(1),
@@ -95,7 +90,9 @@ namespace ParagliderFlightLog.DataAccess
         private double m_S_Longitude;
         private string m_S_Commentaire = "";
 
+
         public long S_ID { get => m_S_ID; set => m_S_ID = value; }
+
         public string S_Nom { get => m_S_Nom; set => m_S_Nom = value; }
         public string S_Type { get => m_S_Type; set => m_S_Type = value; }
         public int S_Alti { get => m_S_Alti; set => m_S_Alti = value; }
@@ -105,12 +102,14 @@ namespace ParagliderFlightLog.DataAccess
 
         internal Site ToFlightLogSite()
         {
-            Site l_Site = new Site();
-            l_Site.Site_ID = Guid.NewGuid().ToString();
-            l_Site.Name = S_Nom;
-            l_Site.Longitude = S_Longitude;
-            l_Site.Latitude = S_Latitude;
-            l_Site.Altitude = S_Alti;
+            var l_Site = new Site
+            {
+                Site_ID = Guid.NewGuid().ToString(),
+                Name = S_Nom,
+                Longitude = S_Longitude,
+                Latitude = S_Latitude,
+                Altitude = S_Alti
+            };
 
             return l_Site;
         }
@@ -151,19 +150,22 @@ namespace ParagliderFlightLog.DataAccess
 
         internal FlightWithData ToFlightLogDBFlightWithData(List<Site> sites, List<Glider> gliders)
         {
-            var l_Flight = new FlightWithData();
-            l_Flight.Flight_ID = Guid.NewGuid().ToString();
-            l_Flight.FlightDuration = new TimeSpan(0, 0, (int)V_Duree);
-            l_Flight.Comment = V_Commentaire;
+            var l_Flight = new FlightWithData
+            {
+                Flight_ID = Guid.NewGuid().ToString(),
+                FlightDuration = new TimeSpan(0, 0, (int)V_Duree),
+                Comment = V_Commentaire,
 
-            l_Flight.TakeOffDateTime = V_Date;
+                TakeOffDateTime = V_Date,
 
-            l_Flight.IgcFileContent = V_IGC;
+                IgcFileContent = V_IGC,
 
-            // find the guid ref in glider and in site corresponding to m_V_Engin and m_V_Site
-            l_Flight.REF_Glider_ID = (from glider in gliders where glider.Model == V_Engin select glider.Glider_ID).FirstOrDefault("");
-            l_Flight.REF_TakeOffSite_ID = (from site in sites where site.Name == V_Site select site.Site_ID).FirstOrDefault("");
+                // find the guid ref in glider and in site corresponding to m_V_Engin and m_V_Site
+                REF_Glider_ID = (from glider in gliders where glider.Model == V_Engin select glider.Glider_ID).FirstOrDefault(""),
+                REF_TakeOffSite_ID = (from site in sites where site.Name == V_Site select site.Site_ID).FirstOrDefault("")
+            };
             return l_Flight;
         }
     }
 }
+#pragma warning restore IDE1006 // Naming Styles

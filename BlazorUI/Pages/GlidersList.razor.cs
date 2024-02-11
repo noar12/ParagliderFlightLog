@@ -39,17 +39,17 @@ namespace BlazorUI.Pages
 
         void ShowContextMenuWithItems(MouseEventArgs args)
         {
-            ContextMenuService.Open(args, new List<ContextMenuItem> { new ContextMenuItem() { Text = "Edit glider", Value = gliderAction.Edit }, }, OnMenuItemClick);
+            ContextMenuService.Open(args, new List<ContextMenuItem> { new() { Text = "Edit glider", Value = EGliderAction.Edit }, }, OnMenuItemClick);
         }
 
         void OnMenuItemClick(MenuItemEventArgs args)
         {
-            if (args.Value is gliderAction action)
+            if (args.Value is EGliderAction action)
             {
                 switch (action)
                 {
-                    case gliderAction.Edit:
-                        OnEditGlider();
+                    case EGliderAction.Edit:
+                        _ = OnEditGlider();
                         break;
                 }
             }
@@ -57,7 +57,7 @@ namespace BlazorUI.Pages
             ContextMenuService.Close();
         }
 
-        enum gliderAction
+        enum EGliderAction
         {
             Edit,
         }

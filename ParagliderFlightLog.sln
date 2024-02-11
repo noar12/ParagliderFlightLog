@@ -5,8 +5,6 @@ VisualStudioVersion = 17.1.32421.90
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParagliderFlightLog", "ParagliderFlightLog\ParagliderFlightLog.csproj", "{A5B08537-1599-4796-8266-42C144BDC4F8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WpfUI", "WpfUI\WpfUI.csproj", "{ADD58DDF-596B-4097-AEF3-10E5572A26FD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParagliderFlightLogTest", "ParagliderFlightLogTest\ParagliderFlightLogTest.csproj", "{3425CF5E-A51C-4C04-8249-B60FC11A300E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorUI", "BlazorUI\BlazorUI.csproj", "{7AE3250B-1111-40EF-912C-00FE7A49FE6D}"
@@ -21,10 +19,6 @@ Global
 		{A5B08537-1599-4796-8266-42C144BDC4F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5B08537-1599-4796-8266-42C144BDC4F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5B08537-1599-4796-8266-42C144BDC4F8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ADD58DDF-596B-4097-AEF3-10E5572A26FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ADD58DDF-596B-4097-AEF3-10E5572A26FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ADD58DDF-596B-4097-AEF3-10E5572A26FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ADD58DDF-596B-4097-AEF3-10E5572A26FD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3425CF5E-A51C-4C04-8249-B60FC11A300E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3425CF5E-A51C-4C04-8249-B60FC11A300E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3425CF5E-A51C-4C04-8249-B60FC11A300E}.Release|Any CPU.ActiveCfg = Release|Any CPU

@@ -16,7 +16,7 @@
     <RadzenRow>
         <BlazorUI.Components.MyDatePicker @bind-Value=_startDate Label="From" />
         <BlazorUI.Components.MyDatePicker @bind-Value=_endDate Label="To"/>
-        <RadzenButton Text="Show sites in time range" Click=@(arg => OnShowSiteTimeRange(arg)) Size="ButtonSize.Small"/>
+        <RadzenButton Text="Show sites in time range" Click=OnShowSiteTimeRange Size="ButtonSize.Small"/>
     </RadzenRow>
    <RadzenRow>
         <RadzenColumn Size="12" SizeSM="6">

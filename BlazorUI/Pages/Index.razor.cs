@@ -26,21 +26,27 @@ namespace BlazorUI.Pages
         {
             if (SelectedFlights is not null && SelectedFlights.Count == 1)
             {
-                ContextMenuService.Open(args, new List<ContextMenuItem> { new ContextMenuItem() { Text = "Edit flight", Value = flightAction.Edit }, new ContextMenuItem() { Text = "Remove flights", Value = flightAction.Remove }, }, OnMenuItemClick);
+                ContextMenuService.Open(args,
+                                        new List<ContextMenuItem>
+                                        {
+                                            new() { Text = "Edit flight", Value = EFlightAction.Edit },
+                                            new() { Text = "Remove flights", Value = EFlightAction.Remove },
+                                        },
+                                        OnMenuItemClick);
             }
         }
 
         void OnMenuItemClick(MenuItemEventArgs args)
         {
-            if (args.Value is flightAction action)
+            if (args.Value is EFlightAction action)
             {
                 switch (action)
                 {
-                    case flightAction.Edit:
-                        OnEditFlight();
+                    case EFlightAction.Edit:
+                        _ = OnEditFlight();
                         break;
-                    case flightAction.Remove:
-                        OnRemoveFlights(SelectedFlights);
+                    case EFlightAction.Remove:
+                        _ = OnRemoveFlights(SelectedFlights);
                         break;
                 }
             }
@@ -48,7 +54,7 @@ namespace BlazorUI.Pages
             ContextMenuService.Close();
         }
 
-        enum flightAction
+        enum EFlightAction
         {
             Edit,
             Remove,
@@ -71,14 +77,14 @@ namespace BlazorUI.Pages
 
         async Task OnEditFlight()
         {
-            await DialogService.OpenAsync<EditFlight>($"Edit flight", new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight }, { "ViewModel", mvm } }, new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
+            await DialogService.OpenAsync<EditFlight>($"Edit flight", new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight! }, { "ViewModel", mvm } }, new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
             StateHasChanged();
         }
 
         async Task OnAddFlights(InputFileChangeEventArgs e)
         {
-            _logger.LogInformation($"ContentRootPath is : {Environment.ContentRootPath}");
-            List<string> l_IgcFilePaths = new List<string>();
+            _logger.LogInformation("ContentRootPath is : {ContentRootPath}", Environment.ContentRootPath);
+            var l_IgcFilePaths = new List<string>();
             foreach (var file in e.GetMultipleFiles())
             {
                 try
@@ -106,17 +112,12 @@ namespace BlazorUI.Pages
                 }
                 catch (System.IO.IOException ex)
                 {
-                    _logger.LogError(ex.Message);
+                    _logger.LogError("{Message}", ex.Message);
                 }
             }
 
             StateHasChanged();
             await dataGrid.Reload();
-        }
-        private string text = "";
-        void InputTextChanged(string newText)
-        {
-            text = newText;
         }
     }
 }

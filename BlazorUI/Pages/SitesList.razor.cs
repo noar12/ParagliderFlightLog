@@ -41,17 +41,19 @@ namespace BlazorUI.Pages
         {
             if (SelectedSites is not null && SelectedSites.Count == 1)
             {
-                ContextMenuService.Open(args, new List<ContextMenuItem> { new ContextMenuItem() { Text = "Edit site", Value = siteAction.Edit }, }, OnMenuItemClick);
+                ContextMenuService.Open(args,
+                                        new List<ContextMenuItem> { new() { Text = "Edit site", Value = ESiteAction.Edit }, },
+                                        OnMenuItemClick);
             }
         }
 
         void OnMenuItemClick(MenuItemEventArgs args)
         {
-            if (args.Value is siteAction action)
+            if (args.Value is ESiteAction action)
             {
                 switch (action)
                 {
-                    case siteAction.Edit:
+                    case ESiteAction.Edit:
                         _ = OnEditSite();
                         break;
                 }
@@ -82,7 +84,7 @@ namespace BlazorUI.Pages
 
         }
 
-        private async Task OnShowSiteTimeRange(object arg){
+        private async Task OnShowSiteTimeRange(){
             List<SiteViewModel> siteToShow = mvm.SiteUsedInTimeRange(_startDate, _endDate);
             foreach (SiteViewModel site in siteToShow) {
                 if (module is not null)
@@ -98,7 +100,7 @@ namespace BlazorUI.Pages
 
 
         }
-        enum siteAction
+        enum ESiteAction
         {
             Edit,
         }
@@ -116,11 +118,13 @@ namespace BlazorUI.Pages
                 try
                 {
                     await module.DisposeAsync();
+                    module = null;
+                    GC.SuppressFinalize(this);
                 }
                 catch (Exception e)
                 {
 
-                    _logger.LogError(e.Message);
+                    _logger.LogError("{Message}",e.Message);
                 }
 
             }

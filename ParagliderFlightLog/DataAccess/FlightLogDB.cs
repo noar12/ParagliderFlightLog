@@ -85,7 +85,7 @@ namespace ParagliderFlightLog.DataAccess
 		//	}
 		//}
 
-		private void AddFlightProperties(FlightWithData flight)
+		private static void AddFlightProperties(FlightWithData flight)
 		{
 			flight.FlightPoints = GetFlightPointsFromIgcContent(flight.IgcFileContent);
 			flight.TakeOffPoint = GetTakeOffPointFromPointList(flight.FlightPoints);
@@ -153,20 +153,6 @@ namespace ParagliderFlightLog.DataAccess
 				foreach (Site site in newItems)
 				{
 					_db.SaveData(sqlWriteSite, site, LoadConnectionString());
-				}
-
-			}
-		}
-
-		private void DeleteFlightsInDB(IList? oldItems)
-		{
-			if (oldItems != null)
-			{
-				string sqlDeleteFlight = "DELETE FROM Flights WHERE Flight_ID = @Flight_ID";
-
-				foreach (Flight flight in oldItems)
-				{
-					_db.SaveData(sqlDeleteFlight, flight, LoadConnectionString());
 				}
 
 			}
@@ -360,7 +346,7 @@ namespace ParagliderFlightLog.DataAccess
 		/// <summary>
 		/// The take off time in UTC as a timestamp based on the igc data (date in meta data and time as the timestamp of the first sample)
 		/// </summary>
-		private DateTime GetTakeOffTimeFromIgcContent(string igcContent)
+		private static DateTime GetTakeOffTimeFromIgcContent(string igcContent)
 		{
 			const string FLIGHT_TIME_REGEXP = @"B(?<h>\d\d)(?<m>\d\d)(?<s>\d\d)";
 			const string FLIGHT_DATE_REGEXP = @"HFDTE(DATE:)?(?<d>\d\d)(?<m>\d\d)(?<y>\d\d)";
@@ -384,26 +370,21 @@ namespace ParagliderFlightLog.DataAccess
 			}
 			return DateTime.MinValue;
 		}
-		private TimeSpan? GetFlightDurationFromPointList(List<FlightPoint> flightPoints)
+		private static TimeSpan? GetFlightDurationFromPointList(List<FlightPoint> flightPoints)
 		{
 			return flightPoints.Count > 0 ? new TimeSpan(0, 0, flightPoints.Count) : null;
 		}
 
-		private double GetTakeOffAltitudeFromPointList(List<FlightPoint> flightPoints)
-		{
-			return flightPoints.Count > 0 ? flightPoints[0].Height : double.NaN;
-		}
-		private FlightPoint GetTakeOffPointFromPointList(List<FlightPoint> flightPoints)
+		private static FlightPoint GetTakeOffPointFromPointList(List<FlightPoint> flightPoints)
 		{
 			return flightPoints.Count > 0 ? flightPoints[0] : new FlightPoint() { Latitude = double.NaN, Longitude = double.NaN, Height = double.NaN };
 		}
-		private List<FlightPoint> GetFlightPointsFromIgcContent(string igcContent)
+		private static List<FlightPoint> GetFlightPointsFromIgcContent(string igcContent)
 		{
 			List<FlightPoint> output = new();
-			FlightPoint l_flightPoint;
 			foreach (string line in igcContent.Split("\r\n"))
 			{
-				if (ParseIGCFlightData(line, out l_flightPoint))
+				if (ParseIGCFlightData(line, out FlightPoint l_flightPoint))
 				{
 					output.Add(l_flightPoint);
 				}
@@ -411,7 +392,7 @@ namespace ParagliderFlightLog.DataAccess
 			return output;
 		}
 
-		private string GetGliderNameFromIgcContent(string igcContent)
+		private static string GetGliderNameFromIgcContent(string igcContent)
 		{
 			const string GLIDER_TYPE_REGEX = @"^HFGTYGLIDERTYPE:(?<value>.+)$";
 			var match = Regex.Match(igcContent, GLIDER_TYPE_REGEX, RegexOptions.Multiline);
@@ -428,7 +409,7 @@ namespace ParagliderFlightLog.DataAccess
 		/// <param name="IGC_Line"></param>
 		/// <param name="parsedFlightPoint"></param>
 		/// <returns></returns>
-		private bool ParseIGCFlightData(string IGC_Line, out FlightPoint parsedFlightPoint)
+		private static bool ParseIGCFlightData(string IGC_Line, out FlightPoint parsedFlightPoint)
 		{
 
 			const string COORDINATE_REGEX = @"^B(?<UTCTimeHour>\d\d)(?<UTCTimeMinute>\d\d)(?<UTCTimeSecond>\d\d)(?<d1>\d\d)(?<m1>\d\d\d\d\d)(?<dir1>[NnSs])(?<d2>\d\d\d)(?<m2>\d\d\d\d\d)(?<dir2>[EeWw])A(?<BaroAlt>\d\d\d\d\d)(?<GPS_Alt>\d\d\d\d\d)";
@@ -477,20 +458,20 @@ namespace ParagliderFlightLog.DataAccess
 
 		public void UpdateFlightComment(Flight flight, string value)
 		{
-			string sqlStatement = "UPDATE Flights SET Comment = @Comment WHERE Flight_ID = @Id;";
-			_db.SaveData(sqlStatement, new { Comment = value, Id = flight.Flight_ID }, LoadConnectionString());
+			string sqlStatement = "UPDATE Flights SET Comment = @Comment WHERE Flight_ID = @Flight_ID;";
+			_db.SaveData(sqlStatement, new { Comment = value, flight.Flight_ID }, LoadConnectionString());
 		}
 
 		public void UpdateFlightGlider(Flight flight, Glider glider)
 		{
-			string sqlStatement = "UPDATE Flights SET REF_Glider_ID = @Glider_ID WHERE Flight_ID = @Id;";
-			_db.SaveData(sqlStatement, new { Glider_ID = glider.Glider_ID, Id = flight.Flight_ID }, LoadConnectionString());
+			string sqlStatement = "UPDATE Flights SET REF_Glider_ID = @Glider_ID WHERE Flight_ID = @Flight_ID;";
+			_db.SaveData(sqlStatement, new { glider.Glider_ID, flight.Flight_ID }, LoadConnectionString());
 		}
 
 		public void UpdateFlightTakeOffSite(Flight flight, Site site)
 		{
-			string sqlStatement = "UPDATE Flights SET REF_TakeOffSite_ID = @Site_ID WHERE Flight_ID = @Id;";
-			_db.SaveData(sqlStatement, new { Site_ID = site.Site_ID, Id = flight.Flight_ID }, LoadConnectionString());
+			string sqlStatement = "UPDATE Flights SET REF_TakeOffSite_ID = @Site_ID WHERE Flight_ID = @Flight_ID;";
+			_db.SaveData(sqlStatement, new { site.Site_ID, flight.Flight_ID }, LoadConnectionString());
 		}
 		public List<Flight> GetAllFlights()
 		{
@@ -592,7 +573,7 @@ namespace ParagliderFlightLog.DataAccess
 		private string GetDbPath()
 		{
 			string pattern = @"(?<=Data Source=).*?(?=;)";
-			Regex rgx = new Regex(pattern);
+			var rgx = new Regex(pattern);
 			Match match = rgx.Match(LoadConnectionString());
 			string dbPath = match.Value;
 

@@ -12,7 +12,6 @@ namespace ParagliderFlightLog.ViewModels
     {
         private Glider m_Glider;
         private readonly FlightLogDB _db;
-        private ICollection<Flight> m_FlightCollection = new List<Flight>();
 
         public GliderViewModel(Glider glider, FlightLogDB db)
         {
@@ -52,8 +51,8 @@ namespace ParagliderFlightLog.ViewModels
             get => m_Glider.HomologationCategory.ToString();
             set
             {
-                Enum.TryParse<EHomologationCategory>(value, out EHomologationCategory homologation);
-                m_Glider.HomologationCategory = homologation;
+                bool success = Enum.TryParse<EHomologationCategory>(value, out EHomologationCategory homologation);
+                m_Glider.HomologationCategory = success ? homologation: EHomologationCategory.Undefined;
             }
 
         }

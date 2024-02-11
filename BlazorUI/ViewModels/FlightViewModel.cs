@@ -12,12 +12,9 @@ namespace ParagliderFlightLog.ViewModels
 	public class FlightViewModel
 	{
 		private const int INTEGRATION_STEP = 8;
-		private Flight _flight = new Flight();
+		private readonly Flight _flight = new();
 		private FlightWithData? _flightWithData = null;
 		private readonly FlightLogDB _db;
-		private ICollection<Flight> m_FlightCollection = new List<Flight>();
-		private ICollection<Site> m_SiteCollection = new List<Site>();
-		private ICollection<Glider> m_GliderCollection = new List<Glider>();
 
 		public FlightViewModel(Flight flight, FlightLogDB db)
 		{
@@ -156,7 +153,7 @@ namespace ParagliderFlightLog.ViewModels
 			_flightWithData ??= _db.GetFlightWithData(_flight);
 			if (_flightWithData is not null && FlightPoints.Count != 0)
 			{
-				List<double> l_verticalRates = new List<double>();
+				var l_verticalRates = new List<double>();
 				for (int i = integrationStep; i < _flightWithData.FlightPoints.Count; i++)
 				{
 					l_verticalRates.Add((FlightPoints[i].Height - FlightPoints[i - INTEGRATION_STEP].Height) / INTEGRATION_STEP);

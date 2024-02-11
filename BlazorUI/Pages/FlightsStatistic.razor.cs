@@ -31,7 +31,7 @@ namespace BlazorUI.Pages
                 return;
             DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
         }
-        private Variant variant = Variant.Outlined;
+        private readonly Variant variant = Variant.Outlined;
         StatisticalFlightsAnalysis AnalysisToDo;
         int YearToAnalyse;
         void OnAnalyze()
@@ -118,19 +118,15 @@ namespace BlazorUI.Pages
             }
         }
 
-        string GetAnalyseName(StatisticalFlightsAnalysis analyse)
+        static string GetAnalyseName(StatisticalFlightsAnalysis analyse)
         {
-            switch (analyse)
+            return analyse switch
             {
-                case StatisticalFlightsAnalysis.MontlyMedian:
-                    return "Monthly median";
-                case StatisticalFlightsAnalysis.DurationDistribution:
-                    return "Duration Distribution";
-                case StatisticalFlightsAnalysis.MonthlyFlightDuration:
-                    return "Monthly flight duration";
-                default:
-                    return "";
-            }
+                StatisticalFlightsAnalysis.MontlyMedian => "Monthly median",
+                StatisticalFlightsAnalysis.DurationDistribution => "Duration Distribution",
+                StatisticalFlightsAnalysis.MonthlyFlightDuration => "Monthly flight duration",
+                _ => "",
+            };
         }
 
         class DurationItem
@@ -147,15 +143,15 @@ namespace BlazorUI.Pages
 
         class YearMonthlyStatistic
         {
-            public MonthlyItem[] MonthlyMedianItems { get; set; } = new MonthlyItem[0];
+            public MonthlyItem[] MonthlyMedianItems { get; set; } = Array.Empty<MonthlyItem>();
         }
 
-        DurationItem[] DurationAnalysisResult = new DurationItem[0];
-        YearMonthlyStatistic[] MonthlyMedianAnalysisResult = new YearMonthlyStatistic[0];
-        YearMonthlyStatistic[] MonthlyDurationAnalysisResult = new YearMonthlyStatistic[0];
-        DurationItem[] HistDataToDurationItem(HistData histData)
+        DurationItem[] DurationAnalysisResult = Array.Empty<DurationItem>();
+        YearMonthlyStatistic[] MonthlyMedianAnalysisResult = Array.Empty<YearMonthlyStatistic>();
+        YearMonthlyStatistic[] MonthlyDurationAnalysisResult = Array.Empty<YearMonthlyStatistic>();
+        static DurationItem[] HistDataToDurationItem(HistData histData)
         {
-            List<DurationItem> durationItems = new List<DurationItem>();
+            var durationItems = new List<DurationItem>();
             for (int i = 0; i < histData.Counts.Length; ++i)
             {
                 durationItems.Add(new DurationItem() { BarValue = histData.Counts[i], BarLocation = histData.BinEdges[i], });
