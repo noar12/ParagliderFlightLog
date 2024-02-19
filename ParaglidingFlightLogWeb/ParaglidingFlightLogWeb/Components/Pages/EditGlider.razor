@@ -1,0 +1,25 @@
+﻿@using ParaglidingFlightLogWeb.ViewModels
+@using ParaglidingFlightLogWeb.Components.Subs
+@rendermode InteractiveServer
+
+<div class="container">
+    <div class="col-4">
+        <MyTextInput Label="Manufacturer" @bind-Value=@GliderToEdit.Manufactuer />
+        <MyTextInput Label="Model" @bind-Value=@GliderToEdit.Model />
+        <MyTextInput Label="Igc Name" @bind-Value=@GliderToEdit.IgcName />
+        <MyIntegerInput Label="BuildYear" @bind-Value=@GliderToEdit.BuildYear />
+        <MyDatePicker Label="Last Check Date" @bind-Value=@GliderToEdit.LastCheckDateTime DateFormat="d" />
+        <RadzenFormField Text="Homologation Category" Variant="Variant.Outlined">
+            <RadzenDropDown TValue="string" @bind-Value=@GliderToEdit.HomologationCategoryDisplay Data=@GliderViewModel.HomologationCategories />
+        </RadzenFormField>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public GliderViewModel GliderToEdit { get; set; }
+
+
+
+
+
+}

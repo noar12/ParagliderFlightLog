@@ -1,0 +1,58 @@
+﻿@page "/SitesList"
+@inject ContextMenuService ContextMenuService
+@inject DialogService DialogService
+@inject IJSRuntime jsRuntime
+@inject ILogger<SitesList> _logger;
+@using System
+@using System.IO
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.Extensions.Logging
+@inject IWebHostEnvironment Environment
+@inject MainViewModel mvm
+@using ParaglidingFlightLogWeb.ViewModels
+@using ParaglidingFlightLogWeb.Components.Subs
+@rendermode InteractiveServer
+
+<PageTitle>Sites list</PageTitle>
+
+    <RadzenRow>
+        <MyDatePicker @bind-Value=_startDate Label="From" />
+        <MyDatePicker @bind-Value=_endDate Label="To"/>
+        <RadzenButton Text="Show sites in time range" Click=OnShowSiteTimeRange Size="ButtonSize.Small"/>
+    </RadzenRow>
+   <RadzenRow>
+        <RadzenColumn Size="12" SizeSM="6">
+            <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="15"
+                            AllowSorting="true" Data="@mvm.SiteListViewModel" TItem="SiteViewModel"
+                            style="height: calc(100vh - 200px)"
+                            SelectionMode="DataGridSelectionMode.Single"
+                            ContextMenu=@(args => ShowContextMenuWithItems(args))
+                            ValueChanged="UpdateSiteDetails">
+                <Columns>
+                    <RadzenDataGridColumn TItem="SiteViewModel" Property="Name" Title="Site name" Width="150px" />
+                    <RadzenDataGridColumn TItem="SiteViewModel" Property="Altitude" Title="Altitude" />
+                    <RadzenDataGridColumn TItem="SiteViewModel" Property="WindOrientation" Title="Wind orientation" />
+                    <RadzenDataGridColumn TItem="SiteViewModel" Property="SiteUseCount" Title="# Used" />
+                </Columns>
+            </RadzenDataGrid>
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeSM="6">
+
+            <div class="row">
+                @if (LastSelectedSite is not null)
+                {
+                    <BlazorUI.Components.MyTextIndicator Label="Site Name" Text="@LastSelectedSite.Name" />
+                }
+                else
+                {
+                    <p>Please select a site</p>
+                }
+            </div>
+
+
+            <div class="row" id="map" style="height: 500px"></div>
+        </RadzenColumn>
+    </RadzenRow>
+
+
+

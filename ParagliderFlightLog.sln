@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParagliderFlightLogTest", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorUI", "BlazorUI\BlazorUI.csproj", "{7AE3250B-1111-40EF-912C-00FE7A49FE6D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParaglidingFlightLogWeb", "ParaglidingFlightLogWeb\ParaglidingFlightLogWeb\ParaglidingFlightLogWeb.csproj", "{BDBF4FEA-0DAA-432E-9BD7-EFE28493AFE4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParaglidingFlightLogWeb.Client", "ParaglidingFlightLogWeb\ParaglidingFlightLogWeb.Client\ParaglidingFlightLogWeb.Client.csproj", "{7360A2A6-694F-43E6-85D4-50E952B59E63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{7AE3250B-1111-40EF-912C-00FE7A49FE6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AE3250B-1111-40EF-912C-00FE7A49FE6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AE3250B-1111-40EF-912C-00FE7A49FE6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDBF4FEA-0DAA-432E-9BD7-EFE28493AFE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDBF4FEA-0DAA-432E-9BD7-EFE28493AFE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDBF4FEA-0DAA-432E-9BD7-EFE28493AFE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDBF4FEA-0DAA-432E-9BD7-EFE28493AFE4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7360A2A6-694F-43E6-85D4-50E952B59E63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7360A2A6-694F-43E6-85D4-50E952B59E63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7360A2A6-694F-43E6-85D4-50E952B59E63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7360A2A6-694F-43E6-85D4-50E952B59E63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
