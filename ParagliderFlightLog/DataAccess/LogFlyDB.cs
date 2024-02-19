@@ -18,8 +18,8 @@ namespace ParagliderFlightLog.DataAccess
     public class LogFlyDB
     {
         private readonly FlightLogDB _flightLogDB;
-        private List<LogFlyVol> m_LogFlyVolCollection = new ();
-        private List<LogFlySite> m_LogFlySiteCollection = new ();
+        private List<LogFlyVol> m_LogFlyVolCollection = [];
+        private List<LogFlySite> m_LogFlySiteCollection = [];
         public LogFlyDB(FlightLogDB flightLogDb)
         {
             _flightLogDB = flightLogDb;
@@ -59,7 +59,7 @@ namespace ParagliderFlightLog.DataAccess
 
         private List<Glider> GetAllGlidersAsFlightLogDbGlider()
         {
-            List<Glider> output = new();
+            List<Glider> output = [];
             List<string> gliderNames = m_LogFlyVolCollection.Select(v => v.V_Engin).Distinct().ToList();
 
             foreach (var gliderName in gliderNames)

@@ -13,12 +13,14 @@ public partial class FlightsStatistic
         DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
     }
     private readonly Variant variant = Variant.Outlined;
-    StatisticalFlightsAnalysis AnalysisToDo;
+#pragma warning disable IDE0044 // Add readonly modifier. this wrong because we change it in the interface
+    StatisticalFlightsAnalysis AnalysisToDo= StatisticalFlightsAnalysis.DurationDistribution;
+#pragma warning restore IDE0044 // Add readonly modifier
     int YearToAnalyse;
     void OnAnalyze()
     {
         string[] l_MonthList =
-        {
+        [
             "January",
             "February",
             "March",
@@ -31,7 +33,7 @@ public partial class FlightsStatistic
             "October",
             "November",
             "December"
-        };
+        ];
         string[] l_YearsText = new string[mvm.YearsOfFlying.Count];
         int i = 0;
         switch (AnalysisToDo)
@@ -124,12 +126,12 @@ public partial class FlightsStatistic
 
     class YearMonthlyStatistic
     {
-        public MonthlyItem[] MonthlyMedianItems { get; set; } = Array.Empty<MonthlyItem>();
+        public MonthlyItem[] MonthlyMedianItems { get; set; } = [];
     }
 
-    DurationItem[] DurationAnalysisResult = Array.Empty<DurationItem>();
-    YearMonthlyStatistic[] MonthlyMedianAnalysisResult = Array.Empty<YearMonthlyStatistic>();
-    YearMonthlyStatistic[] MonthlyDurationAnalysisResult = Array.Empty<YearMonthlyStatistic>();
+    DurationItem[] DurationAnalysisResult = [];
+    YearMonthlyStatistic[] MonthlyMedianAnalysisResult = [];
+    YearMonthlyStatistic[] MonthlyDurationAnalysisResult = [];
     static DurationItem[] HistDataToDurationItem(HistData histData)
     {
         var durationItems = new List<DurationItem>();
@@ -138,6 +140,6 @@ public partial class FlightsStatistic
             durationItems.Add(new DurationItem() { BarValue = histData.Counts[i], BarLocation = histData.BinEdges[i], });
         }
 
-        return durationItems.ToArray();
+        return [.. durationItems];
     }
 }

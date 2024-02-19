@@ -138,7 +138,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
 
         internal List<SiteViewModel> SiteUsedInTimeRange(DateTime startDate, DateTime endDate)
         {
-			List<SiteViewModel> output = new();
+			List<SiteViewModel> output = [];
             var sites = _flightLog.GetSitesUsedInTimeRange(startDate, endDate);
             foreach (var item in sites)
             {

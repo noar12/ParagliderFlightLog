@@ -100,7 +100,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 }
             }
 
-            mvm.AddFlightsFromIGC(l_IgcFilePaths.ToArray());
+            mvm.AddFlightsFromIGC([.. l_IgcFilePaths]);
             foreach (string filepath in l_IgcFilePaths)
             {
                 try

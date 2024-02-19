@@ -18,7 +18,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
         public TimeSpan MedianFlightsDuration { get; private set; }
         public string MedianFlightDurationText { get { return $"{(int)MedianFlightsDuration.TotalHours}:{MedianFlightsDuration.Minutes}"; } }
         public int FlightsCount { get; private set; }
-        public HistData FlightsDurationHistData { get; private set; } = new(Array.Empty<double>(),Array.Empty<double>());
+        public HistData FlightsDurationHistData { get; private set; } = new([], []);
 
         public FlightsStatisticsViewModel(MainViewModel mvm) {
         m_MainViewModel = mvm;
@@ -37,7 +37,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
             FlightsCount = l_AnalyzeFlights.Count;
             List<double> l_flightsDurationsList = l_AnalyzeFlights.Select(f => f.FlightDuration.TotalHours).ToList();
 
-            (double[] counts, double[] binEdges) = ComputeHistData(l_flightsDurationsList.ToArray(), 20);
+            (double[] counts, double[] binEdges) = ComputeHistData([.. l_flightsDurationsList], 20);
             FlightsDurationHistData = new HistData(counts, binEdges);
 
             
@@ -67,8 +67,11 @@ namespace ParaglidingFlightLogWeb.ViewModels
             double[] l_MonthMedian = new double[12];
             for (int month = 1; month <= 12; month++)
             {
-                FlightViewModel[]? l_MonthFlights = m_MainViewModel.FlightListViewModel
-                .Where(f => f.TakeOffDateTime.Year == flightYear && f.TakeOffDateTime.Month == month).OrderBy(f => f.FlightDuration).ToArray();
+                FlightViewModel[]? l_MonthFlights =
+                [
+                    .. m_MainViewModel.FlightListViewModel
+                                    .Where(f => f.TakeOffDateTime.Year == flightYear && f.TakeOffDateTime.Month == month).OrderBy(f => f.FlightDuration),
+                ];
                 if (l_MonthFlights.Length != 0)
                 {
                     int i = month -1;
@@ -110,7 +113,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
                             break;
                     }
                 }
-                return availableAnalysis.ToArray();
+                return [.. availableAnalysis];
             }
         }
     }

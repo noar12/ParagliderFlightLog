@@ -257,7 +257,7 @@ namespace ParagliderFlightLog.DataAccess
 
 
 			// insert the flight if everything is ok here
-			WriteFlightsInDB(new List<FlightWithData> { newFlight });
+			WriteFlightsInDB([newFlight]);
 			return newFlight;
 		}
 		public Site? GetFlightTakeOffSite(Flight flight)
@@ -360,7 +360,7 @@ namespace ParagliderFlightLog.DataAccess
 		}
 		private static List<FlightPoint> GetFlightPointsFromIgcContent(string igcContent)
 		{
-			List<FlightPoint> output = new();
+			List<FlightPoint> output = [];
 			foreach (string line in igcContent.Split("\r\n"))
 			{
 				if (ParseIGCFlightData(line, out FlightPoint l_flightPoint))

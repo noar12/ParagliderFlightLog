@@ -88,7 +88,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
 		public List<FlightPoint> FlightPoints { get {
 				_flightWithData ??= _db.GetFlightWithData(_flight);
 
-				return _flightWithData?.FlightPoints ?? new(); } }
+				return _flightWithData?.FlightPoints ?? []; } }
 		public string Comment { get { return _db.GetFlightComment(Flight) ?? ""; } set { _db.UpdateFlightComment(Flight, value); } }
 		/// <summary>
 		/// Get the trace length in km
@@ -147,9 +147,9 @@ namespace ParaglidingFlightLogWeb.ViewModels
 				{
 					l_verticalRates.Add((FlightPoints[i].Height - FlightPoints[i - INTEGRATION_STEP].Height) / INTEGRATION_STEP);
 				}
-				return l_verticalRates.ToArray();
+                return [.. l_verticalRates];
 			}
-			return Array.Empty<double>();
+			return [];
 		}
 	}
 

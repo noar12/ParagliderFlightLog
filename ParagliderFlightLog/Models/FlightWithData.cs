@@ -31,7 +31,7 @@ public class FlightWithData
     /// The flightPoint of the take off if an igc content is available. NaN otherwise
     /// </summary>
     public FlightPoint TakeOffPoint { get; set; } = new();
-    public List<FlightPoint> FlightPoints { get; set; } = new List<FlightPoint>();
+    public List<FlightPoint> FlightPoints { get; set; } = [];
     public string IGC_GliderName { get; set; } = "Unknown glider";
     public Flight ToFlight(){
         return new()

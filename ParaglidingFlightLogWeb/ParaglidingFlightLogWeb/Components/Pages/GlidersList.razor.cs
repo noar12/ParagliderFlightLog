@@ -35,7 +35,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
         void ShowContextMenuWithItems(MouseEventArgs args)
         {
-            ContextMenuService.Open(args, new List<ContextMenuItem> { new() { Text = "Edit glider", Value = EGliderAction.Edit }, }, OnMenuItemClick);
+            ContextMenuService.Open(args, [new() { Text = "Edit glider", Value = EGliderAction.Edit },], OnMenuItemClick);
         }
 
         void OnMenuItemClick(MenuItemEventArgs args)
