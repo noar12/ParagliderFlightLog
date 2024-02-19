@@ -1,0 +1,49 @@
+﻿@page "/FlightsList"
+@inject ContextMenuService ContextMenuService
+@inject DialogService DialogService
+@using System
+@using System.IO
+@using ParaglidingFlightLogWeb.Components.Subs
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.Extensions.Logging
+@inject IWebHostEnvironment Environment
+@inject MainViewModel mvm
+@inject ILogger<Index> _logger
+@using ParaglidingFlightLogWeb.ViewModels
+
+@rendermode InteractiveServer
+
+<PageTitle>Flight list</PageTitle>
+
+<InputFile OnChange="@OnAddFlights" multiple />
+<RadzenRow>
+    <RadzenColumn Size="12" SizeSM="8">
+        <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                        AllowPaging="true"
+                        PageSize="16"
+                        style="height: calc(100vh - 180px)"
+                        AllowSorting="true" Data="@mvm.FlightListViewModel" TItem="FlightViewModel"
+                        SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedFlights
+                        ContextMenu=@(args => ShowContextMenuWithItems(args))>
+            <Columns>
+                <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffDateTime" Title="Date/Time" Width="150px" SortOrder="SortOrder.Descending" />
+                <RadzenDataGridColumn TItem="FlightViewModel" Property="TakeOffSiteName" Title="Site" />
+                <RadzenDataGridColumn TItem="FlightViewModel" Property="FlightDuration" Title="Duration" />
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenColumn>
+    @if (LastSelectedFlight != null)
+    {
+        <RadzenColumn Size="12" SizeSM="4">
+            <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName" />
+            <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxHeight" UnitSymbol="m" Format="F0" />
+            <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2" />
+            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1" />
+            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1" />
+            <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false />
+        </RadzenColumn>
+    }
+</RadzenRow>
+
+
+
