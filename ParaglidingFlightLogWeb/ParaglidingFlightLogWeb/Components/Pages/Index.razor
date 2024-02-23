@@ -11,8 +11,23 @@
 @inject ILogger<Index> _logger
 @using ParaglidingFlightLogWeb.ViewModels
 
+
 @rendermode InteractiveServer
 
 <PageTitle>Home</PageTitle>
 
+<h1>Welcome in the Paragliding Flight Log Web App</h1>
+
+<AuthorizeView>
+    <Authorized>
+        <h2>
+            You are currently log in as @userName (@userEmail) and your Id is : @userId
+        </h2>
+    </Authorized>
+    <NotAuthorized>
+        <h2>
+            You are currently not log in please <a href="/Account/Login">log in</a>
+        </h2>
+    </NotAuthorized>
+</AuthorizeView>
 
