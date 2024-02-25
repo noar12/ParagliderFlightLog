@@ -9,11 +9,11 @@ namespace ParaglidingFlightLogWeb.Components.Pages;
 
 public partial class FlightsStatistic
 {
-
-    [CascadingParameter]
-    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
-    [Inject]
-    UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] IWebHostEnvironment Environment { get; set; } = null!;
+    [Inject] MainViewModel mvm { get; set; } = null!;
+    [Inject] FlightsStatisticsViewModel fsvm { get; set; } = null!;
+    [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+    [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
     protected override async Task OnInitializedAsync()
     {
         var userClaim = (await AuthenticationStateTask).User;
@@ -31,7 +31,7 @@ public partial class FlightsStatistic
     }
     private readonly Variant variant = Variant.Outlined;
 #pragma warning disable IDE0044 // Add readonly modifier. this wrong because we change it in the interface
-    StatisticalFlightsAnalysis AnalysisToDo= StatisticalFlightsAnalysis.DurationDistribution;
+    StatisticalFlightsAnalysis AnalysisToDo = StatisticalFlightsAnalysis.DurationDistribution;
 #pragma warning restore IDE0044 // Add readonly modifier
     int YearToAnalyse;
     void OnAnalyze()
@@ -108,7 +108,7 @@ public partial class FlightsStatistic
 
                 break;
             case StatisticalFlightsAnalysis.DurationDistribution:
-                fsvm = new FlightsStatisticsViewModel(mvm, new DateTime(YearToAnalyse, 1, 1,0,0,0,DateTimeKind.Utc), new DateTime(YearToAnalyse, 12, 31, 0, 0, 0, DateTimeKind.Utc));
+                fsvm = new FlightsStatisticsViewModel(mvm, new DateTime(YearToAnalyse, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(YearToAnalyse, 12, 31, 0, 0, 0, DateTimeKind.Utc));
                 if (fsvm.FlightsCount == 0)
                     return;
                 DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);

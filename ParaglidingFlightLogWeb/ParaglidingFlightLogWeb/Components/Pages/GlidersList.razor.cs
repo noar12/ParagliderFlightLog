@@ -1,23 +1,7 @@
-using global::System.Collections.Generic;
-using global::System.Linq;
-using global::System.Threading.Tasks;
 using global::Microsoft.AspNetCore.Components;
-using System.Net.Http;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.Web.Virtualization;
-using Microsoft.JSInterop;
-using ParaglidingFlightLogWeb;
-using ParaglidingFlightLogWeb.Components.Layout;
 using Radzen;
-using Radzen.Blazor;
-using System;
-using System.IO;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
 using ParaglidingFlightLogWeb.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
@@ -34,6 +18,10 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 return SelectedGliders.Count > 0 ? SelectedGliders[SelectedGliders.Count - 1] : null;
             }
         }
+        [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
+        [Inject] DialogService DialogService { get; set; } = null!;
+        [Inject] IWebHostEnvironment Environment { get; set; } = null!;
+        [Inject] MainViewModel mvm { get; set; } = null!;
         [CascadingParameter]
         private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
         [Inject]

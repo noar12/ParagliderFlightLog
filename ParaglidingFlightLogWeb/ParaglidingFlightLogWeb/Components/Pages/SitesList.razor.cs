@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 using Radzen;
 using ParaglidingFlightLogWeb.ViewModels;
-using System.Linq;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -18,10 +17,15 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         private DateTime _startDate = DateTime.Today - TimeSpan.FromDays(365);
         private DateTime _endDate = DateTime.Today;
 
-        [CascadingParameter]
-        private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
-        [Inject]
-        UserManager<ApplicationUser> UserManager { get; set; } = null!;
+        [Inject] IWebHostEnvironment Environment { get; set; } = null!;
+        [Inject] MainViewModel mvm { get; set; } = null!;
+        [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
+        [Inject] DialogService DialogService { get; set; } = null!;
+        [Inject] IJSRuntime jsRuntime { get; set; } = null!;
+        [Inject] ILogger<SitesList> _logger { get; set; } = null!;
+
+        [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+        [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
         protected override async Task OnInitializedAsync()
         {
             var userClaim = (await AuthenticationStateTask).User;
@@ -102,7 +106,8 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
         }
 
-        private async Task OnShowSiteTimeRange(){
+        private async Task OnShowSiteTimeRange()
+        {
             List<SiteViewModel> siteToShow = mvm.SiteUsedInTimeRange(_startDate, _endDate);
             foreach (var site in siteToShow.Where(site => module is not null))
             {
@@ -138,7 +143,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 catch (Exception e)
                 {
 
-                    _logger.LogError("{Message}",e.Message);
+                    _logger.LogError("{Message}", e.Message);
                 }
 
             }

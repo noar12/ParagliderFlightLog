@@ -8,14 +8,18 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
 
+
 namespace ParaglidingFlightLogWeb.Components.Pages
 {
     public partial class FlightsList
     {
-        [CascadingParameter]
-        private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
-        [Inject]
-        UserManager<ApplicationUser> UserManager { get; set; } = null!;
+        [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
+        [Inject] DialogService DialogService { get; set; } = null!;
+        [Inject] IWebHostEnvironment Environment { get; set; } = null!;
+        [Inject] MainViewModel mvm { get; set; } = null!;
+        [Inject] ILogger<Index> _logger {  get; set; } = null!;
+        [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+        [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
 
         private RadzenDataGrid<FlightViewModel> dataGrid = new();
 

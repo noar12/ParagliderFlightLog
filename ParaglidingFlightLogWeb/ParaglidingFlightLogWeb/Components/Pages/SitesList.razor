@@ -1,16 +1,11 @@
-﻿@page "/SitesList"
-@inject ContextMenuService ContextMenuService
-@inject DialogService DialogService
-@inject IJSRuntime jsRuntime
-@inject ILogger<SitesList> _logger;
-@using System
+﻿@using System
 @using System.IO
 @using Microsoft.AspNetCore.Hosting
 @using Microsoft.Extensions.Logging
-@inject IWebHostEnvironment Environment
-@inject MainViewModel mvm
 @using ParaglidingFlightLogWeb.ViewModels
 @using ParaglidingFlightLogWeb.Components.Subs
+
+@page "/SitesList"
 @rendermode InteractiveServer
 
 <PageTitle>Sites list</PageTitle>
