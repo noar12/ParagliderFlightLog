@@ -5,23 +5,36 @@ using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
 using System;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Components.Authorization;
+using ParaglidingFlightLogWeb.Data;
 
 namespace ParaglidingFlightLogWeb.Components.Pages
 {
     public partial class ImportLogFlyDb
     {
-        [Inject]
-        private MainViewModel? Mvm { get; set; }
-        [Inject]
-        private ILogger<ImportLogFlyDb>? Logger { get; set; }
-        [Inject]
-        private IWebHostEnvironment? Environment { get; set; }
+        [Inject] private MainViewModel Mvm { get; set; } = null!;
+        [Inject] private ILogger<ImportLogFlyDb>? Logger { get; set; } = null!;
+        [Inject] private IWebHostEnvironment? Environment { get; set; } = null!;
+        [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+        [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
         private bool _success = false;
         private int _importedFlightCount;
         private int _importedSiteCount;
         private int _importedGliderCount;
         private bool _fail = false;
         private string _failMessage = string.Empty;
+        protected override async Task OnInitializedAsync()
+        {
+            var userClaim = (await AuthenticationStateTask).User;
+            if (userClaim.Identity is not null && userClaim.Identity.IsAuthenticated)
+            {
+                var currentUser = await UserManager.GetUserAsync(userClaim);
+                if (currentUser == null) return;
+                string userId = currentUser.Id;
+                Mvm.Init(userId);
+            }
+        }
         private async Task OnLogFlyDbChosen(InputFileChangeEventArgs e)
         {
             _success = false;

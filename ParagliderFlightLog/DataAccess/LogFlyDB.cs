@@ -73,7 +73,7 @@ namespace ParagliderFlightLog.DataAccess
         private static string LoadConnectionString(string DB_Path)
         {
             // "Data Source=./<relativePathToSqliteDataBase;Version=3;"
-            return $"Data Source={DB_Path};Version=3;";
+            return $"Data Source={DB_Path};";
 
         }
     }
