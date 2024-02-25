@@ -1,16 +1,33 @@
 using Radzen;
 using ParaglidingFlightLogWeb.ViewModels;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Identity;
+using ParaglidingFlightLogWeb.Data;
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
 
 public partial class FlightsStatistic
 {
-    protected override void OnInitialized()
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+    [Inject]
+    UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    protected override async Task OnInitializedAsync()
     {
-        YearToAnalyse = DateTime.Now.Year;
-        if (fsvm.FlightsCount == 0)
-            return;
-        DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
+        var userClaim = (await AuthenticationStateTask).User;
+        if (userClaim.Identity is not null && userClaim.Identity.IsAuthenticated)
+        {
+            var currentUser = await UserManager.GetUserAsync(userClaim);
+            if (currentUser == null) return;
+            string userId = currentUser.Id;
+            mvm.Init(userId);
+            YearToAnalyse = DateTime.Now.Year;
+            if (fsvm.FlightsCount == 0)
+                return;
+            DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
+        }
     }
     private readonly Variant variant = Variant.Outlined;
 #pragma warning disable IDE0044 // Add readonly modifier. this wrong because we change it in the interface

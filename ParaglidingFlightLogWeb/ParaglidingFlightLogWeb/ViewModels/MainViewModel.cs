@@ -22,12 +22,15 @@ namespace ParaglidingFlightLogWeb.ViewModels
 			_flightLog = flightLogDB;
             _logger = logger;
             _logFlyDB = logFlyDB;
-            FlightListViewModel = _flightLog.GetAllFlights().Select(f => f.ToVM(_flightLog)).ToList();
-			SiteListViewModel = _flightLog.GetAllSites().Select(s => s.ToVM(_flightLog)).ToList();
-			GliderListViewModel = _flightLog.GetAllGliders().Select(g => g.ToVM(_flightLog)).ToList();
+
 		}
 
-
+		public void Init(string userId){
+			_flightLog.Init(userId);
+            FlightListViewModel = _flightLog.GetAllFlights().Select(f => f.ToVM(_flightLog)).ToList();
+            SiteListViewModel = _flightLog.GetAllSites().Select(s => s.ToVM(_flightLog)).ToList();
+            GliderListViewModel = _flightLog.GetAllGliders().Select(g => g.ToVM(_flightLog)).ToList();
+        }
 
 
 
@@ -148,8 +151,8 @@ namespace ParaglidingFlightLogWeb.ViewModels
 			return output;
         }
 
-        public List<FlightViewModel> FlightListViewModel { get; }
-		public List<SiteViewModel> SiteListViewModel { get; }
-		public List<GliderViewModel> GliderListViewModel { get; }
+        public List<FlightViewModel> FlightListViewModel { get; private set; }
+		public List<SiteViewModel> SiteListViewModel { get; private set; }
+		public List<GliderViewModel> GliderListViewModel { get; private set; }
 	}
 }

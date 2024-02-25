@@ -47,6 +47,7 @@ builder.Services.AddScoped<MainViewModel>();
 builder.Services.AddScoped<FlightsStatisticsViewModel>();
 builder.Services.AddScoped<FlightLogDB>();
 builder.Services.AddScoped<LogFlyDB>();
+builder.Services.AddScoped<SqliteDataAccess>();
 
 var app = builder.Build();
 

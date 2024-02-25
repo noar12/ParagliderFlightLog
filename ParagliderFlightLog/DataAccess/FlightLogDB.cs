@@ -24,12 +24,18 @@ namespace ParagliderFlightLog.DataAccess
 		private readonly SqliteDataAccess _db;
 		private readonly IConfiguration _config;
 		private readonly ILogger<FlightLogDB> _logger;
+		private string? _userId;
 
-		public FlightLogDB(IConfiguration config, ILogger<FlightLogDB> logger)
+		public FlightLogDB(IConfiguration config, ILogger<FlightLogDB> logger, SqliteDataAccess dbAccess)
 		{
-			_db = new();
+			_db = dbAccess;
 			_config = config;
 			_logger = logger;
+		}
+
+		public void Init(string userId)
+		{
+			_userId = userId;
 			if (!_db.DbExists(LoadConnectionString()))
 			{
 				CreateFlightLogDB();
@@ -320,7 +326,13 @@ namespace ParagliderFlightLog.DataAccess
 
 		private string LoadConnectionString(string connectionStringName = "Sqlite")
 		{
-			return _config.GetConnectionString(connectionStringName)!;
+			if (_userId  is null){
+				_logger.LogError("Connection string cannot be build without a user id");
+				return "";
+			}
+
+			string rawCs = _config.GetConnectionString(connectionStringName)!;
+			return rawCs.Replace("{UserId}", _userId);
 		}
 		/// <summary>
 		/// The take off time in UTC as a timestamp based on the igc data (date in meta data and time as the timestamp of the first sample)

@@ -19,6 +19,8 @@ using System.IO;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using ParaglidingFlightLogWeb.ViewModels;
+using Microsoft.AspNetCore.Identity;
+using ParaglidingFlightLogWeb.Data;
 
 namespace ParaglidingFlightLogWeb.Components.Pages
 {
@@ -32,7 +34,21 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 return SelectedGliders.Count > 0 ? SelectedGliders[SelectedGliders.Count - 1] : null;
             }
         }
-
+        [CascadingParameter]
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+        [Inject]
+        UserManager<ApplicationUser> UserManager { get; set; } = null!;
+        protected override async Task OnInitializedAsync()
+        {
+            var userClaim = (await AuthenticationStateTask).User;
+            if (userClaim.Identity is not null && userClaim.Identity.IsAuthenticated)
+            {
+                var currentUser = await UserManager.GetUserAsync(userClaim);
+                if (currentUser == null) return;
+                string userId = currentUser.Id;
+                mvm.Init(userId);
+            }
+        }
         void ShowContextMenuWithItems(MouseEventArgs args)
         {
             ContextMenuService.Open(args, [new() { Text = "Edit glider", Value = EGliderAction.Edit },], OnMenuItemClick);

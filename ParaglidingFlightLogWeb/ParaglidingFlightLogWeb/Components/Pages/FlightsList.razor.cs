@@ -3,11 +3,20 @@ using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
 using ParaglidingFlightLogWeb.ViewModels;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Identity;
+using ParaglidingFlightLogWeb.Data;
 
 namespace ParaglidingFlightLogWeb.Components.Pages
 {
     public partial class FlightsList
     {
+        [CascadingParameter]
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+        [Inject]
+        UserManager<ApplicationUser> UserManager { get; set; } = null!;
+
         private RadzenDataGrid<FlightViewModel> dataGrid = new();
 
         IList<FlightViewModel> SelectedFlights = new List<FlightViewModel>();
@@ -16,6 +25,18 @@ namespace ParaglidingFlightLogWeb.Components.Pages
             get
             {
                 return SelectedFlights.Count > 0 ? SelectedFlights[SelectedFlights.Count - 1] : null;
+            }
+        }
+
+        protected override async Task OnInitializedAsync()
+        {
+            var userClaim = (await AuthenticationStateTask).User;
+            if (userClaim.Identity is not null && userClaim.Identity.IsAuthenticated)
+            {
+                var currentUser = await UserManager.GetUserAsync(userClaim);
+                if (currentUser == null) return;
+                string userId = currentUser.Id;
+                mvm.Init(userId);
             }
         }
 

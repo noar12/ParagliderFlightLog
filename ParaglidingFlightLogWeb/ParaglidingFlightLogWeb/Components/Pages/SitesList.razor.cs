@@ -3,6 +3,10 @@ using Microsoft.JSInterop;
 using Radzen;
 using ParaglidingFlightLogWeb.ViewModels;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components;
+using ParaglidingFlightLogWeb.Data;
 
 namespace ParaglidingFlightLogWeb.Components.Pages
 {
@@ -13,6 +17,22 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         private object? map;
         private DateTime _startDate = DateTime.Today - TimeSpan.FromDays(365);
         private DateTime _endDate = DateTime.Today;
+
+        [CascadingParameter]
+        private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+        [Inject]
+        UserManager<ApplicationUser> UserManager { get; set; } = null!;
+        protected override async Task OnInitializedAsync()
+        {
+            var userClaim = (await AuthenticationStateTask).User;
+            if (userClaim.Identity is not null && userClaim.Identity.IsAuthenticated)
+            {
+                var currentUser = await UserManager.GetUserAsync(userClaim);
+                if (currentUser == null) return;
+                string userId = currentUser.Id;
+                mvm.Init(userId);
+            }
+        }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
