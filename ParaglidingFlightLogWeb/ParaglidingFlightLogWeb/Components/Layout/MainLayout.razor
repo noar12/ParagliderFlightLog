@@ -4,31 +4,7 @@
 <PageTitle>Paraglider Flight Log</PageTitle>
 <RadzenLayout style="position: relative">
 
-    <RadzenHeader>
-        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-            <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
-            <RadzenLabel Text="Paraglider Flight Log" />
-        </RadzenStack>
-    </RadzenHeader>
-    <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute">
-        <RadzenPanelMenu Click="@(()=> sidebarExpanded = false)">
-            <AuthorizeView>
-                <Authorized>
-                    <RadzenPanelMenuItem Text="Flights List" Icon="menu_book" Path="FlightsList"></RadzenPanelMenuItem>
-                    <RadzenPanelMenuItem Text="Sites List" Icon="place" Path="SitesList"></RadzenPanelMenuItem>
-                    <RadzenPanelMenuItem Text="Flights Statistic" Icon="bar_chart" Path="FlightsStatistic"></RadzenPanelMenuItem>
-                    <RadzenPanelMenuItem Text="Glider" Icon="paragliding" Path="Gliderslist"></RadzenPanelMenuItem>
-                    <RadzenPanelMenuItem Text="Import from LogFly" Icon="input" Path="ImportLogFlyDb"></RadzenPanelMenuItem>
-                </Authorized>
-                <NotAuthorized>
-                    <RadzenPanelMenuItem Text="Register" Icon="input" Path="Account/Register"></RadzenPanelMenuItem>
-                    <RadzenPanelMenuItem Text="Login" Icon="input" Path="Account/Login"></RadzenPanelMenuItem>
-
-                </NotAuthorized>
-            </AuthorizeView>
-
-        </RadzenPanelMenu>
-    </RadzenSidebar>
+    <Navigation />
     <RadzenBody>
         @Body
     </RadzenBody>
@@ -39,6 +15,3 @@
 
 <RadzenComponents />
 
-@code {
-    bool sidebarExpanded = false;
-}
