@@ -22,4 +22,10 @@
     <PackageReference Include="Radzen.Blazor" Version="4.24.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\paraglidingLogBackground.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
