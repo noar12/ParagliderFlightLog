@@ -13,7 +13,7 @@
 
 
 <RadzenRow>
-    <RadzenColumn Size="12">
+    
         <RadzenFormField Text="Analyze" Variant="@variant">
             <RadzenDropDown TValue="StatisticalFlightsAnalysis" AllowFiltering="false" Data=@Enum.GetValues(typeof(StatisticalFlightsAnalysis)) @bind-Value=AnalysisToDo
                             Class="w-100">
@@ -27,8 +27,9 @@
                             Class="w-100" />
         </RadzenFormField>
         <RadzenButton Click=@(args => OnAnalyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
-    </RadzenColumn>
-
+    
+</RadzenRow>
+<RadzenRow>
 
 
     <MyNumericIndicator Label="Flight Count" Value="@fsvm.FlightsCount" Format="F0" />
@@ -55,7 +56,7 @@
                 <RadzenColumnSeries Data="@DurationAnalysisResult"
                                     Title="Flight duration repartition"
                                     CategoryProperty="BarLocation"
-                                    ValueProperty="BarValue" />
+                                    ValueProperty="BarValue"/>
             }
             @if (AnalysisToDo == StatisticalFlightsAnalysis.MontlyMedian)
             {

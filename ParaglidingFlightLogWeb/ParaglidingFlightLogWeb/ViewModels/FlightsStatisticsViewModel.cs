@@ -12,11 +12,11 @@ namespace ParaglidingFlightLogWeb.ViewModels
     {
         private readonly MainViewModel m_MainViewModel;
         public TimeSpan FlightsDuration { get; private set; }
-        public string FlightsDurationText { get { return $"{(int)FlightsDuration.TotalHours}:{FlightsDuration.Minutes}"; } }
+        public string FlightsDurationText { get { return $"{(int)FlightsDuration.TotalHours:D2}:{FlightsDuration.Minutes:D2}"; } }
         public TimeSpan MeanFlightsDuration { get; private set; }
-        public string MeanFlightsDurationText { get { return $"{(int)MeanFlightsDuration.TotalHours}:{MeanFlightsDuration.Minutes}"; } }
+        public string MeanFlightsDurationText { get { return $"{(int)MeanFlightsDuration.TotalHours:D2}:{MeanFlightsDuration.Minutes:D2}"; } }
         public TimeSpan MedianFlightsDuration { get; private set; }
-        public string MedianFlightDurationText { get { return $"{(int)MedianFlightsDuration.TotalHours}:{MedianFlightsDuration.Minutes}"; } }
+        public string MedianFlightDurationText { get { return $"{(int)MedianFlightsDuration.TotalHours:D2}:{MedianFlightsDuration.Minutes:D2}"; } }
         public int FlightsCount { get; private set; }
         public HistData FlightsDurationHistData { get; private set; } = new([], []);
 

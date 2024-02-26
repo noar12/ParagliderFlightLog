@@ -27,9 +27,11 @@
     @if (LastSelectedGlider != null)
     {
         <RadzenColumn Size="12" SizeSM="4">
+            <RadzenCard>
             <MyNumericIndicator Label="Total flight count" Value="@LastSelectedGlider.TotalFlightCount" Format="F0" />
             <MyTextIndicator Label="Total flight time" Text="@LastSelectedGlider.TotalFlightTime" />
             <MyTextIndicator Label="Flight time since last check" Text="@LastSelectedGlider.FlightTimeSinceLastCheck" />
+            </RadzenCard>
         </RadzenColumn>
     }
 </RadzenRow>

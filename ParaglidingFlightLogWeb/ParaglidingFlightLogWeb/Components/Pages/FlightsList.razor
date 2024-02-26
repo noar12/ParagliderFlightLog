@@ -30,12 +30,15 @@
     @if (LastSelectedFlight != null)
     {
         <RadzenColumn Size="12" SizeSM="4">
-            <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName" />
-            <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxHeight" UnitSymbol="m" Format="F0" />
-            <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2" />
-            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1" />
-            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1" />
-            <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false />
+            <RadzenCard >
+                <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName" />
+                <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxHeight" UnitSymbol="m" Format="F0" />
+                <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2" />
+                <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1" />
+                <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1" />
+                <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false />
+            </RadzenCard>
+
         </RadzenColumn>
     }
 </RadzenRow>
