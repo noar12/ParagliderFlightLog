@@ -90,6 +90,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 SelectedSites = sites;
                 if (module is not null)
                 {
+                    //map = await module.InvokeAsync<IJSObjectReference>("remove_all", map);//this remove even the tile. It's a bit violent...
                     map = await module.InvokeAsync<IJSObjectReference>("modify_map",
                                                             map,
                                                             sites[^1].Latitude,

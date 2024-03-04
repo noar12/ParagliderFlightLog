@@ -12,6 +12,17 @@ export function modify_map(map, lat, lon, zoom) {
 	return map;
 }
 export function add_marker(map, lat, lon, title) {
-	var marker = L.marker([lat, lon], { title: title }).addTo(map);
+	L.marker([lat, lon], { title: title }).addTo(map);
 	return map;
+}
+export function add_polyline(map, latlngs) {
+	let polyline = L.polyline(latlngs, { color: 'blue' }).addTo(map);
+	map.fitBounds(polyline.getBounds());
+	return map;
+}
+export function remove_all(map) {
+	map.eachLayer(function (layer) {
+		map.removeLayer(layer);
+	});
+	return map
 }
