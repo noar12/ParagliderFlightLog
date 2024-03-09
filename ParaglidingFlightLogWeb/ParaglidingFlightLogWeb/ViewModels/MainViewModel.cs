@@ -25,11 +25,11 @@ namespace ParaglidingFlightLogWeb.ViewModels
 
 		}
 
-		public void Init(string userId){
+		public async Task Init(string userId){
 			_flightLog.Init(userId);
-            FlightListViewModel = _flightLog.GetAllFlights().Select(f => f.ToVM(_flightLog)).ToList();
-            SiteListViewModel = _flightLog.GetAllSites().Select(s => s.ToVM(_flightLog)).ToList();
-            GliderListViewModel = _flightLog.GetAllGliders().Select(g => g.ToVM(_flightLog)).ToList();
+            FlightListViewModel = (await _flightLog.GetAllFlights()).Select(f => f.ToVM(_flightLog)).ToList();
+            SiteListViewModel = (await _flightLog.GetAllSites()).Select(s => s.ToVM(_flightLog)).ToList();
+            GliderListViewModel = (await _flightLog.GetAllGliders()).Select(g => g.ToVM(_flightLog)).ToList();
         }
 
 

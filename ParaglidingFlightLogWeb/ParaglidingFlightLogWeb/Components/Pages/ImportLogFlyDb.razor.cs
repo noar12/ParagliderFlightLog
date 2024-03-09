@@ -32,7 +32,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 var currentUser = await UserManager.GetUserAsync(userClaim);
                 if (currentUser == null) return;
                 string userId = currentUser.Id;
-                Mvm.Init(userId);
+                await Mvm.Init(userId);
             }
         }
         private async Task OnLogFlyDbChosen(InputFileChangeEventArgs e)

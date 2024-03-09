@@ -34,7 +34,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 var currentUser = await UserManager.GetUserAsync(userClaim);
                 if (currentUser == null) return;
                 string userId = currentUser.Id;
-                mvm.Init(userId);
+                await mvm.Init(userId);
             }
         }
         void ShowContextMenuWithItems(MouseEventArgs args)
@@ -64,7 +64,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
         async Task OnEditGlider()
         {
-            await DialogService.OpenAsync<EditGlider>($"Edit glider", new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider! } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = true });
+            await DialogService.OpenAsync<EditGlider>($"Edit glider", new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider! } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = false });
             mvm.EditGlider(LastSelectedGlider!);
             StateHasChanged();
         }

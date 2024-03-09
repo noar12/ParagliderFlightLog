@@ -8,10 +8,11 @@
 
 @page "/FlightsList"
 @rendermode InteractiveServer
-
 <PageTitle>Flight list</PageTitle>
 <InputFile OnChange="@OnAddFlights" multiple />
-<RadzenRow>
+@if (mvm.FlightListViewModel.Count > 0)
+{
+    <RadzenRow>
     <RadzenColumn Size="12" SizeSM="8">
         <RadzenDataGrid @ref="dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                         AllowPaging="true"
@@ -57,7 +58,13 @@
 
 
 
-</RadzenRow>
+    </RadzenRow>
+}
+else
+{
+    <p>...loading ...</p>
+}
+<RadzenComponents />
 
 
 

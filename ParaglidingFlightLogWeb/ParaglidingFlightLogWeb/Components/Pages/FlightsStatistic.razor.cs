@@ -22,7 +22,7 @@ public partial class FlightsStatistic
             var currentUser = await UserManager.GetUserAsync(userClaim);
             if (currentUser == null) return;
             string userId = currentUser.Id;
-            mvm.Init(userId);
+            await mvm.Init(userId);
             YearToAnalyse = DateTime.Now.Year;
             if (fsvm.FlightsCount == 0)
                 return;

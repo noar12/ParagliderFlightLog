@@ -44,7 +44,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 				var currentUser = await UserManager.GetUserAsync(userClaim);
 				if (currentUser == null) return;
 				string userId = currentUser.Id;
-				mvm.Init(userId);
+				await mvm.Init(userId);
 			}
 		}
 		protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -124,7 +124,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
 		async Task OnEditFlight()
 		{
-			await DialogService.OpenAsync<EditFlight>($"Edit flight", new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight! }, { "ViewModel", mvm } }, new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = true });
+			await DialogService.OpenAsync<EditFlight>($"Edit flight", new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight! }, { "ViewModel", mvm } }, new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = false });
 			StateHasChanged();
 		}
 

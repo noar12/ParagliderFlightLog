@@ -30,7 +30,14 @@ namespace ParagliderFlightLog.DataAccess
             List<T> rows = connection.Query<T>(sqlStatement, parameters).ToList();
             return rows;
         }
-		public void SaveData<T>(string sqlStatement, T parameters, string connectionString)
+        public async Task<List<T>> LoadDataAsync<T, U>(string sqlStatement, U parameters, string connectionString)
+        {
+            // T is the model of the data we want to load
+            using IDbConnection connection = new SqliteConnection(connectionString);// this will always close the connection when exiting the scope
+            List<T> rows = (await connection.QueryAsync<T>(sqlStatement, parameters)).ToList();
+            return rows;
+        }
+        public void SaveData<T>(string sqlStatement, T parameters, string connectionString)
 		{
             using IDbConnection connection = new SqliteConnection(connectionString);
             connection.Execute(sqlStatement, parameters);
