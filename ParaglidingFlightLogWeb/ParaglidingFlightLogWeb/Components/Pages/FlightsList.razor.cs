@@ -14,9 +14,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 {
 	public partial class FlightsList
 	{
-		private IJSObjectReference? module;
-		private object? flightMap;
-		[Inject] IJSRuntime jsRuntime { get; set; } = null!;
+		
 		[Inject] ContextMenuService ContextMenuService { get; set; } = null!;
 		[Inject] DialogService DialogService { get; set; } = null!;
 		[Inject] IWebHostEnvironment Environment { get; set; } = null!;
@@ -47,17 +45,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 				await mvm.Init(userId);
 			}
 		}
-		protected override async Task OnAfterRenderAsync(bool firstRender)
-		{
-			if (firstRender)
-			{
-				module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmap.js");
-				if (module != null)
-				{
-					flightMap = await module.InvokeAsync<IJSObjectReference>("load_map", "flightMap", 0, 0, 2);
-				}
-			}
-		}
+
 		void ShowContextMenuWithItems(MouseEventArgs args)
 		{
 			if (SelectedFlights is not null && SelectedFlights.Count == 1)
@@ -89,24 +77,18 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
 			ContextMenuService.Close();
 		}
+		async Task OnShowMapClick(){
+            await DialogService.OpenAsync<ShowFlightOnMap>($"Flight trace on map",
+			new Dictionary<string, object>() { { "FlightToShow", LastSelectedFlight! } },
+			new DialogOptions() { Width= "900px", Resizable = true, Draggable = false });
+        }
 
-		enum EFlightAction
+        enum EFlightAction
 		{
 			Edit,
 			Remove,
 		}
-		async Task OnFlightClick(DataGridRowMouseEventArgs<FlightViewModel> e)
-		{
-			var flight = e.Data;
-			double[][] latlngs = flight.GetLatLngsArray();
-			if (module is not null)
-			{
-				//flightMap = await module.InvokeAsync<IJSObjectReference>("remove_all", flightMap); //this remove even the tile. It's a bit violent...
-				flightMap = await module.InvokeAsync<IJSObjectReference>("add_polyline",
-															 flightMap,
-															 latlngs);
-			}
-		}
+		
 		async Task OnRemoveFlights(IList<FlightViewModel> flightsToRemove)
 		{
 			var answer = await DialogService.Confirm($"Are you sure you want to delete {SelectedFlights.Count} flight(s)?", "Flight remove confirmation", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });

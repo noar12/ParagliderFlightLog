@@ -1,0 +1,33 @@
+﻿@using ParaglidingFlightLogWeb.ViewModels
+<PageTitle>Flight On Map</PageTitle>
+
+<RadzenCard>
+    <div class="row" id="flightMap" style="height: 500px" />
+</RadzenCard>
+
+@code {
+	[Parameter]
+	public FlightViewModel FlightToShow { get; set; } = null!;
+	private IJSObjectReference? module;
+	private object? flightMap;
+	[Inject] IJSRuntime jsRuntime { get; set; } = null!;
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmap.js");
+			if (module != null)
+			{
+				flightMap = await module.InvokeAsync<IJSObjectReference>("load_map", "flightMap", 0, 0, 2);
+			}
+		}
+		double[][] latlngs = FlightToShow.GetLatLngsArray();
+		if (module is not null)
+		{
+			//flightMap = await module.InvokeAsync<IJSObjectReference>("remove_all", flightMap); //this remove even the tile. It's a bit violent...
+			flightMap = await module.InvokeAsync<IJSObjectReference>("add_polyline",
+															flightMap,
+															latlngs);
+		}
+	}
+}
