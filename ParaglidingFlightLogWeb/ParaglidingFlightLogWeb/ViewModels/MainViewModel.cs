@@ -151,8 +151,8 @@ namespace ParaglidingFlightLogWeb.ViewModels
 			return output;
         }
 
-        public List<FlightViewModel> FlightListViewModel { get; private set; }
-		public List<SiteViewModel> SiteListViewModel { get; private set; }
-		public List<GliderViewModel> GliderListViewModel { get; private set; }
+		public List<FlightViewModel> FlightListViewModel { get; private set; } = [];
+		public List<SiteViewModel> SiteListViewModel { get; private set; } = [];
+		public List<GliderViewModel> GliderListViewModel { get; private set; } = [];
 	}
 }

@@ -18,8 +18,8 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 		[Inject] ContextMenuService ContextMenuService { get; set; } = null!;
 		[Inject] DialogService DialogService { get; set; } = null!;
 		[Inject] IWebHostEnvironment Environment { get; set; } = null!;
-		[Inject] MainViewModel mvm { get; set; } = null!;
-		[Inject] ILogger<Index> _logger { get; set; } = null!;
+		[Inject] MainViewModel Mvm { get; set; } = null!;
+		[Inject] ILogger<Index> Logger { get; set; } = null!;
 		[CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
 		[Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
 
@@ -42,7 +42,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 				var currentUser = await UserManager.GetUserAsync(userClaim);
 				if (currentUser == null) return;
 				string userId = currentUser.Id;
-				await mvm.Init(userId);
+				await Mvm.Init(userId);
 			}
 		}
 
@@ -96,7 +96,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 			{
 				foreach (FlightViewModel fvm in flightsToRemove)
 				{
-					mvm.RemoveFlight(fvm);
+					Mvm.RemoveFlight(fvm);
 				}
 			}
 
@@ -106,13 +106,13 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
 		async Task OnEditFlight()
 		{
-			await DialogService.OpenAsync<EditFlight>($"Edit flight", new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight! }, { "ViewModel", mvm } }, new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = false });
+			await DialogService.OpenAsync<EditFlight>($"Edit flight", new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight! }, { "ViewModel", Mvm } }, new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = false });
 			StateHasChanged();
 		}
 
 		async Task OnAddFlights(InputFileChangeEventArgs e)
 		{
-			_logger.LogInformation("ContentRootPath is : {ContentRootPath}", Environment.ContentRootPath);
+			Logger.LogInformation("ContentRootPath is : {ContentRootPath}", Environment.ContentRootPath);
 			var l_IgcFilePaths = new List<string>();
 			foreach (var file in e.GetMultipleFiles())
 			{
@@ -124,15 +124,15 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 					await using FileStream fs = new(path, FileMode.Create);
 					await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
 					l_IgcFilePaths.Add(fs.Name);
-					_logger.LogDebug("File copied to {fs.Name}", fs.Name);
+					Logger.LogDebug("File copied to {fs.Name}", fs.Name);
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError("File: {Filename} Error: {Error}", file.Name, ex.Message);
+					Logger.LogError("File: {Filename} Error: {Error}", file.Name, ex.Message);
 				}
 			}
 
-			mvm.AddFlightsFromIGC([.. l_IgcFilePaths]);
+			Mvm.AddFlightsFromIGC([.. l_IgcFilePaths]);
 			foreach (string filepath in l_IgcFilePaths)
 			{
 				try
@@ -141,7 +141,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 				}
 				catch (System.IO.IOException ex)
 				{
-					_logger.LogError("{Message}", ex.Message);
+					Logger.LogError("{Message}", ex.Message);
 				}
 			}
 
