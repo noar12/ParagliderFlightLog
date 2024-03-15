@@ -16,6 +16,7 @@ using ParagliderFlightLog.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Runtime.CompilerServices;
+using System.Diagnostics;
 
 namespace ParagliderFlightLog.DataAccess
 {
@@ -487,24 +488,32 @@ namespace ParagliderFlightLog.DataAccess
 		}
 		public async Task<List<Flight>> GetAllFlights()
 		{
+			var sw = Stopwatch.StartNew();
 			string sqlStatement = "SELECT Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights;";
 			var output = await _db.LoadDataAsync<Flight, dynamic>(sqlStatement, new { }, LoadConnectionString());
-			return output;
+            _logger.LogInformation("All flights requested and get in {GetAllFlightsDuration_ms}", sw.ElapsedMilliseconds);
+            return output;
 
 		}
 		public async Task<List<Site>> GetAllSites()
 		{
-			string sqlStatement = @"SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude
+            var sw = Stopwatch.StartNew();
+
+            string sqlStatement = @"SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude
 									FROM Sites;";
 			var output = await _db.LoadDataAsync<Site, dynamic>(sqlStatement, new { }, LoadConnectionString());
-			return output;
+            _logger.LogInformation("All sites requested and get in {GetAllSitesDuration_ms}", sw.ElapsedMilliseconds);
+            return output;
 		}
 		public async Task<List<Glider>> GetAllGliders()
 		{
-			string sqlStatement = @"SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name
+            var sw = Stopwatch.StartNew();
+
+            string sqlStatement = @"SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name
 								FROM Gliders;";
 			var output = await _db.LoadDataAsync<Glider, dynamic>(sqlStatement, new { }, LoadConnectionString());
-			return output;
+            _logger.LogInformation("All glider requested and get in {GetAllGlidersDuration_ms}", sw.ElapsedMilliseconds);
+            return output;
 
 		}
 		public int GetFlightDoneCountWithGlider(Glider glider)
