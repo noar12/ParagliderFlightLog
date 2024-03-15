@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
+using System.Diagnostics;
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
 
@@ -23,6 +24,9 @@ public partial class Index
 
     protected override async Task OnInitializedAsync()
     {
+        var sw = Stopwatch.StartNew();
+        _logger.LogInformation("Starting initialization of index page");
+
         var userClaim = (await AuthenticationStateTask).User;
         if (userClaim.Identity is not null && userClaim.Identity.IsAuthenticated)
         {
@@ -31,6 +35,7 @@ public partial class Index
             userName = currentUser.UserName;
             userId = currentUser.Id;
             userEmail = currentUser.Email;
+            _logger.LogInformation("Index page intialzed for {user} in {time_ms} ms", currentUser.UserName, sw.ElapsedMilliseconds);
         }
     }
 }
