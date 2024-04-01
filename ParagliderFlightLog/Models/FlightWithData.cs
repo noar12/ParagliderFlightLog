@@ -33,6 +33,7 @@ public class FlightWithData
     public FlightPoint TakeOffPoint { get; set; } = new();
     public List<FlightPoint> FlightPoints { get; set; } = [];
     public string IGC_GliderName { get; set; } = "Unknown glider";
+    public XcScore? XcScore { get; set; }
     public Flight ToFlight(){
         return new()
         {

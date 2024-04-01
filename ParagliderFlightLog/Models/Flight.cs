@@ -28,5 +28,6 @@ namespace ParagliderFlightLog.Models
 		/// The altitude of the take off if an igc content is available. NaN otherwise
 		/// </summary>
 		public int FlightDuration_s { get; set; }
-	}
+        public XcScore? XcScore { get; set; }
+    }
 }

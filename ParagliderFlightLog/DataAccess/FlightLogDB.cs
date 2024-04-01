@@ -46,7 +46,6 @@ namespace ParagliderFlightLog.DataAccess
                 var dbInfo = GetDbInformations();
                 if (dbInfo == null)
                 {
-                    // Create missing column in Flights table
                     MigrateFromBetaTable();
                 }
                 else if (dbInfo.VersionMajor == 1 &&
@@ -68,7 +67,7 @@ namespace ParagliderFlightLog.DataAccess
         private void MigrateFromv1_1_0()
         {
             _logger.LogInformation("Migrating db from v1.1.0");
-            string sql = @"ALTER TABLE Flights ADD Score TEXT;
+            string sql = @"ALTER TABLE Flights ADD GeoJsonScore TEXT;
             UPDATE DbInformations SET VersionMinor = 2;";
             _db.SaveData(sql, new { _userId }, LoadConnectionString());
         }
@@ -145,7 +144,7 @@ namespace ParagliderFlightLog.DataAccess
 	""FlightDuration_s""    INTEGER,
 	""TakeOffDateTime""    TEXT,
 	""IgcFileContent""    TEXT,
-    ""Score""   TEXT,
+    ""GeoJsonScore""   TEXT,
 	PRIMARY KEY(""Flight_ID""));";
             string sqlCreateDbInfo = @"CREATE TABLE ""DbInformations"" (
 	""VersionMajor""	INTEGER NOT NULL,
@@ -191,9 +190,9 @@ namespace ParagliderFlightLog.DataAccess
             if (newItems != null)
             {
                 string sqlWriteFlight = @"INSERT INTO Flights
-				(Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s)
+				(Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s, GeoJsonScore)
 				VALUES
-				(@Flight_ID, @IgcFileContent, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s);";
+				(@Flight_ID, @IgcFileContent, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s, @XcScore);";
 
                 foreach (var flight in newItems)
                 {
@@ -208,7 +207,8 @@ namespace ParagliderFlightLog.DataAccess
                         flight.REF_TakeOffSite_ID,
                         flight.REF_Glider_ID,
                         flight.TakeOffDateTime,
-                        FlightDuration_s
+                        FlightDuration_s,
+                        flight.XcScore
                     },
                     LoadConnectionString());
                 }
@@ -507,7 +507,7 @@ namespace ParagliderFlightLog.DataAccess
         public async Task<List<Flight>> GetAllFlights()
         {
             var sw = Stopwatch.StartNew();
-            string sqlStatement = "SELECT Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights;";
+            string sqlStatement = "SELECT Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime, GeoJsonScore FROM Flights;";
             var output = await _db.LoadDataAsync<Flight, dynamic>(sqlStatement, new { }, LoadConnectionString());
             _logger.LogInformation("All flights requested and get in {GetAllFlightsDuration_ms}", sw.ElapsedMilliseconds);
             return output;
@@ -563,7 +563,8 @@ namespace ParagliderFlightLog.DataAccess
 									REF_Glider_ID = @REF_Glider_ID,
 									FlightDuration_s = @FlightDuration_s,
 									TakeOffDateTime = @TakeOffDateTIme,
-									IgcFileContent = @IgcFileContent
+									IgcFileContent = @IgcFileContent,
+                                    GeoJsonScore = @XcScore,
 									WHERE Flight_ID = @Flight_ID;";
             _db.SaveData(sqlStatement, flight, LoadConnectionString());
         }
@@ -636,7 +637,7 @@ namespace ParagliderFlightLog.DataAccess
 
         public FlightWithData? GetFlightWithData(Flight flight)
         {
-            string sql = @"SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s
+            string sql = @"SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s, GeoJsonScore
 		FROM Flights
 		WHERE Flight_ID=@Flight_ID;";
             var output = _db.LoadData<FlightWithData, dynamic>(sql, flight, LoadConnectionString())[0];
