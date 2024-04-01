@@ -40,6 +40,10 @@
                     <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2" />
                     <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1" />
                     <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1" />
+                    @if (LastSelectedFlight.XcScore is not null)
+                    {
+                    <MyNumericIndicator Label="Score" Value="@LastSelectedFlight.XcScore.Points" />
+                }
                     <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false />
                 }
                 else

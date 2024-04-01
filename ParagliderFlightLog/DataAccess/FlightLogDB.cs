@@ -507,11 +507,29 @@ namespace ParagliderFlightLog.DataAccess
         public async Task<List<Flight>> GetAllFlights()
         {
             var sw = Stopwatch.StartNew();
-            string sqlStatement = "SELECT Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime, GeoJsonScore FROM Flights;";
+            string sqlStatement = "SELECT Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights;";
             var output = await _db.LoadDataAsync<Flight, dynamic>(sqlStatement, new { }, LoadConnectionString());
+            foreach (var flight in output)
+            {
+                flight.XcScore = await GetFlightScoreAsync(flight);
+            }
             _logger.LogInformation("All flights requested and get in {GetAllFlightsDuration_ms}", sw.ElapsedMilliseconds);
             return output;
 
+        }
+        private async Task<XcScore?> GetFlightScoreAsync(Flight flight)
+        {
+            string sql = "SELECT GeoJsonScore FROM Flights WHERE Flight_ID = @Flight_ID;";
+            string? scoreJson = (await _db.LoadDataAsync<string, dynamic>(sql, flight, LoadConnectionString())).FirstOrDefault();
+            if (scoreJson == null) return null;
+            else return new XcScore(scoreJson);
+        }
+        private XcScore? GetFlightScore(FlightWithData flight)
+        {
+            string sql = "SELECT GeoJsonScore FROM Flights WHERE Flight_ID = @Flight_ID;";
+            string? scoreJson = _db.LoadData<string, dynamic>(sql, flight, LoadConnectionString()).FirstOrDefault();
+            if (scoreJson == null) return null;
+            else return new XcScore(scoreJson);
         }
         public async Task<List<Site>> GetAllSites()
         {
@@ -637,11 +655,13 @@ namespace ParagliderFlightLog.DataAccess
 
         public FlightWithData? GetFlightWithData(Flight flight)
         {
-            string sql = @"SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s, GeoJsonScore
+            string sql = @"SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s
 		FROM Flights
 		WHERE Flight_ID=@Flight_ID;";
             var output = _db.LoadData<FlightWithData, dynamic>(sql, flight, LoadConnectionString())[0];
             AddFlightProperties(output);
+            output.XcScore = GetFlightScore(output);
+
             return output;
         }
     }

@@ -14,9 +14,9 @@ namespace ParagliderFlightLog.Models
         {
             GeoJsonScore = geoJson;
         }
-        public double? Points { get {
+        public double Points { get {
                 var result = JsonSerializer.Deserialize<XcScoreGeoJson>(GeoJsonScore);
-                return result?.properties.score;
+                return result?.properties.score ?? double.NaN;
         } }
         public override string ToString()
         {

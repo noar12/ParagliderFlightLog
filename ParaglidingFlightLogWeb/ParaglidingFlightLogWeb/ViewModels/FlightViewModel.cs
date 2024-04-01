@@ -31,6 +31,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
         public DateTime TakeOffDateTime { get { return _flight.TakeOffDateTime; } }
         public TimeSpan FlightDuration { get { return _flight.FlightDuration; } }
         public string TakeOffSiteID { get { return _flight.REF_TakeOffSite_ID; } }
+        public XcScoreViewModel? XcScore { get => _flight.XcScore != null ? new XcScoreViewModel(_flight.XcScore) : null; }
         public SiteViewModel? TakeOffSite
         {
             get { return _db.GetFlightTakeOffSite(Flight)?.ToVM(_db); }
@@ -166,6 +167,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
             }
             return [];
         }
+
     }
 
 
