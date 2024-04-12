@@ -1,0 +1,141 @@
+﻿using CliWrap;
+using CliWrap.Buffered;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using ParagliderFlightLog.DataAccess;
+using ParagliderFlightLog.Models;
+
+namespace ParagliderFlightLog.XcScoreWapper;
+
+public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration config) : IDisposable
+{
+	private readonly Queue<ProcessRequest> _processRequests = new();
+	private bool _running;
+	private Task? _computeTask;
+	private bool _disposedValue;
+
+	/// <summary>
+	/// Number of flight in the queue still to process
+	/// </summary>
+	public int FlightToProcess => _processRequests.Count;
+	/// <summary>
+	/// Indicates if a score engine is installed
+	/// </summary>
+	public bool ScoreEngineInstalled {  get; private set; }
+
+
+	private async Task Compute(CancellationToken token)
+	{
+		while (!token.IsCancellationRequested && _running)
+		{
+			if (_processRequests.TryDequeue(out var request))
+			{
+				string flightPath = Path.Combine(GetOutputDirectory(), Path.GetRandomFileName());
+				string scorePath = Path.Combine(GetOutputDirectory(), Path.GetRandomFileName());
+
+				try
+				{
+					// writing file data to a file to give it to the external calculator
+					await File.WriteAllTextAsync(flightPath, request.Flight.IgcFileContent, token);
+					// execute the external calculator on the file and output the result in another file
+					var result = await Cli
+					.Wrap($"{GetCalculatorCmd()} {flightPath} out={scorePath} scoring=XContest")
+					.WithWorkingDirectory(GetWorkingDirectory() ?? "")
+					.ExecuteBufferedAsync();
+					logger.LogInformation("Flight score result : {standard}", result.StandardOutput);
+					if (!result.IsSuccess)
+					{
+						logger.LogError("Flight score exited with error code {errorCode} : {error}", result.ExitCode, result.StandardError);
+						continue;
+					}
+					// Reading the result to put it in the requested flight and if ok write in the database associated with the request
+					string scoreText = File.ReadAllText(scorePath);
+					var xcScore = XcScore.FromJson(scoreText);
+					if (xcScore != null)
+					{
+						request.Flight.XcScore = xcScore;
+						request.Db.UpdateFlight(request.Flight.ToFlight());
+					}
+				}
+				catch (Exception)
+				{
+					_running = false;
+					ScoreEngineInstalled = false;
+					logger.LogCritical("Score engine cannot be executed");
+					throw;
+				}
+			}
+			else
+			{
+				await Task.Delay(1000, token);
+			}
+		}
+	}
+	public void QueueFlightForScoring(FlightWithData flight, FlightLogDB db)
+	{
+		if (string.IsNullOrEmpty(flight.IgcFileContent)) return;
+		var request = new ProcessRequest()
+		{
+			Flight = flight,
+			Db = db
+		};
+		_processRequests.Enqueue(request);
+	}
+
+	public void Start(CancellationToken token)
+	{
+		_running = true;
+		_computeTask = Compute(token);
+	}
+	public void Stop()
+	{
+		_running = false;
+		_computeTask?.Wait();
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (!_disposedValue)
+		{
+			if (disposing)
+			{
+				_computeTask?.Dispose();
+			}
+			_processRequests.Clear();
+			_disposedValue = true;
+		}
+	}
+
+	public void Dispose()
+	{
+		// Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+		Dispose(disposing: true);
+		GC.SuppressFinalize(this);
+	}
+
+	private string GetCalculatorCmd()
+	{
+		string? output = config.GetSection("XcScore")["CalculatorCmd"] ?? "";
+		Directory.CreateDirectory(output);
+		return output;
+	}
+	private string GetWorkingDirectory()
+	{
+		string? output = config.GetSection("XcScore")["WorkingDirectory"] ?? "";
+		Directory.CreateDirectory(output);
+		return output;
+	}
+	private string GetOutputDirectory()
+	{
+		string? output = config.GetSection("XcScore")["OutputDirectory"] ?? "";
+		Directory.CreateDirectory(output);
+		return output;
+	}
+	private sealed class ProcessRequest
+	{
+		public FlightWithData Flight { get; set; } = null!;
+		public FlightLogDB Db { get; set; } = null!;
+	}
+}
+
+

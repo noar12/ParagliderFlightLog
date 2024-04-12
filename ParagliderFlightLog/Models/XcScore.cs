@@ -7,20 +7,39 @@ using System.Threading.Tasks;
 
 namespace ParagliderFlightLog.Models
 {
-    public class XcScore
-    {
-        public string GeoJsonScore { get; private set; }
-        public XcScore(string geoJson)
-        {
-            GeoJsonScore = geoJson;
-        }
-        public double Points { get {
-                var result = JsonSerializer.Deserialize<XcScoreGeoJson>(GeoJsonScore);
-                return result?.properties.score ?? double.NaN;
-        } }
-        public override string ToString()
-        {
-            return GeoJsonScore;
-        }
-    }
+	public class XcScore
+	{
+		public string GeoJsonScore { get; private set; } = null!;
+		private XcScoreGeoJson xcScore = null!;
+
+		public static XcScore? FromJson(string geoJson)
+		{
+			try
+			{
+				var result = JsonSerializer.Deserialize<XcScoreGeoJson>(geoJson);
+				if (result == null) return null;
+				var output = new XcScore()
+				{
+					xcScore = result,
+					GeoJsonScore = geoJson
+				};
+				return output;
+			}
+			catch
+			{
+				return null;
+			}
+		}
+		public double Points
+		{
+			get
+			{
+				return xcScore.properties.score;
+			}
+		}
+		public override string ToString()
+		{
+			return GeoJsonScore;
+		}
+	}
 }

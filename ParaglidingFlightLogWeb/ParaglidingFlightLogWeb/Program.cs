@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ParagliderFlightLog.DataAccess;
+using ParagliderFlightLog.XcScoreWapper;
 using ParaglidingFlightLogWeb.Client.Pages;
 using ParaglidingFlightLogWeb.Components;
 using ParaglidingFlightLogWeb.Components.Account;
@@ -48,6 +49,7 @@ builder.Services.AddScoped<FlightsStatisticsViewModel>();
 builder.Services.AddScoped<FlightLogDB>();
 builder.Services.AddScoped<LogFlyDB>();
 builder.Services.AddScoped<SqliteDataAccess>();
+builder.Services.AddSingleton<XcScoreManager>();
 
 var app = builder.Build();
 

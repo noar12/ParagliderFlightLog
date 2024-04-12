@@ -522,14 +522,14 @@ namespace ParagliderFlightLog.DataAccess
             string sql = "SELECT GeoJsonScore FROM Flights WHERE Flight_ID = @Flight_ID;";
             string? scoreJson = (await _db.LoadDataAsync<string, dynamic>(sql, flight, LoadConnectionString())).FirstOrDefault();
             if (scoreJson == null) return null;
-            else return new XcScore(scoreJson);
+            else return XcScore.FromJson(scoreJson);
         }
         private XcScore? GetFlightScore(FlightWithData flight)
         {
             string sql = "SELECT GeoJsonScore FROM Flights WHERE Flight_ID = @Flight_ID;";
             string? scoreJson = _db.LoadData<string, dynamic>(sql, flight, LoadConnectionString()).FirstOrDefault();
             if (scoreJson == null) return null;
-            else return new XcScore(scoreJson);
+            else return XcScore.FromJson(scoreJson);
         }
         public async Task<List<Site>> GetAllSites()
         {
