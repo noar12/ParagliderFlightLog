@@ -8,13 +8,19 @@ using System.Text;
 using Dapper;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
 namespace ParagliderFlightLog.DataAccess
 {
 	public class SqliteDataAccess
 	{
+        private readonly ILogger<SqliteDataAccess> _logger;
 #pragma warning disable CA1822 // Mark members as static: don't want this to be static
-		public bool DbExists(string connectionString)
+        public SqliteDataAccess(ILogger<SqliteDataAccess> logger)
+        {
+            _logger = logger;
+        }
+        public bool DbExists(string connectionString)
 		{
 			string pattern = @"(?<=Data Source=).*?(?=;)";
 			var rgx = new Regex(pattern);
@@ -39,8 +45,17 @@ namespace ParagliderFlightLog.DataAccess
         }
         public void SaveData<T>(string sqlStatement, T parameters, string connectionString)
 		{
-            using IDbConnection connection = new SqliteConnection(connectionString);
-            connection.Execute(sqlStatement, parameters);
+            
+			try
+			{
+                using IDbConnection connection = new SqliteConnection(connectionString);
+                connection.Execute(sqlStatement, parameters);
+            }
+			catch (Exception ex)
+			{
+                _logger.LogError(ex, "The statement: {sqlStatement}, {parameter}", sqlStatement, parameters);
+			}
+            
         }
 #pragma warning restore CA1822 // Mark members as static
 	}

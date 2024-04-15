@@ -193,24 +193,45 @@ namespace ParagliderFlightLog.DataAccess
 				(Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s, GeoJsonScore)
 				VALUES
 				(@Flight_ID, @IgcFileContent, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s, @XcScore);";
-
+                string sqlWriteFlightNoScore = @"INSERT INTO Flights
+				(Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s)
+				VALUES
+				(@Flight_ID, @IgcFileContent, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s);";
                 foreach (var flight in newItems)
                 {
                     int FlightDuration_s = (int)flight.FlightDuration.TotalSeconds;
-
-                    _db.SaveData(sqlWriteFlight,
-                    new
+                    if (flight.XcScore is not null)
                     {
-                        flight.Flight_ID,
-                        flight.IgcFileContent,
-                        flight.Comment,
-                        flight.REF_TakeOffSite_ID,
-                        flight.REF_Glider_ID,
-                        flight.TakeOffDateTime,
-                        FlightDuration_s,
-                        flight.XcScore
-                    },
-                    LoadConnectionString());
+                        _db.SaveData(sqlWriteFlight,
+                        new
+                        {
+                            flight.Flight_ID,
+                            flight.IgcFileContent,
+                            flight.Comment,
+                            flight.REF_TakeOffSite_ID,
+                            flight.REF_Glider_ID,
+                            flight.TakeOffDateTime,
+                            FlightDuration_s,
+                            flight.XcScore.GeoJsonScore
+                        },
+                        LoadConnectionString());
+                    }
+                    else
+                    {
+                        _db.SaveData(sqlWriteFlightNoScore,
+                        new
+                        {
+                            flight.Flight_ID,
+                            flight.IgcFileContent,
+                            flight.Comment,
+                            flight.REF_TakeOffSite_ID,
+                            flight.REF_Glider_ID,
+                            flight.TakeOffDateTime,
+                            FlightDuration_s,
+                        },
+                        LoadConnectionString());
+                    }
+
                 }
 
 
