@@ -53,6 +53,8 @@ builder.Services.AddSingleton<XcScoreManager>();
 
 var app = builder.Build();
 
+app.Services.GetService<XcScoreManager>()?.Start(new CancellationTokenSource().Token);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -67,7 +67,12 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
 			}
 			else
 			{
-				await Task.Delay(1000, token);
+                var result = await Cli
+.Wrap($"{GetCalculatorCmd()}")
+.WithWorkingDirectory(GetWorkingDirectory() ?? "")
+.ExecuteBufferedAsync();
+				ScoreEngineInstalled = result.IsSuccess;
+                await Task.Delay(1000, token);
 			}
 		}
 	}
@@ -85,6 +90,8 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
 	public void Start(CancellationToken token)
 	{
 		_running = true;
+		logger.LogInformation("Starting XcScore manager. WorkingDirectory: {workingDirectory}, Calculator Cmd: {CalculatorCmd}, OutputDirectory: {OutputDirectory}",
+		GetWorkingDirectory(), GetCalculatorCmd(), GetOutputDirectory());
 		_computeTask = Compute(token);
 	}
 	public void Stop()
