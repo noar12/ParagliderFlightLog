@@ -45,7 +45,7 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                     //.ExecuteBufferedAsync();
                     var result = await Cli
                     .Wrap($"{GetCalculatorCmd()}")
-                    .WithArguments($"{flightPath} out={scorePath} scoring=XContest")
+                    .WithArguments($"{GetCjsPath()} {flightPath} out={scorePath} scoring=XContest")
                     .WithValidation(CommandResultValidation.None)
                     .ExecuteBufferedAsync();
                     logger.LogInformation("Flight score result : {standard}", result.StandardOutput);
@@ -77,6 +77,7 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                 {
                     var result = await Cli
     .Wrap($"{GetCalculatorCmd()}")
+    .WithArguments($"{GetCjsPath()}")
     .WithValidation(CommandResultValidation.None)
     .ExecuteBufferedAsync();
                     bool isReady = result.StandardOutput.StartsWith("igc-xc-score");
@@ -140,12 +141,16 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
 
     private string GetCalculatorCmd()
     {
-        string? output = config.GetSection("XcScore")["CalculatorCmd"] ?? "";
+        string output = config.GetSection("XcScore")["CalculatorCmd"] ?? "";
+        return output;
+    }
+    private string GetCjsPath(){
+        string output = config.GetSection("XcScore")["CjsPath"] ?? "";
         return output;
     }
     private string GetTmpFileDirectory()
     {
-        string? output = config.GetSection("XcScore")["TmpFileDirectory"] ?? "";
+        string output = config.GetSection("XcScore")["TmpFileDirectory"] ?? "";
         Directory.CreateDirectory(output);
         return output;
     }
