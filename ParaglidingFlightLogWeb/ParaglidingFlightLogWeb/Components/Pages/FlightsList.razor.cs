@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
 using Microsoft.JSInterop;
+using ParagliderFlightLog.XcScoreWapper;
 
 
 namespace ParaglidingFlightLogWeb.Components.Pages
@@ -148,5 +149,8 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 			StateHasChanged();
 			await dataGrid.Reload();
 		}
-	}
+        private void ComputeFlightScore(){
+			Mvm.EnqueueFlight(LastSelectedFlight);
+		}
+    }
 }

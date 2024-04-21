@@ -43,6 +43,7 @@ public class FlightWithData
             TakeOffDateTime = TakeOffDateTime,
             FlightDuration_s = FlightDuration_s,
             Comment = Comment,
+            XcScore = XcScore
         };
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Configuration;
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.XcScoreWapper;
@@ -14,17 +15,9 @@ using Serilog;
 
 
 
-var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
-
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(configuration)
-    .CreateLogger();
-
 try
 {
-    Log.Information("Application starting up");
+    
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSerilog();
@@ -69,6 +62,11 @@ try
 
     var app = builder.Build();
 
+    var config = app.Services.GetService<IConfiguration>()!;
+    Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(config)
+    .CreateLogger();
+    Log.Information("Application starting up");
     app.Services.GetService<XcScoreManager>()?.Start(new CancellationTokenSource().Token);
 
     // Configure the HTTP request pipeline.

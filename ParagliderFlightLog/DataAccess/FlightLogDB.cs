@@ -596,16 +596,51 @@ namespace ParagliderFlightLog.DataAccess
 
         public void UpdateFlight(Flight flight)
         {
-            string sqlStatement = @"UPDATE Flights 
+            string sqlStatement = @"UPDATE Flights SET 
 									Comment = @Comment,
 									REF_TakeOffSite_ID = @REF_TakeOffSite_ID,
 									REF_Glider_ID = @REF_Glider_ID,
 									FlightDuration_s = @FlightDuration_s,
-									TakeOffDateTime = @TakeOffDateTIme,
-									IgcFileContent = @IgcFileContent,
-                                    GeoJsonScore = @XcScore,
+									TakeOffDateTime = @TakeOffDateTime,
+                                    GeoJsonScore = @GeoJsonScore
 									WHERE Flight_ID = @Flight_ID;";
-            _db.SaveData(sqlStatement, flight, LoadConnectionString());
+            string sqlStatementNoScore = @"UPDATE Flights SET
+									Comment = @Comment,
+									REF_TakeOffSite_ID = @REF_TakeOffSite_ID,
+									REF_Glider_ID = @REF_Glider_ID,
+									FlightDuration_s = @FlightDuration_s,
+									TakeOffDateTime = @TakeOffDateTime
+									WHERE Flight_ID = @Flight_ID;";
+            if (flight.XcScore is not null)
+            {
+                _db.SaveData(sqlStatement,
+                new
+                {
+                    flight.Flight_ID,
+                    flight.Comment,
+                    flight.REF_TakeOffSite_ID,
+                    flight.REF_Glider_ID,
+                    flight.FlightDuration_s,
+                    flight.TakeOffDateTime,
+                    flight.XcScore.GeoJsonScore
+                },
+                LoadConnectionString());
+            }
+            else
+            {
+                _db.SaveData(sqlStatementNoScore,
+                new
+                {
+                    flight.Flight_ID,
+                    flight.Comment,
+                    flight.REF_TakeOffSite_ID,
+                    flight.REF_Glider_ID,
+                    flight.FlightDuration_s,
+                    flight.TakeOffDateTime,
+                },
+                LoadConnectionString());
+            }
+
         }
 
         public void UpdateSite(Site site)

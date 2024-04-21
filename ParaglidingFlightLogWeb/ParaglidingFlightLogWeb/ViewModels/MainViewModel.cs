@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ParaglidingFlightLogWeb.ViewModels;
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
+using ParagliderFlightLog.XcScoreWapper;
 
 namespace ParaglidingFlightLogWeb.ViewModels
 {
@@ -16,14 +17,15 @@ namespace ParaglidingFlightLogWeb.ViewModels
 		private readonly FlightLogDB _flightLog;
 		private readonly ILogger<MainViewModel> _logger;
 		private readonly LogFlyDB _logFlyDB;
+        private readonly XcScoreManager _xcScoreManager;
 
-		public MainViewModel(FlightLogDB flightLogDB, ILogger<MainViewModel> logger, LogFlyDB logFlyDB)
+        public MainViewModel(FlightLogDB flightLogDB, ILogger<MainViewModel> logger, LogFlyDB logFlyDB, XcScoreManager xcScoreManager)
 		{
 			_flightLog = flightLogDB;
 			_logger = logger;
 			_logFlyDB = logFlyDB;
-
-		}
+            _xcScoreManager = xcScoreManager;
+        }
 
 		public async Task Init(string userId){
 			_flightLog.Init(userId);
@@ -151,7 +153,13 @@ namespace ParaglidingFlightLogWeb.ViewModels
 			return output;
 		}
 
-		public List<FlightViewModel> FlightListViewModel { get; private set; } = [];
+        public void EnqueueFlight(FlightViewModel? lastSelectedFlight)
+        {
+			if (lastSelectedFlight?.FlightWithData is null) return;
+            _xcScoreManager.QueueFlightForScoring(lastSelectedFlight.FlightWithData, _flightLog);
+        }
+
+        public List<FlightViewModel> FlightListViewModel { get; private set; } = [];
 		public List<SiteViewModel> SiteListViewModel { get; private set; } = [];
 		public List<GliderViewModel> GliderListViewModel { get; private set; } = [];
 	}

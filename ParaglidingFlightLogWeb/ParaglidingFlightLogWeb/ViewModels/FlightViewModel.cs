@@ -152,6 +152,13 @@ namespace ParaglidingFlightLogWeb.ViewModels
             }
         }
 
+        public FlightWithData? FlightWithData
+        {
+            get
+            {
+                return _flightWithData ??= _db.GetFlightWithData(_flight);
+            }
+        }
 
         private double[] GetVerticalRate(int integrationStep)
         {
