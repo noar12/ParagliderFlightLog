@@ -212,7 +212,7 @@ namespace ParagliderFlightLog.DataAccess
                             flight.REF_Glider_ID,
                             flight.TakeOffDateTime,
                             FlightDuration_s,
-                            flight.XcScore.GeoJsonScore
+                            flight.XcScore.GeoJsonText
                         },
                         LoadConnectionString());
                     }
@@ -622,7 +622,7 @@ namespace ParagliderFlightLog.DataAccess
                     flight.REF_Glider_ID,
                     flight.FlightDuration_s,
                     flight.TakeOffDateTime,
-                    flight.XcScore.GeoJsonScore
+                    flight.XcScore.GeoJsonText
                 },
                 LoadConnectionString());
             }

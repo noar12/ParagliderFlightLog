@@ -9,8 +9,8 @@ namespace ParagliderFlightLog.Models
 {
     public class XcScore
     {
-        public string GeoJsonScore { get; private set; } = null!;
-        private XcScoreGeoJson xcScore = null!;
+        public string GeoJsonText { get; private set; } = null!;
+        public XcScoreGeoJson GeoJsonObject { get; private set; } = null!;
 
         public static XcScore? FromJson(string geoJson, bool withFlightCoordinates = false)
         {
@@ -25,8 +25,8 @@ namespace ParagliderFlightLog.Models
                 }
                 var output = new XcScore()
                 {
-                    xcScore = result,
-                    GeoJsonScore = geoJson
+                    GeoJsonObject = result,
+                    GeoJsonText = geoJson
                 };
                 return output;
             }
@@ -39,19 +39,19 @@ namespace ParagliderFlightLog.Models
         {
             get
             {
-                return xcScore.properties.score;
+                return GeoJsonObject.properties.score;
             }
         }
         public string Type
         {
             get
             {
-                return xcScore.properties.type;
+                return GeoJsonObject.properties.type;
             }
         }
         public override string ToString()
         {
-            return GeoJsonScore;
+            return GeoJsonText;
         }
     }
 }

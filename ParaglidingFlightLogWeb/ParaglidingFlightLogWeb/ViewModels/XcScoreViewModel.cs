@@ -12,5 +12,6 @@ namespace ParaglidingFlightLogWeb.ViewModels
         }
         public double Points { get => _score.Points; }
         public string Type { get => _score.Type; }
+        public XcScoreGeoJson GeoJsonObject { get { return _score.GeoJsonObject; } }
     }
 }

@@ -16,7 +16,7 @@ export function add_marker(map, lat, lon, title) {
 	return map;
 }
 export function add_polyline(map, latlngs) {
-	let polyline = L.polyline(latlngs, { color: 'blue' }).addTo(map);
+	let polyline = L.polyline(latlngs, { color: 'red' }).addTo(map);
 	map.fitBounds(polyline.getBounds());
 	return map;
 }
@@ -24,5 +24,9 @@ export function remove_all(map) {
 	map.eachLayer(function (layer) {
 		map.removeLayer(layer);
 	});
-	return map
+	return map;
+}
+export function add_geojson(map, geojson) {
+	L.geoJSON(geojson).addTo(map);
+	return map;
 }
