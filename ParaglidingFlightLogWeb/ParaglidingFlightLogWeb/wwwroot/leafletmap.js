@@ -27,6 +27,11 @@ export function remove_all(map) {
 	return map;
 }
 export function add_geojson(map, geojson) {
-	L.geoJSON(geojson).addTo(map);
+	L.geoJSON(geojson, {
+		pointToLayer: function (feature, latlng) {
+			let label = String(feature.properties.id)
+			return new L.marker(latlng, { title: label })
+		}
+	}).addTo(map);
 	return map;
 }
