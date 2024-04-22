@@ -34,17 +34,24 @@
             <RadzenCard>
                 @if (LastSelectedFlight != null)
                 {
-                    <RadzenButton Click="OnShowMapClick" Icon="map" Text="Show Flight On Map" />
-                    <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName" />
-                    <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxHeight" UnitSymbol="m" Format="F0" />
-                    <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2" />
-                    <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1" />
-                    <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1" />
-                    @if (LastSelectedFlight.XcScore is not null)
-                    {
-                    <MyNumericIndicator Label="Score" Value="@LastSelectedFlight.XcScore.Points" />
-                }
-                    <RadzenButton Click="ComputeFlightScore" Icon="calculate" Text="Calculate Score" />
+                    <RadzenRow>
+                        <RadzenColumn>
+                            <RadzenButton Click="OnShowMapClick" Icon="map" Text="Show Flight On Map" />
+                            <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName" />
+                            <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxHeight" UnitSymbol="m" Format="F0" />
+                            <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2" />
+                            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1" />
+                            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1" />
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <RadzenButton Click="ComputeFlightScore" Icon="calculate" Text="Calculate Score" />
+                            @if (LastSelectedFlight.XcScore is not null)
+                            {
+                                <MyNumericIndicator Label="Score" Value="@LastSelectedFlight.XcScore.Points" />
+                                <MyTextIndicator Label="Type of flight" Text="@LastSelectedFlight.XcScore.Type" />
+                            }
+                        </RadzenColumn>
+                </RadzenRow>
                     <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false />
                 }
                 else

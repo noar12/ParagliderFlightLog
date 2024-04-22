@@ -42,6 +42,13 @@ namespace ParagliderFlightLog.Models
                 return xcScore.properties.score;
             }
         }
+        public string Type
+        {
+            get
+            {
+                return xcScore.properties.type;
+            }
+        }
         public override string ToString()
         {
             return GeoJsonScore;

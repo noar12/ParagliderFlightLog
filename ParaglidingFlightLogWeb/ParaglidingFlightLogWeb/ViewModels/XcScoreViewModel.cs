@@ -11,5 +11,6 @@ namespace ParaglidingFlightLogWeb.ViewModels
             _score = score;
         }
         public double Points { get => _score.Points; }
+        public string Type { get => _score.Type; }
     }
 }
