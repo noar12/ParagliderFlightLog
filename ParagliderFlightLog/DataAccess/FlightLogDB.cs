@@ -192,7 +192,7 @@ namespace ParagliderFlightLog.DataAccess
                 string sqlWriteFlight = @"INSERT INTO Flights
 				(Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s, GeoJsonScore)
 				VALUES
-				(@Flight_ID, @IgcFileContent, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s, @XcScore);";
+				(@Flight_ID, @IgcFileContent, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s, @GeoJsonText);";
                 string sqlWriteFlightNoScore = @"INSERT INTO Flights
 				(Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s)
 				VALUES
@@ -602,7 +602,7 @@ namespace ParagliderFlightLog.DataAccess
 									REF_Glider_ID = @REF_Glider_ID,
 									FlightDuration_s = @FlightDuration_s,
 									TakeOffDateTime = @TakeOffDateTime,
-                                    GeoJsonScore = @GeoJsonScore
+                                    GeoJsonScore = @GeoJsonText
 									WHERE Flight_ID = @Flight_ID;";
             string sqlStatementNoScore = @"UPDATE Flights SET
 									Comment = @Comment,
