@@ -22,10 +22,14 @@
                 </Template>
             </RadzenDropDown>
         </RadzenFormField>
-        <RadzenFormField Text="Year to analyze" Variant="@variant">
+    @if (AnalysisToDo == StatisticalFlightsAnalysis.DurationDistribution)
+    {
+            <RadzenFormField Text="Year to analyze" Variant="@variant">
             <RadzenDropDown AllowFiltering="false" Data=@mvm.YearsOfFlying @bind-Value=@YearToAnalyse
                             Class="w-100" />
         </RadzenFormField>
+    }
+
         <RadzenButton Click=@(args => OnAnalyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
     
 </RadzenRow>
@@ -41,7 +45,7 @@
 </RadzenRow>
 <RadzenRow style="overflow: auto;">
     <RadzenColumn>
-        <RadzenChart style="height: 400px;min-width: 1200px;">
+        <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
             <RadzenLegend Position="LegendPosition.Top" />
 
 

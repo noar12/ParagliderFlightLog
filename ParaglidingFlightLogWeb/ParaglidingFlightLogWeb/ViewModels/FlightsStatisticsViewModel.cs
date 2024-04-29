@@ -136,5 +136,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
         DurationDistribution,
         MontlyMedian,
         MonthlyFlightDuration,
+        MonthlyCumulatedMedian,
+        MonthlyCumulatedFlightDuration,
     }
 }

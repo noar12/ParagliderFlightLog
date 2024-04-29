@@ -125,6 +125,8 @@ public partial class FlightsStatistic
             StatisticalFlightsAnalysis.MontlyMedian => "Monthly median",
             StatisticalFlightsAnalysis.DurationDistribution => "Duration Distribution",
             StatisticalFlightsAnalysis.MonthlyFlightDuration => "Monthly flight duration",
+            StatisticalFlightsAnalysis.MonthlyCumulatedMedian => "Monthly cumulated flight duration (not implemented yet)",
+            StatisticalFlightsAnalysis.MonthlyCumulatedFlightDuration => "Monthly cumulated flight duration (not implemented yet)",
             _ => "",
         };
     }
