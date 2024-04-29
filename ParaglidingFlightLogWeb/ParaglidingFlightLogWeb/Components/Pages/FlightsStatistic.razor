@@ -39,9 +39,9 @@
     <MyTextIndicator Label="Flights median duration" Text="@fsvm.MedianFlightDurationText" />
 
 </RadzenRow>
-<RadzenRow>
+<RadzenRow style="overflow: auto;">
     <RadzenColumn>
-        <RadzenChart style="height: 700px">
+        <RadzenChart style="height: 400px;min-width: 1200px;">
             <RadzenLegend Position="LegendPosition.Top" />
 
 
@@ -69,7 +69,8 @@
                     <RadzenColumnSeries Data="@item.MonthlyMedianItems"
                                         Title="@mvm.YearsOfFlying[i].ToString()"
                                         CategoryProperty="Month"
-                                        ValueProperty="BarValue" />
+                                        ValueProperty="BarValue"
+                                         />
                     i++;
                 }
             }

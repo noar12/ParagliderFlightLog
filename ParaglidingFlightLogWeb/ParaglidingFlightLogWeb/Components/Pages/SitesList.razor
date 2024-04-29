@@ -16,18 +16,18 @@
         <RadzenButton Text="Show sites in time range" Click=OnShowSiteTimeRange Size="ButtonSize.Small"/>
     </RadzenRow>
    <RadzenRow>
-        <RadzenColumn Size="12" SizeSM="6">
-            <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="15"
+    <RadzenColumn Size="12" SizeSM="6" Style="overflow: auto;">
+            <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                             AllowSorting="true" Data="@mvm.SiteListViewModel" TItem="SiteViewModel"
                             style="height: calc(100vh - 200px)"
                             SelectionMode="DataGridSelectionMode.Single"
                             ContextMenu=@(args => ShowContextMenuWithItems(args))
                             ValueChanged="UpdateSiteDetails">
                 <Columns>
-                    <RadzenDataGridColumn TItem="SiteViewModel" Property="Name" Title="Site name" Width="150px" />
-                    <RadzenDataGridColumn TItem="SiteViewModel" Property="Altitude" Title="Altitude" />
-                    <RadzenDataGridColumn TItem="SiteViewModel" Property="WindOrientation" Title="Wind orientation" />
-                    <RadzenDataGridColumn TItem="SiteViewModel" Property="SiteUseCount" Title="# Used" />
+                    <RadzenDataGridColumn TItem="SiteViewModel" Property="Name" Title="Site name" MinWidth="150px" />
+                <RadzenDataGridColumn TItem="SiteViewModel" Property="Altitude" Title="Altitude" Width="150px" />
+                <RadzenDataGridColumn TItem="SiteViewModel" Property="WindOrientation" Title="Wind orientation" Width="200px" />
+                <RadzenDataGridColumn TItem="SiteViewModel" Property="SiteUseCount" Title="# Used" Width="100px" MinWidth="200px" />
                 </Columns>
             </RadzenDataGrid>
         </RadzenColumn>
