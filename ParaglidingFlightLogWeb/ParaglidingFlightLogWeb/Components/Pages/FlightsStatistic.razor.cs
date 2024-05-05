@@ -66,7 +66,7 @@ public partial class FlightsStatistic
                     {
                         currentYearMonthlyMedian[j] = new MonthlyItem()
                         {
-                            BarValue = monthMedian,
+                            Value = monthMedian,
                             Month = l_MonthList[j],
                         };
                         j++;
@@ -74,7 +74,7 @@ public partial class FlightsStatistic
 
                     MonthlyMedianAnalysisResult[i] = new YearMonthlyStatistic()
                     {
-                        MonthlyMedianItems = currentYearMonthlyMedian,
+                        MonthlyItems = currentYearMonthlyMedian,
                     };
                     l_YearsText[i] = l_FlightYear.ToString();
                     i++;
@@ -92,7 +92,7 @@ public partial class FlightsStatistic
                     {
                         currentYearMonthlyDuration[j] = new MonthlyItem()
                         {
-                            BarValue = monthDuration,
+                            Value = monthDuration,
                             Month = l_MonthList[j],
                         };
                         j++;
@@ -100,7 +100,7 @@ public partial class FlightsStatistic
 
                     MonthlyDurationAnalysisResult[i] = new YearMonthlyStatistic()
                     {
-                        MonthlyMedianItems = currentYearMonthlyDuration,
+                        MonthlyItems = currentYearMonthlyDuration,
                     };
                     l_YearsText[i] = l_FlightYear.ToString();
                     ++i;
@@ -112,6 +112,23 @@ public partial class FlightsStatistic
                 if (fsvm.FlightsCount == 0)
                     return;
                 DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
+                break;
+            case StatisticalFlightsAnalysis.MonthlyCumulatedFlightDuration:
+                MonthlyCumulatedDurationAnalysisResult = new YearMonthlyStatistic[mvm.YearsOfFlying.Count];
+                foreach (int year in mvm.YearsOfFlying)
+                {
+                    double[] monthlyCumulatedDuration = fsvm.GetCumulatedFlightHoursPerMonth(year);
+                    MonthlyCumulatedDurationAnalysisResult[i] = new() { MonthlyItems = new MonthlyItem[l_MonthList.Length] };
+                    for ( int j = 0; j < monthlyCumulatedDuration.Length; j++)
+                    {
+                        MonthlyCumulatedDurationAnalysisResult[i].MonthlyItems[j]= new()
+                        {
+                            Month = l_MonthList[j],
+                            Value = monthlyCumulatedDuration[j]
+                        };
+                    }
+                    ++i;
+                }
                 break;
             default:
                 break;
@@ -125,8 +142,7 @@ public partial class FlightsStatistic
             StatisticalFlightsAnalysis.MontlyMedian => "Monthly median",
             StatisticalFlightsAnalysis.DurationDistribution => "Duration Distribution",
             StatisticalFlightsAnalysis.MonthlyFlightDuration => "Monthly flight duration",
-            StatisticalFlightsAnalysis.MonthlyCumulatedMedian => "Monthly cumulated flight duration (not implemented yet)",
-            StatisticalFlightsAnalysis.MonthlyCumulatedFlightDuration => "Monthly cumulated flight duration (not implemented yet)",
+            StatisticalFlightsAnalysis.MonthlyCumulatedFlightDuration => "Monthly cumulated flight duration",
             _ => "",
         };
     }
@@ -140,17 +156,18 @@ public partial class FlightsStatistic
     class MonthlyItem
     {
         public string Month { get; set; } = string.Empty;
-        public double BarValue { get; set; }
+        public double Value { get; set; }
     }
 
     class YearMonthlyStatistic
     {
-        public MonthlyItem[] MonthlyMedianItems { get; set; } = [];
+        public MonthlyItem[] MonthlyItems { get; set; } = [];
     }
 
     DurationItem[] DurationAnalysisResult = [];
     YearMonthlyStatistic[] MonthlyMedianAnalysisResult = [];
     YearMonthlyStatistic[] MonthlyDurationAnalysisResult = [];
+    YearMonthlyStatistic[] MonthlyCumulatedDurationAnalysisResult = [];
     static DurationItem[] HistDataToDurationItem(HistData histData)
     {
         var durationItems = new List<DurationItem>();
