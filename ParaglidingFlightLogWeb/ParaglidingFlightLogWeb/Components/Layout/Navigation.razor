@@ -15,6 +15,11 @@
                 <RadzenPanelMenuItem Text="Glider" Icon="paragliding" Path="Gliderslist"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Import from LogFly" Icon="input" Path="ImportLogFlyDb"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Manage Account" Icon="account_circle" Path="/Account/Manage"></RadzenPanelMenuItem>
+                <form action="Account/Logout" method="post">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="ReturnUrl" value="" />
+                    <RadzenButton Icon="logout" ButtonType="ButtonType.Submit" Text="Logout" ButtonStyle="ButtonStyle.Light"></RadzenButton>
+                </form>
             </Authorized>
             <NotAuthorized>
                 <RadzenPanelMenuItem Text="Register" Icon="input" Path="Account/Register"></RadzenPanelMenuItem>
