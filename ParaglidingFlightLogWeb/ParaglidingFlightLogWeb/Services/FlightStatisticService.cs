@@ -4,14 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ParagliderFlightLog.Models;
+using ParaglidingFlightLogWeb.ViewModels;
 using Radzen;
 
 
-namespace ParaglidingFlightLogWeb.ViewModels
+namespace ParaglidingFlightLogWeb.Services
 {
-    public class FlightsStatisticsViewModel
+    public class FlightStatisticService
     {
-        private readonly MainViewModel m_MainViewModel;
+        private readonly CoreService m_MainViewModel;
         public TimeSpan FlightsDuration { get; private set; }
         public string FlightsDurationText { get { return $"{(int)FlightsDuration.TotalHours:D2}:{FlightsDuration.Minutes:D2}"; } }
         public TimeSpan MeanFlightsDuration { get; private set; }
@@ -21,11 +22,11 @@ namespace ParaglidingFlightLogWeb.ViewModels
         public int FlightsCount { get; private set; }
         public HistData FlightsDurationHistData { get; private set; } = new([], []);
 
-        public FlightsStatisticsViewModel(MainViewModel mvm)
+        public FlightStatisticService(CoreService mvm)
         {
             m_MainViewModel = mvm;
         }
-        public FlightsStatisticsViewModel(MainViewModel mainViewModel, DateTime AnalyzeStart, DateTime AnalyzeEnd)
+        public FlightStatisticService(CoreService mainViewModel, DateTime AnalyzeStart, DateTime AnalyzeEnd)
         {
             m_MainViewModel = mainViewModel;
             // get the flights we have to put in the statistical analysis
@@ -58,7 +59,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
             {
                 double l_CurrentBin = l_PreviousBin + l_BinWidth;
                 l_binEdges[i] = l_CurrentBin;
-                l_counts[i] = sample.Count(s => (s > l_PreviousBin) && (s <= l_CurrentBin));
+                l_counts[i] = sample.Count(s => s > l_PreviousBin && s <= l_CurrentBin);
                 l_PreviousBin = l_CurrentBin;
             }
             return (l_counts, l_binEdges);

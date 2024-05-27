@@ -9,7 +9,7 @@ using ParaglidingFlightLogWeb.Client.Pages;
 using ParaglidingFlightLogWeb.Components;
 using ParaglidingFlightLogWeb.Components.Account;
 using ParaglidingFlightLogWeb.Data;
-using ParaglidingFlightLogWeb.ViewModels;
+using ParaglidingFlightLogWeb.Services;
 using Radzen;
 using Serilog;
 
@@ -53,8 +53,8 @@ try
     builder.Services.AddRadzenComponents();
 
     // Register our own injectables
-    builder.Services.AddScoped<MainViewModel>();
-    builder.Services.AddScoped<FlightsStatisticsViewModel>();
+    builder.Services.AddScoped<CoreService>();
+    builder.Services.AddScoped<FlightStatisticService>();
     builder.Services.AddScoped<FlightLogDB>();
     builder.Services.AddScoped<LogFlyDB>();
     builder.Services.AddScoped<SqliteDataAccess>();

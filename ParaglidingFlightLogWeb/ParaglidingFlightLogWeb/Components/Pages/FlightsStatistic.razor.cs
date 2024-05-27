@@ -1,17 +1,17 @@
 using Radzen;
-using ParaglidingFlightLogWeb.ViewModels;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
+using ParaglidingFlightLogWeb.Services;
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
 
 public partial class FlightsStatistic
 {
     [Inject] IWebHostEnvironment Environment { get; set; } = null!;
-    [Inject] MainViewModel mvm { get; set; } = null!;
-    [Inject] FlightsStatisticsViewModel fsvm { get; set; } = null!;
+    [Inject] CoreService mvm { get; set; } = null!;
+    [Inject] FlightStatisticService fsvm { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
     protected override async Task OnInitializedAsync()
@@ -108,7 +108,7 @@ public partial class FlightsStatistic
 
                 break;
             case StatisticalFlightsAnalysis.DurationDistribution:
-                fsvm = new FlightsStatisticsViewModel(mvm, new DateTime(YearToAnalyse, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(YearToAnalyse, 12, 31, 0, 0, 0, DateTimeKind.Utc));
+                fsvm = new FlightStatisticService(mvm, new DateTime(YearToAnalyse, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(YearToAnalyse, 12, 31, 0, 0, 0, DateTimeKind.Utc));
                 if (fsvm.FlightsCount == 0)
                     return;
                 DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);

@@ -5,6 +5,7 @@ using Radzen;
 using ParaglidingFlightLogWeb.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
+using ParaglidingFlightLogWeb.Services;
 
 namespace ParaglidingFlightLogWeb.Components.Pages
 {
@@ -21,7 +22,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
         [Inject] DialogService DialogService { get; set; } = null!;
         [Inject] IWebHostEnvironment Environment { get; set; } = null!;
-        [Inject] MainViewModel mvm { get; set; } = null!;
+        [Inject] CoreService mvm { get; set; } = null!;
         [CascadingParameter]
         private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
         [Inject]

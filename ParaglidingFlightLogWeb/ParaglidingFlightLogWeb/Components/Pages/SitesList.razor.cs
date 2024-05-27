@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using ParaglidingFlightLogWeb.Data;
+using ParaglidingFlightLogWeb.Services;
 
 namespace ParaglidingFlightLogWeb.Components.Pages
 {
@@ -18,7 +19,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         private DateTime _endDate = DateTime.Today;
 
         [Inject] IWebHostEnvironment Environment { get; set; } = null!;
-        [Inject] MainViewModel mvm { get; set; } = null!;
+        [Inject] CoreService mvm { get; set; } = null!;
         [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
         [Inject] DialogService DialogService { get; set; } = null!;
         [Inject] IJSRuntime jsRuntime { get; set; } = null!;

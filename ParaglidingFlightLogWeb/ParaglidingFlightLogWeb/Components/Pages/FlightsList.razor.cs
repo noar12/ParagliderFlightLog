@@ -9,17 +9,18 @@ using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
 using Microsoft.JSInterop;
 using ParagliderFlightLog.XcScoreWapper;
+using ParaglidingFlightLogWeb.Services;
 
 
 namespace ParaglidingFlightLogWeb.Components.Pages
 {
-	public partial class FlightsList
+    public partial class FlightsList
 	{
 		
 		[Inject] ContextMenuService ContextMenuService { get; set; } = null!;
 		[Inject] DialogService DialogService { get; set; } = null!;
 		[Inject] IWebHostEnvironment Environment { get; set; } = null!;
-		[Inject] MainViewModel Mvm { get; set; } = null!;
+		[Inject] CoreService Mvm { get; set; } = null!;
 		[Inject] ILogger<Index> Logger { get; set; } = null!;
 		[CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
 		[Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
@@ -79,12 +80,12 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 			ContextMenuService.Close();
 		}
 		async Task OnShowMapClick(){
-            await DialogService.OpenAsync<ShowFlightOnMap>($"Flight trace on map",
+			await DialogService.OpenAsync<ShowFlightOnMap>($"Flight trace on map",
 			new Dictionary<string, object>() { { "FlightToShow", LastSelectedFlight! } },
 			new DialogOptions() { Width= "900px", Resizable = true, Draggable = false });
-        }
+		}
 
-        enum EFlightAction
+		enum EFlightAction
 		{
 			Edit,
 			Remove,
@@ -149,8 +150,8 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 			StateHasChanged();
 			await dataGrid.Reload();
 		}
-        private void ComputeFlightScore(){
+		private void ComputeFlightScore(){
 			Mvm.EnqueueFlight(LastSelectedFlight);
 		}
-    }
+	}
 }

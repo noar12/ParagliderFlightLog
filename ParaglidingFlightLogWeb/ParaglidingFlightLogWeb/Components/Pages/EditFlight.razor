@@ -1,4 +1,5 @@
 ﻿@using ParaglidingFlightLogWeb.ViewModels
+@using ParaglidingFlightLogWeb.Services
 @rendermode InteractiveServer
 
         <RadzenFormField Text="Glider" Variant="Variant.Outlined">
@@ -24,7 +25,7 @@
     [Parameter]
     public FlightViewModel FlightToEdit { get; set; } = null!;
     [Parameter]
-    public MainViewModel ViewModel { get; set; } = null!;
+    public CoreService ViewModel { get; set; } = null!;
 
 
 }

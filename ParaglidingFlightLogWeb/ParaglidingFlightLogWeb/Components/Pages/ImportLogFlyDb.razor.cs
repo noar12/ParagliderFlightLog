@@ -1,6 +1,5 @@
 using global::Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using ParaglidingFlightLogWeb.ViewModels;
 using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
@@ -8,12 +7,13 @@ using System;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using ParaglidingFlightLogWeb.Data;
+using ParaglidingFlightLogWeb.Services;
 
 namespace ParaglidingFlightLogWeb.Components.Pages
 {
     public partial class ImportLogFlyDb
     {
-        [Inject] private MainViewModel Mvm { get; set; } = null!;
+        [Inject] private CoreService Mvm { get; set; } = null!;
         [Inject] private ILogger<ImportLogFlyDb>? Logger { get; set; } = null!;
         [Inject] private IWebHostEnvironment? Environment { get; set; } = null!;
         [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
