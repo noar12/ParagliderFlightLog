@@ -20,6 +20,24 @@ namespace ParaglidingFlightLogWeb.Services
         public TimeSpan MedianFlightsDuration { get; private set; }
         public string MedianFlightDurationText { get { return $"{(int)MedianFlightsDuration.TotalHours:D2}:{MedianFlightsDuration.Minutes:D2}"; } }
         public int FlightsCount { get; private set; }
+        public int LastYearSiteCount
+        {
+            get
+            {
+                return m_MainViewModel.FlightListViewModel
+                    .Where(f => f.TakeOffDateTime >= DateTime.Now - TimeSpan.FromDays(365.25) && f.TakeOffSite is not null)
+                    .Select(f => f.TakeOffSite)
+                    .DistinctBy(s => s!.Site_ID).Count();
+            }
+        }
+        public GliderViewModel? OldestCheckUsedGlider { get
+            {
+                return m_MainViewModel.FlightListViewModel.Where(f => f.TakeOffDateTime >= DateTime.Now - TimeSpan.FromDays(365.25) && f.TakeOffSite is not null && f.Glider is not null)
+                .Select(f => f.Glider)
+                .DistinctBy(g => g.GliderId)
+                .MinBy(g => g.LastCheckDateTime);
+            }
+        }
         public HistData FlightsDurationHistData { get; private set; } = new([], []);
 
         public FlightStatisticService(CoreService mvm)

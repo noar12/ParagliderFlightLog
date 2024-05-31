@@ -1,9 +1,30 @@
 @rendermode InteractiveServer
 <RadzenHeader style="position: static">
-    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-        <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
-        <RadzenLabel Text="Paraglider Flight Log" />
-    </RadzenStack>
+    <RadzenRow>
+        <RadzenColumn Size="3">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
+                <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+                <RadzenLink Path="/" Text="Go to index page">
+                    <RadzenLabel Text="Paraglider Flight Log" />
+                </RadzenLink>
+            </RadzenStack>
+        </RadzenColumn>
+
+        <RadzenColumn Size="3" Offset="6">
+            <AuthorizeView>
+                <Authorized>
+                    <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Orientation="Orientation.Horizontal">
+                        <RadzenText Style="color: var(--rz-text-contrast-color)">Hello, @context.User.Identity.Name</RadzenText>
+
+                    </RadzenStack>
+                </Authorized>
+            </AuthorizeView>
+        </RadzenColumn>
+
+
+    </RadzenRow>
+
+
 </RadzenHeader>
 <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute">
     <RadzenPanelMenu Click="@(()=> sidebarExpanded = false)">

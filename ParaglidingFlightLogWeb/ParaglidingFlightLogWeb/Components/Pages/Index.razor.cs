@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
 using System.Diagnostics;
+using ParaglidingFlightLogWeb.Services;
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
 
@@ -17,7 +18,8 @@ public partial class Index
     private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject]
     UserManager<ApplicationUser> UserManager { get; set; } = null!;
-
+    [Inject] FlightStatisticService FlightStatisticService { get; set; } = null!;
+    [Inject] CoreService CoreService { get; set; } = null!;
     string? userName;
     string? userId;
     string? userEmail;
@@ -36,6 +38,8 @@ public partial class Index
             userId = currentUser.Id;
             userEmail = currentUser.Email;
             _logger.LogInformation("Index page intialzed for {user} in {time_ms} ms", currentUser.UserName, sw.ElapsedMilliseconds);
+            await CoreService.Init(userId);
+
         }
     }
 }

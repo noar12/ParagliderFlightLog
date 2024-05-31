@@ -13,20 +13,50 @@
 
 @rendermode InteractiveServer
 
-<PageTitle>Paragliding Flight Log</PageTitle>
+<PageTitle>Paraglidier Flight Log</PageTitle>
 
-<h1>Welcome in the Paragliding Flight Log Web App</h1>
+<RadzenText TextStyle="TextStyle.H1" Text="Welcome on the Paraglider Flight Log" />
 
 <AuthorizeView>
     <Authorized>
-        <h2>
-            You are currently log in as @userName (@userEmail) and your Id is : @userId
-        </h2>
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenCard>
+                    <RadzenText TextStyle="TextStyle.H3" Text="Interesting facts" />
+                    
+                    <RadzenRow>
+                        <RadzenColumn>
+                            <MyNumericIndicator Format="F0" Label="Number of sites during the last year" Value="@FlightStatisticService.LastYearSiteCount" />
+                        </RadzenColumn>
+                        <RadzenColumn>
+                            <MyTextIndicator Label="Glider with the oldest last check" Text="@($"{FlightStatisticService.OldestCheckUsedGlider?.FullName} ({FlightStatisticService.OldestCheckUsedGlider?.LastCheckDateTime.ToString("d")} with {FlightStatisticService.OldestCheckUsedGlider?.FlightTimeSinceLastCheck} flight hours)")" />
+                        </RadzenColumn>
+                    </RadzenRow>
+                </RadzenCard>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenCard>
+
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow>
+            <RadzenColumn>
+                <RadzenCard>
+
+                </RadzenCard>
+            </RadzenColumn>
+            <RadzenColumn>
+                <RadzenCard>
+
+                </RadzenCard>
+            </RadzenColumn>
+        </RadzenRow>
     </Authorized>
     <NotAuthorized>
-        <h2>
-            You are currently not log in please <a href="/Account/Login">log in</a>
-        </h2>
+        <RadzenText TextStyle="TextStyle.Body1">
+            You are currently not log in please <RadzenLink Path="/Account/Login">log in</RadzenLink>
+        </RadzenText>
     </NotAuthorized>
 </AuthorizeView>
 
