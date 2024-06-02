@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
 using System.Diagnostics;
 using ParaglidingFlightLogWeb.Services;
+using Microsoft.JSInterop;
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
 
@@ -24,6 +25,8 @@ public partial class Index
     string? userId;
     string? userEmail;
 
+
+    FlightViewModel? _flightToRemember;
     protected override async Task OnInitializedAsync()
     {
         var sw = Stopwatch.StartNew();
@@ -39,7 +42,7 @@ public partial class Index
             userEmail = currentUser.Email;
             _logger.LogInformation("Index page intialzed for {user} in {time_ms} ms", currentUser.UserName, sw.ElapsedMilliseconds);
             await CoreService.Init(userId);
-
+            _flightToRemember = CoreService.GetFlightToRemember();
         }
     }
 }

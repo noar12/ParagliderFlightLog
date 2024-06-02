@@ -9,6 +9,7 @@ using ParaglidingFlightLogWeb.ViewModels;
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
 using ParagliderFlightLog.XcScoreWapper;
+using Microsoft.Identity.Client;
 
 namespace ParaglidingFlightLogWeb.Services
 {
@@ -158,6 +159,45 @@ namespace ParaglidingFlightLogWeb.Services
         {
             if (lastSelectedFlight?.FlightWithData is null) return;
             _xcScoreManager.QueueFlightForScoring(lastSelectedFlight.FlightWithData, _flightLog);
+        }
+
+        public FlightViewModel? GetFlightToRemember()
+        {
+            double anniversaryFlightProbability = 0.5;
+            var random = new Random();
+            double kindOfMemory = random.NextDouble();
+            var anniversaryFlight = FlightListViewModel.Where(f => f.TakeOffDateTime.Day == DateTime.Today.Day && f.TakeOffDateTime.Month == DateTime.Today.Month).ToArray();
+            if (anniversaryFlight.Length > 0)
+            {
+                anniversaryFlightProbability = 0.9;
+            }
+            if (kindOfMemory < anniversaryFlightProbability)
+            {
+                return anniversaryFlight[random.Next(anniversaryFlight.Length)];
+            }
+            else
+            {
+                return GetFlightWithBigComment();
+            }
+        }
+
+        private FlightViewModel? GetFlightWithBigComment()
+        {
+            var random = new Random();
+            int bigCommentLimit = 200;
+            var flightWithBigComment = FlightListViewModel.Where(f => f.Comment.Length > bigCommentLimit).ToArray();
+            if (flightWithBigComment.Length > 0)
+            {
+                return flightWithBigComment[random.Next(flightWithBigComment.Length)];
+            }
+            else if (FlightListViewModel.Count > 0)
+            {
+                return FlightListViewModel[random.Next(FlightListViewModel.Count)];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public List<FlightViewModel> FlightListViewModel { get; private set; } = [];

@@ -81,7 +81,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 		}
 		async Task OnShowMapClick(){
 			await DialogService.OpenAsync<ShowFlightOnMap>($"Flight trace on map",
-			new Dictionary<string, object>() { { "FlightToShow", LastSelectedFlight! } },
+			new Dictionary<string, object>() { { "FlightToShow", LastSelectedFlight! }, { "Height", 500 } },
 			new DialogOptions() { Width= "900px", Resizable = true, Draggable = false });
 		}
 
