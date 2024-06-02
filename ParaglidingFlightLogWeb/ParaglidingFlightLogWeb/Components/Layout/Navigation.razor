@@ -1,31 +1,34 @@
 @rendermode InteractiveServer
 <RadzenHeader style="position: static">
-    <RadzenRow>
+    <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="3">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
                 <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
                 <RadzenLink Path="/" Text="Go to index page">
-                    <RadzenLabel Text="Paraglider Flight Log" />
+                    <RadzenButton Text="Paraglider Flight Log" ButtonStyle="ButtonStyle.Light" Variant="Variant.Text" />
                 </RadzenLink>
             </RadzenStack>
         </RadzenColumn>
 
-        <RadzenColumn Size="3" Offset="6">
-            <AuthorizeView>
-                <Authorized>
-                    <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Orientation="Orientation.Horizontal">
-                        <RadzenText Style="color: var(--rz-text-contrast-color)">Hello, @context.User.Identity.Name</RadzenText>
 
+        <AuthorizeView>
+            <Authorized>
+                <RadzenColumn Size="3" Offset="6">
+                    <RadzenStack Gap="0" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Orientation="Orientation.Horizontal">
+                        <form action="Account/Logout" method="post">
+                            <AntiforgeryToken />
+                            <input type="hidden" name="ReturnUrl" value="" />
+                            <RadzenButton Icon="logout" ButtonType="ButtonType.Submit" Text="Logout" ButtonStyle="ButtonStyle.Light" Variant="Variant.Text"></RadzenButton>
+                        </form>
+                        <RadzenLabel>Hello, @context.User.Identity.Name</RadzenLabel>
                     </RadzenStack>
-                </Authorized>
-            </AuthorizeView>
-        </RadzenColumn>
+                </RadzenColumn>
 
-
+            </Authorized>
+        </AuthorizeView>
     </RadzenRow>
-
-
 </RadzenHeader>
+
 <RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute">
     <RadzenPanelMenu Click="@(()=> sidebarExpanded = false)">
         <AuthorizeView>
@@ -36,11 +39,7 @@
                 <RadzenPanelMenuItem Text="Glider" Icon="paragliding" Path="Gliderslist"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Import from LogFly" Icon="input" Path="ImportLogFlyDb"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Manage Account" Icon="account_circle" Path="/Account/Manage"></RadzenPanelMenuItem>
-                <form action="Account/Logout" method="post">
-                    <AntiforgeryToken />
-                    <input type="hidden" name="ReturnUrl" value="" />
-                    <RadzenButton Icon="logout" ButtonType="ButtonType.Submit" Text="Logout" ButtonStyle="ButtonStyle.Light"></RadzenButton>
-                </form>
+
             </Authorized>
             <NotAuthorized>
                 <RadzenPanelMenuItem Text="Register" Icon="input" Path="Account/Register"></RadzenPanelMenuItem>
