@@ -10,8 +10,8 @@ namespace ParaglidingFlightLogWeb.Components.Pages;
 public partial class FlightsStatistic
 {
     [Inject] IWebHostEnvironment Environment { get; set; } = null!;
-    [Inject] CoreService mvm { get; set; } = null!;
-    [Inject] FlightStatisticService fsvm { get; set; } = null!;
+    [Inject] CoreService Core { get; set; } = null!;
+    [Inject] FlightStatisticService FlightStatistic { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
     protected override async Task OnInitializedAsync()
@@ -22,18 +22,18 @@ public partial class FlightsStatistic
             var currentUser = await UserManager.GetUserAsync(userClaim);
             if (currentUser == null) return;
             string userId = currentUser.Id;
-            await mvm.Init(userId);
-            YearToAnalyse = DateTime.Now.Year;
-            if (fsvm.FlightsCount == 0)
+            await Core.Init(userId);
+            _yearToAnalyse = DateTime.Now.Year;
+            if (FlightStatistic.FlightsCount == 0)
                 return;
-            DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
+            OnAnalyze();
         }
     }
+
+    private bool _allYearAnalysis = false;
     private readonly Variant variant = Variant.Outlined;
-#pragma warning disable IDE0044 // Add readonly modifier. this wrong because we change it in the interface
     StatisticalFlightsAnalysis AnalysisToDo = StatisticalFlightsAnalysis.DurationDistribution;
-#pragma warning restore IDE0044 // Add readonly modifier
-    int YearToAnalyse;
+    int _yearToAnalyse;
     void OnAnalyze()
     {
         string[] l_MonthList =
@@ -51,15 +51,15 @@ public partial class FlightsStatistic
             "November",
             "December"
         ];
-        string[] l_YearsText = new string[mvm.YearsOfFlying.Count];
+        string[] l_YearsText = new string[Core.YearsOfFlying.Count];
         int i = 0;
         switch (AnalysisToDo)
         {
             case StatisticalFlightsAnalysis.MontlyMedian:
-                MonthlyMedianAnalysisResult = new YearMonthlyStatistic[mvm.YearsOfFlying.Count];
-                foreach (int l_FlightYear in mvm.YearsOfFlying)
+                MonthlyMedianAnalysisResult = new YearMonthlyStatistic[Core.YearsOfFlying.Count];
+                foreach (int l_FlightYear in Core.YearsOfFlying)
                 {
-                    double[] l_MonthlyMedians = fsvm.GetMonthlyMedian(l_FlightYear);
+                    double[] l_MonthlyMedians = FlightStatistic.GetMonthlyMedian(l_FlightYear);
                     MonthlyItem[] currentYearMonthlyMedian = new MonthlyItem[l_MonthList.Length];
                     int j = 0;
                     foreach (double monthMedian in l_MonthlyMedians)
@@ -82,10 +82,10 @@ public partial class FlightsStatistic
 
                 break;
             case StatisticalFlightsAnalysis.MonthlyFlightDuration:
-                MonthlyDurationAnalysisResult = new YearMonthlyStatistic[mvm.YearsOfFlying.Count];
-                foreach (int l_FlightYear in mvm.YearsOfFlying)
+                MonthlyDurationAnalysisResult = new YearMonthlyStatistic[Core.YearsOfFlying.Count];
+                foreach (int l_FlightYear in Core.YearsOfFlying)
                 {
-                    double[] l_MonthlyDuration = fsvm.GetMonthlyFlightHours(l_FlightYear);
+                    double[] l_MonthlyDuration = FlightStatistic.GetMonthlyFlightHours(l_FlightYear);
                     MonthlyItem[] currentYearMonthlyDuration = new MonthlyItem[l_MonthList.Length];
                     int j = 0;
                     foreach (double monthDuration in l_MonthlyDuration)
@@ -108,20 +108,28 @@ public partial class FlightsStatistic
 
                 break;
             case StatisticalFlightsAnalysis.DurationDistribution:
-                fsvm = new FlightStatisticService(mvm, new DateTime(YearToAnalyse, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(YearToAnalyse, 12, 31, 0, 0, 0, DateTimeKind.Utc));
-                if (fsvm.FlightsCount == 0)
-                    return;
-                DurationAnalysisResult = HistDataToDurationItem(fsvm.FlightsDurationHistData);
+                HistData? histData;
+                if (_allYearAnalysis)
+                {
+                    histData = FlightStatistic.GetFlightDurationRepartition(DateTime.MinValue, DateTime.MaxValue);
+                }
+                else
+                {
+                    histData = FlightStatistic.GetFlightDurationRepartition(new DateTime(_yearToAnalyse, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+                                                                     new DateTime(_yearToAnalyse, 12, 31, 0, 0, 0, DateTimeKind.Utc));
+                }
+                if (histData is null) { return; }
+                DurationAnalysisResult = HistDataToDurationItem(histData);
                 break;
             case StatisticalFlightsAnalysis.MonthlyCumulatedFlightDuration:
-                MonthlyCumulatedDurationAnalysisResult = new YearMonthlyStatistic[mvm.YearsOfFlying.Count];
-                foreach (int year in mvm.YearsOfFlying)
+                MonthlyCumulatedDurationAnalysisResult = new YearMonthlyStatistic[Core.YearsOfFlying.Count];
+                foreach (int year in Core.YearsOfFlying)
                 {
-                    double[] monthlyCumulatedDuration = fsvm.GetCumulatedFlightHoursPerMonth(year);
+                    double[] monthlyCumulatedDuration = FlightStatistic.GetCumulatedFlightHoursPerMonth(year);
                     MonthlyCumulatedDurationAnalysisResult[i] = new() { MonthlyItems = new MonthlyItem[l_MonthList.Length] };
-                    for ( int j = 0; j < monthlyCumulatedDuration.Length; j++)
+                    for (int j = 0; j < monthlyCumulatedDuration.Length; j++)
                     {
-                        MonthlyCumulatedDurationAnalysisResult[i].MonthlyItems[j]= new()
+                        MonthlyCumulatedDurationAnalysisResult[i].MonthlyItems[j] = new()
                         {
                             Month = l_MonthList[j],
                             Value = monthlyCumulatedDuration[j]

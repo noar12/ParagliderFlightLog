@@ -12,7 +12,7 @@ namespace ParaglidingFlightLogWeb.Services
 {
     public class FlightStatisticService
     {
-        private readonly CoreService m_MainViewModel;
+        private readonly CoreService _mainViewModel;
         public TimeSpan FlightsDuration { get; private set; }
         public string FlightsDurationText { get { return $"{(int)FlightsDuration.TotalHours:D2}:{FlightsDuration.Minutes:D2}"; } }
         public TimeSpan MeanFlightsDuration { get; private set; }
@@ -24,7 +24,7 @@ namespace ParaglidingFlightLogWeb.Services
         {
             get
             {
-                return m_MainViewModel.FlightListViewModel
+                return _mainViewModel.FlightListViewModel
                     .Where(f => f.TakeOffDateTime >= DateTime.Now - TimeSpan.FromDays(365.25) && f.TakeOffSite is not null)
                     .Select(f => f.TakeOffSite)
                     .DistinctBy(s => s!.Site_ID).Count();
@@ -32,39 +32,20 @@ namespace ParaglidingFlightLogWeb.Services
         }
         public GliderViewModel? OldestCheckUsedGlider { get
             {
-                return m_MainViewModel.FlightListViewModel.Where(f => f.TakeOffDateTime >= DateTime.Now - TimeSpan.FromDays(365.25) && f.TakeOffSite is not null && f.Glider is not null)
+                return _mainViewModel.FlightListViewModel.Where(f => f.TakeOffDateTime >= DateTime.Now - TimeSpan.FromDays(365.25) && f.TakeOffSite is not null && f.Glider is not null)
                 .Select(f => f.Glider)
-                .DistinctBy(g => g.GliderId)
-                .MinBy(g => g.LastCheckDateTime);
+                .DistinctBy(g => g?.GliderId)
+                .MinBy(g => g?.LastCheckDateTime);
             }
         }
         public HistData FlightsDurationHistData { get; private set; } = new([], []);
 
         public FlightStatisticService(CoreService mvm)
         {
-            m_MainViewModel = mvm;
+            _mainViewModel = mvm;
         }
-        public FlightStatisticService(CoreService mainViewModel, DateTime AnalyzeStart, DateTime AnalyzeEnd)
-        {
-            m_MainViewModel = mainViewModel;
-            // get the flights we have to put in the statistical analysis
-            List<FlightViewModel> l_AnalyzeFlights = mainViewModel.FlightsInPeriod(AnalyzeStart, AnalyzeEnd);
-            if (l_AnalyzeFlights.Count == 0)
-                return;
-            FlightsDuration = mainViewModel.FlightDurationInPeriod(AnalyzeStart, AnalyzeEnd);
-            MeanFlightsDuration = FlightsDuration / l_AnalyzeFlights.Count;
-            MedianFlightsDuration = l_AnalyzeFlights.OrderBy(flight => flight.FlightDuration)
-                .ToList()[l_AnalyzeFlights.Count / 2].FlightDuration;
-            FlightsCount = l_AnalyzeFlights.Count;
-            List<double> l_flightsDurationsList = l_AnalyzeFlights.Select(f => f.FlightDuration.TotalHours).ToList();
-
-            (double[] counts, double[] binEdges) = ComputeHistData([.. l_flightsDurationsList], 20);
-            FlightsDurationHistData = new HistData(counts, binEdges);
 
 
-
-
-        }
 
         static private (double[] counts, double[] binEdges) ComputeHistData(double[] sample, int groupCount)
         {
@@ -82,6 +63,23 @@ namespace ParaglidingFlightLogWeb.Services
             }
             return (l_counts, l_binEdges);
         }
+        public HistData? GetFlightDurationRepartition(DateTime AnalyzeStart, DateTime AnalyzeEnd)
+        {
+            // get the flights we have to put in the statistical analysis
+            List<FlightViewModel> l_AnalyzeFlights = _mainViewModel.FlightsInPeriod(AnalyzeStart, AnalyzeEnd);
+            if (l_AnalyzeFlights.Count == 0)
+                return null;
+            FlightsDuration = _mainViewModel.FlightDurationInPeriod(AnalyzeStart, AnalyzeEnd);
+            MeanFlightsDuration = FlightsDuration / l_AnalyzeFlights.Count;
+            MedianFlightsDuration = l_AnalyzeFlights.OrderBy(flight => flight.FlightDuration)
+                .ToList()[l_AnalyzeFlights.Count / 2].FlightDuration;
+            FlightsCount = l_AnalyzeFlights.Count;
+            List<double> l_flightsDurationsList = l_AnalyzeFlights.Select(f => f.FlightDuration.TotalHours).ToList();
+
+            (double[] counts, double[] binEdges) = ComputeHistData([.. l_flightsDurationsList], 20);
+            return new HistData(counts, binEdges);
+        }
+
         public double[] GetMonthlyMedian(int flightYear)
         {
             double[] l_MonthMedian = new double[12];
@@ -89,7 +87,7 @@ namespace ParaglidingFlightLogWeb.Services
             {
                 FlightViewModel[]? l_MonthFlights =
                 [
-                    .. m_MainViewModel.FlightListViewModel
+                    .. _mainViewModel.FlightListViewModel
                                     .Where(f => f.TakeOffDateTime.Year == flightYear && f.TakeOffDateTime.Month == month).OrderBy(f => f.FlightDuration),
                 ];
                 if (l_MonthFlights.Length != 0)
@@ -106,7 +104,7 @@ namespace ParaglidingFlightLogWeb.Services
             double[] l_MonthFlightHour = new double[12];
             for (int month = 1; month <= 12; month++)
             {
-                double l_MonthFlights = m_MainViewModel.FlightListViewModel
+                double l_MonthFlights = _mainViewModel.FlightListViewModel
                 .Where(f => f.TakeOffDateTime.Year == flightYear && f.TakeOffDateTime.Month == month)
                 .Aggregate(TimeSpan.Zero, (sub, f) => sub + f.FlightDuration).TotalHours;
                 int i = month - 1;

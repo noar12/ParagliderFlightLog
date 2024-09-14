@@ -18,12 +18,11 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         private DateTime _startDate = DateTime.Today - TimeSpan.FromDays(365);
         private DateTime _endDate = DateTime.Today;
 
-        [Inject] IWebHostEnvironment Environment { get; set; } = null!;
-        [Inject] CoreService mvm { get; set; } = null!;
+        [Inject] CoreService Core { get; set; } = null!;
         [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
         [Inject] DialogService DialogService { get; set; } = null!;
-        [Inject] IJSRuntime jsRuntime { get; set; } = null!;
-        [Inject] ILogger<SitesList> _logger { get; set; } = null!;
+        [Inject] IJSRuntime JsRuntime { get; set; } = null!;
+        [Inject] ILogger<SitesList> Logger { get; set; } = null!;
 
         [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
         [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
@@ -35,7 +34,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 var currentUser = await UserManager.GetUserAsync(userClaim);
                 if (currentUser == null) return;
                 string userId = currentUser.Id;
-                await mvm.Init(userId);
+                await Core.Init(userId);
             }
         }
 
@@ -43,7 +42,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         {
             if (firstRender)
             {
-                module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmap.js");
+                module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmap.js");
                 if (module != null)
                 {
                     map = await module.InvokeAsync<IJSObjectReference>("load_map", "map", 0, 0, 2);
@@ -51,7 +50,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
             }
         }
 
-        IList<SiteViewModel> SelectedSites = new List<SiteViewModel>();
+        IList<SiteViewModel> SelectedSites = [];
         SiteViewModel? LastSelectedSite
         {
             get
@@ -65,7 +64,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
             if (SelectedSites is not null && SelectedSites.Count == 1)
             {
                 ContextMenuService.Open(args,
-                                        new List<ContextMenuItem> { new() { Text = "Edit site", Value = ESiteAction.Edit }, },
+                                        [ new() { Text = "Edit site", Value = ESiteAction.Edit }],
                                         OnMenuItemClick);
             }
         }
@@ -110,7 +109,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
         private async Task OnShowSiteTimeRange()
         {
-            List<SiteViewModel> siteToShow = mvm.SiteUsedInTimeRange(_startDate, _endDate);
+            List<SiteViewModel> siteToShow = Core.SiteUsedInTimeRange(_startDate, _endDate);
             foreach (var site in siteToShow.Where(site => module is not null))
             {
                 map = await module!.InvokeAsync<IJSObjectReference>("add_marker",
@@ -128,7 +127,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
         async Task OnEditSite()
         {
-            await DialogService.OpenAsync<EditSite>($"Edit site", new Dictionary<string, object>() { { "SiteToEdit", LastSelectedSite! }, { "ViewModel", mvm } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = false });
+            await DialogService.OpenAsync<EditSite>($"Edit site", new Dictionary<string, object>() { { "SiteToEdit", LastSelectedSite! }, { "ViewModel", Core } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = false });
             StateHasChanged();
         }
 
@@ -145,7 +144,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 catch (Exception e)
                 {
 
-                    _logger.LogError("{Message}", e.Message);
+                    Logger.LogError("{Message}", e.Message);
                 }
 
             }

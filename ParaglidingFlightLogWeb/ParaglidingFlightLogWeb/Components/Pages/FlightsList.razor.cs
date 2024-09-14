@@ -27,7 +27,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
 		private RadzenDataGrid<FlightViewModel> dataGrid = new();
 
-		IList<FlightViewModel> SelectedFlights = new List<FlightViewModel>();
+		IList<FlightViewModel> SelectedFlights = [];
 		FlightViewModel? LastSelectedFlight
 		{
 			get
@@ -53,11 +53,10 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 			if (SelectedFlights is not null && SelectedFlights.Count == 1)
 			{
 				ContextMenuService.Open(args,
-										new List<ContextMenuItem>
-										{
+										[
 											new() { Text = "Edit flight", Value = EFlightAction.Edit },
 											new() { Text = "Remove flights", Value = EFlightAction.Remove },
-										},
+										],
 										OnMenuItemClick);
 			}
 		}

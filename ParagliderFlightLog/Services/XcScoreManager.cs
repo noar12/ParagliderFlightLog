@@ -39,15 +39,11 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                     // writing file data to a file to give it to the external calculator
                     await File.WriteAllTextAsync(flightPath, request.Flight.IgcFileContent, token);
                     // execute the external calculator on the file and output the result in another file
-                    //var result = await Cli
-                    //.Wrap($"{GetCalculatorCmd()} {flightPath} out={scorePath} scoring=XContest")
-                    //.WithValidation(CommandResultValidation.None)
-                    //.ExecuteBufferedAsync();
                     var result = await Cli
                     .Wrap($"{GetCalculatorCmd()}")
                     .WithArguments($"{GetCjsPath()} {flightPath} out={scorePath} scoring=XContest")
                     .WithValidation(CommandResultValidation.None)
-                    .ExecuteBufferedAsync();
+                    .ExecuteBufferedAsync(token);
                     logger.LogInformation("Flight score result : {standard}", result.StandardOutput);
                     if (!result.IsSuccess)
                     {
@@ -79,7 +75,7 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
     .Wrap($"{GetCalculatorCmd()}")
     .WithArguments($"{GetCjsPath()}")
     .WithValidation(CommandResultValidation.None)
-    .ExecuteBufferedAsync();
+    .ExecuteBufferedAsync(token);
                     bool isReady = result.StandardOutput.StartsWith("igc-xc-score");
                     ScoreEngineInstalled = isReady;
                     await Task.Delay(1000, token);
@@ -109,7 +105,7 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
     public void Start(CancellationToken token)
     {
         _running = true;
-        logger.LogInformation("Starting XcScore manager. WorkingDirectory: {workingDirectory}, Calculator Cmd: {CalculatorCmd}, OutputDirectory: {OutputDirectory}",
+        logger.LogInformation("Starting XcScore manager. Calculator Cmd: {CalculatorCmd}, OutputDirectory: {OutputDirectory}",
         GetCalculatorCmd(), GetTmpFileDirectory());
         _computeTask = Compute(token);
     }

@@ -13,7 +13,7 @@
 <RadzenRow>
     <RadzenColumn Size="12" SizeSM="8">
         <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="true" PageSize="20"
-                        AllowSorting="true" Data="@mvm.GliderListViewModel" TItem="GliderViewModel"
+                        AllowSorting="true" Data="@Core.GliderListViewModel" TItem="GliderViewModel"
                         SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedGliders
                         ContextMenu=@(args => ShowContextMenuWithItems(args))>
             <Columns>

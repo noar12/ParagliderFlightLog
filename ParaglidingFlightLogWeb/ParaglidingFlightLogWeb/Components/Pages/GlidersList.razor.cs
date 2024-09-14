@@ -11,7 +11,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 {
     public partial class GlidersList
     {
-        IList<GliderViewModel> SelectedGliders = new List<GliderViewModel>();
+        IList<GliderViewModel> SelectedGliders = [];
         GliderViewModel? LastSelectedGlider
         {
             get
@@ -21,8 +21,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         }
         [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
         [Inject] DialogService DialogService { get; set; } = null!;
-        [Inject] IWebHostEnvironment Environment { get; set; } = null!;
-        [Inject] CoreService mvm { get; set; } = null!;
+        [Inject] CoreService Core { get; set; } = null!;
         [CascadingParameter]
         private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
         [Inject]
@@ -35,7 +34,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 var currentUser = await UserManager.GetUserAsync(userClaim);
                 if (currentUser == null) return;
                 string userId = currentUser.Id;
-                await mvm.Init(userId);
+                await Core.Init(userId);
             }
         }
         void ShowContextMenuWithItems(MouseEventArgs args)
@@ -66,13 +65,13 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         async Task OnEditGlider()
         {
             await DialogService.OpenAsync<EditGlider>($"Edit glider", new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider! } }, new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = false });
-            mvm.EditGlider(LastSelectedGlider!);
+            Core.EditGlider(LastSelectedGlider!);
             StateHasChanged();
         }
 
         void OnAddGlider()
         {
-            mvm.AddGlider();
+            Core.AddGlider();
         }
     }
 }

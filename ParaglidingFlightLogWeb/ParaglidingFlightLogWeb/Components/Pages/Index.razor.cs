@@ -21,9 +21,7 @@ public partial class Index
     UserManager<ApplicationUser> UserManager { get; set; } = null!;
     [Inject] FlightStatisticService FlightStatisticService { get; set; } = null!;
     [Inject] CoreService CoreService { get; set; } = null!;
-    string? userName;
     string? userId;
-    string? userEmail;
 
 
     FlightViewModel? _flightToRemember;
@@ -37,9 +35,7 @@ public partial class Index
         {
             var currentUser = await UserManager.GetUserAsync(userClaim);
             if (currentUser == null) return;
-            userName = currentUser.UserName;
             userId = currentUser.Id;
-            userEmail = currentUser.Email;
             _logger.LogInformation("Index page intialzed for {user} in {time_ms} ms", currentUser.UserName, sw.ElapsedMilliseconds);
             await CoreService.Init(userId);
             _flightToRemember = CoreService.GetFlightToRemember();
