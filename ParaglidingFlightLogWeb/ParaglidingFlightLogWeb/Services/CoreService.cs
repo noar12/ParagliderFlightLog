@@ -163,7 +163,7 @@ namespace ParaglidingFlightLogWeb.Services
 
         public FlightViewModel? GetFlightToRemember()
         {
-            double anniversaryFlightProbability = 0.5;
+            double anniversaryFlightProbability = 0;
             var random = new Random();
             double kindOfMemory = random.NextDouble();
             var anniversaryFlight = FlightListViewModel.Where(f => f.TakeOffDateTime.Day == DateTime.Today.Day && f.TakeOffDateTime.Month == DateTime.Today.Month).ToArray();

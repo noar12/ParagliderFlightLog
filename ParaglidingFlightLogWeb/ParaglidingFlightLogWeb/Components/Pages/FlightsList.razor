@@ -36,7 +36,7 @@
                 {
                     <RadzenRow>
                         <RadzenColumn>
-                            <RadzenButton Click="OnShowMapClick" Icon="map" Text="Show Flight On Map" />
+                            <RadzenButton Click="OnShowMapClick" Icon="map" Text="Show Flight On Map" Visible="@(LastSelectedFlight.FlightPoints.Count>0)"/>
                             <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName" />
                             <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxHeight" UnitSymbol="m" Format="F0" />
                             <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2" />
@@ -44,7 +44,7 @@
                             <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1" />
                         </RadzenColumn>
                         <RadzenColumn>
-                            <RadzenButton Click="ComputeFlightScore" Icon="calculate" Text="Calculate Score" />
+                            <RadzenButton Click="ComputeFlightScore" Icon="calculate" Text="Calculate Score" Visible="@(LastSelectedFlight.FlightPoints.Count>0)"/>
                             @if (LastSelectedFlight.XcScore is not null)
                             {
                                 <MyNumericIndicator Label="Score" Value="@LastSelectedFlight.XcScore.Points" />

@@ -69,7 +69,11 @@
                                 <MyTextIndicator Label="Comment" Text="@_flightToRemember.Comment" Bold=false />
                             </RadzenColumn>
                             <RadzenColumn SizeSM="6">
-                                <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="350"/>
+                                @if (_flightToRemember.FlightPoints.Count > 0)
+                                {
+                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="350"/>
+                                }
+                                
                             </RadzenColumn>
                         </RadzenRow>
 

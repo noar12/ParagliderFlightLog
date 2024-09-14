@@ -154,7 +154,7 @@ namespace ParagliderFlightLog.DataAccess
 )";
 
 			_db.SaveData(sqlCreateDbInfo, new { }, LoadConnectionString());
-			var dbInfo = new DbInformations() { VersionMajor = 1, VersionMinor = 1, VersionFix = 0, UserId = _userId! };
+			var dbInfo = new DbInformations() { VersionMajor = 1, VersionMinor = 2, VersionFix = 0, UserId = _userId! };
 			string sql = "INSERT INTO DbInformations (VersionMajor, VersionMinor, VersionFix, UserId) VALUES (@VersionMajor, @VersionMinor, @VersionFix, @UserId);";
 			_db.SaveData(sql, dbInfo, LoadConnectionString());
 			_db.SaveData(sqlCreateFlights, new { }, LoadConnectionString());
