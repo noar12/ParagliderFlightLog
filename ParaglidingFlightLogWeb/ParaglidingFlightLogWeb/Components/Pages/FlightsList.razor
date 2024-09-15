@@ -9,7 +9,8 @@
 @page "/FlightsList"
 @rendermode InteractiveServer
 <PageTitle>Flight list</PageTitle>
-<InputFile OnChange="@OnAddFlights" multiple />
+<InputFile OnChange="@OnAddFlights" multiple accept=".igc" />
+
 @if (Mvm.FlightListViewModel.Count > 0)
 {
     <RadzenRow>
