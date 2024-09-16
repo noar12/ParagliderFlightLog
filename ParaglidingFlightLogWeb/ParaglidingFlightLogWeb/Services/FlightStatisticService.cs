@@ -20,6 +20,28 @@ namespace ParaglidingFlightLogWeb.Services
         public TimeSpan MedianFlightsDuration { get; private set; }
         public string MedianFlightDurationText { get { return $"{(int)MedianFlightsDuration.TotalHours:D2}:{MedianFlightsDuration.Minutes:D2}"; } }
         public int FlightsCount { get; private set; }
+        public IEnumerable<FlightViewModel> TopScorer(int year = 1, int listSize = 3)
+        {
+            return _mainViewModel.FlightListViewModel
+            .Where(f => f.TakeOffDateTime > new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Utc) &&
+                                f.XcScore is not null)
+            .OrderByDescending(f => f.XcScore!.Points)
+            .Take(listSize);
+        }
+        public IEnumerable<FlightViewModel> TopLongestFlight(int year = 1, int listSize = 3)
+        {
+            return _mainViewModel.FlightListViewModel
+            .Where(f => f.TakeOffDateTime > new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+            .OrderByDescending(f => f.FlightDuration)
+            .Take(listSize);
+        }
+        public IEnumerable<FlightViewModel> TopHighestFlight(int year = 1, int listSize = 3)
+        {
+            return _mainViewModel.FlightListViewModel
+            .Where(f => f.TakeOffDateTime > new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+            .OrderByDescending(f => f.MaxHeight)
+            .Take(listSize);
+        }
         public int LastYearSiteCount
         {
             get
@@ -30,7 +52,9 @@ namespace ParaglidingFlightLogWeb.Services
                     .DistinctBy(s => s!.Site_ID).Count();
             }
         }
-        public GliderViewModel? OldestCheckUsedGlider { get
+        public GliderViewModel? OldestCheckUsedGlider
+        {
+            get
             {
                 return _mainViewModel.FlightListViewModel.Where(f => f.TakeOffDateTime >= DateTime.Now - TimeSpan.FromDays(365.25) && f.TakeOffSite is not null && f.Glider is not null)
                 .Select(f => f.Glider)

@@ -21,9 +21,9 @@
     <Authorized>
         <RadzenRow>
             <RadzenColumn SizeSM="6">
-                <RadzenCard>
+                <RadzenCard Style="margin-bottom: 15px">
                     <RadzenText TextStyle="TextStyle.H4" Text="Interesting facts" />
-                    
+
                     <RadzenRow>
                         <RadzenColumn>
                             <MyNumericIndicator Format="F0" Label="Number of sites during the last year" Value="@FlightStatisticService.LastYearSiteCount" />
@@ -33,14 +33,105 @@
                         </RadzenColumn>
                     </RadzenRow>
                 </RadzenCard>
-                <RadzenCard>
-                    <RadzenText TextStyle="TextStyle.H4" Text="Flights of the year" />
-                    <p>Coming soon</p>
-                </RadzenCard>
-                <RadzenCard>
-                    <RadzenText TextStyle="TextStyle.H4" Text="Something graphical" />
-                    <p>Coming soon</p>
-                </RadzenCard>
+                <RadzenRow>
+                    <RadzenColumn SizeSM="6">
+                        <RadzenCard>
+                            <RadzenText TextStyle="TextStyle.H4" Text="Flights of the year" />
+                            <div><RadzenIcon Icon="sports_score" />Best Score</div>
+                            @if (_thisYearTopScorers is not null)
+                            {
+                                <ol>
+                                    @foreach (var f in _thisYearTopScorers)
+                                    {
+                                        <li>@f.TakeOffSite with a @f.XcScore?.Points.ToString("N2") points @f.XcScore?.Type</li>
+                                    }
+                                </ol>
+                            }
+                            else
+                            {
+                                <p>Loading...</p>
+                            }
+                            <div><RadzenIcon Icon="timer" />Longest Flight</div>
+                            @if (_thisYearLongestFlights is not null)
+                            {
+                                <ol>
+                                    @foreach (var f in _thisYearLongestFlights)
+                                    {
+                                        <li>@f.TakeOffSite with @f.FlightDuration</li>
+                                    }
+                                </ol>
+                            }
+                            else
+                            {
+                                <p>Loading...</p>
+                            }
+
+                                <div><RadzenIcon Icon="height" />Highest Flight</div>
+                            @if(_thisYearHighestFlights is not null)
+                            {
+                                <ol>
+                                    @foreach (var f in _thisYearHighestFlights)
+                                    {
+                                        <li>@f.TakeOffSite with @f.MaxHeight [m]</li>
+                                    }
+                                </ol>
+                            }
+                            else
+                            {
+                                <p>Loading...</p>
+                            }
+                        </RadzenCard>
+                    </RadzenColumn>
+                    <RadzenColumn SizeSM="6">
+                        <RadzenCard>
+                            <RadzenText TextStyle="TextStyle.H4" Text="Flights of the year" />
+                            <div><RadzenIcon Icon="sports_score" />Best Score</div>
+                            @if (_topScorers is not null)
+                            {
+                                <ol>
+                                    @foreach (var f in _topScorers)
+                                    {
+                                        <li>@f.TakeOffSite with a @f.XcScore?.Points.ToString("N2") points @f.XcScore?.Type</li>
+                                    }
+                                </ol>
+                            }
+                            else
+                            {
+                                <p>Loading...</p>
+                            }
+                            <div><RadzenIcon Icon="timer" />Longest Flight</div>
+                            @if (_longestFlights is not null)
+                            {
+                                <ol>
+                                    @foreach (var f in _longestFlights)
+                                    {
+                                        <li>@f.TakeOffSite with @f.FlightDuration</li>
+                                    }
+                                </ol>
+                            }
+                            else
+                            {
+                                <p>Loading...</p>
+                            }
+
+                            <div><RadzenIcon Icon="height" />Highest Flight</div>
+                            @if (_highestFlights is not null)
+                            {
+                                <ol>
+                                    @foreach (var f in _highestFlights)
+                                    {
+                                        <li>@f.TakeOffSite with @f.MaxHeight [m]</li>
+                                    }
+                                </ol>
+                            }
+                            else
+                            {
+                                <p>Loading...</p>
+                            }
+                        </RadzenCard>
+                    </RadzenColumn>
+
+                </RadzenRow>
             </RadzenColumn>
             <RadzenColumn SizeSM="6">
                 <RadzenCard>
@@ -48,15 +139,24 @@
                     @if (_flightToRemember is not null)
                     {
                         <RadzenRow>
-                            <RadzenColumn >
+                            <RadzenColumn>
                                 <MyTextIndicator Label="Flight date" Text="@_flightToRemember.TakeOffDateTime.ToString("d")" />
+                            </RadzenColumn>
+                            <RadzenColumn>
+                                <MyTextIndicator Label="Site" Text="@_flightToRemember.TakeOffSiteName" />
+                            </RadzenColumn>
+                            <RadzenColumn>
                                 <MyTextIndicator Label="Glider" Text="@_flightToRemember.GliderName" />
+                            </RadzenColumn>
+                        </RadzenRow>
+                        <RadzenRow>
+                            <RadzenColumn>
                                 <MyPhysicalValueIndicator Label="Max Height" Value="@_flightToRemember.MaxHeight" UnitSymbol="m" Format="F0" />
                                 <MyPhysicalValueIndicator Label="Trace Length" Value="@_flightToRemember.TraceLength" UnitSymbol="km" Format="F2" />
                                 <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@_flightToRemember.MaxClimb" UnitSymbol="m/s" Format="F1" />
                                 <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@_flightToRemember.MaxSink" UnitSymbol="m/s" Format="F1" />
                             </RadzenColumn>
-                            <RadzenColumn >
+                            <RadzenColumn>
                                 @if (_flightToRemember.XcScore is not null)
                                 {
                                     <MyNumericIndicator Label="Score" Value="@_flightToRemember.XcScore.Points" />
@@ -71,14 +171,15 @@
                             <RadzenColumn SizeSM="6">
                                 @if (_flightToRemember.FlightPoints.Count > 0)
                                 {
-                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="350"/>
+                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="350" />
                                 }
-                                
+
                             </RadzenColumn>
                         </RadzenRow>
-
-                            
-
+                    }
+                    else
+                    {
+                        <p>Loading...</p>
                     }
                 </RadzenCard>
             </RadzenColumn>
