@@ -65,21 +65,6 @@
                             {
                                 <p>Loading...</p>
                             }
-
-                                <div><RadzenIcon Icon="height" />Highest Flight</div>
-                            @if(_thisYearHighestFlights is not null)
-                            {
-                                <ol>
-                                    @foreach (var f in _thisYearHighestFlights)
-                                    {
-                                        <li>@f.TakeOffSite with @f.MaxHeight [m]</li>
-                                    }
-                                </ol>
-                            }
-                            else
-                            {
-                                <p>Loading...</p>
-                            }
                         </RadzenCard>
                     </RadzenColumn>
                     <RadzenColumn SizeSM="6">
@@ -106,21 +91,6 @@
                                     @foreach (var f in _longestFlights)
                                     {
                                         <li>@f.TakeOffSite with @f.FlightDuration</li>
-                                    }
-                                </ol>
-                            }
-                            else
-                            {
-                                <p>Loading...</p>
-                            }
-
-                            <div><RadzenIcon Icon="height" />Highest Flight</div>
-                            @if (_highestFlights is not null)
-                            {
-                                <ol>
-                                    @foreach (var f in _highestFlights)
-                                    {
-                                        <li>@f.TakeOffSite with @f.MaxHeight [m]</li>
                                     }
                                 </ol>
                             }

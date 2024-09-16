@@ -57,10 +57,10 @@ public partial class Index
             await Task.Run(() => _flightToRemember = CoreService.GetFlightToRemember());
             await Task.Run(() => _thisYearTopScorers = FlightStatisticService.TopScorer(DateTime.Now.Year).ToList());
             await Task.Run(() => _thisYearLongestFlights = FlightStatisticService.TopLongestFlight(DateTime.Now.Year).ToList());
-            await Task.Run(() => _thisYearHighestFlights = FlightStatisticService.TopHighestFlight(DateTime.Now.Year).ToList());
+            //await Task.Run(() => _thisYearHighestFlights = FlightStatisticService.TopHighestFlight(DateTime.Now.Year).ToList());//
             await Task.Run(() => _topScorers = FlightStatisticService.TopScorer().ToList());
             await Task.Run(() => _longestFlights = FlightStatisticService.TopLongestFlight().ToList());
-            await Task.Run(() => _highestFlights = FlightStatisticService.TopHighestFlight().ToList());
+            //await Task.Run(() => _highestFlights = FlightStatisticService.TopHighestFlight().ToList());// this take too much time because height is not store in the db
             StateHasChanged(); // that's ugly but it is the only way I found to display something to the user before every thing is set
             // OnInitialized is execute twice (once before connecting the SignalR and the page is not rendering at this point) and another time after.
         }
