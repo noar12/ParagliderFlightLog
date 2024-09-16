@@ -1,0 +1,15 @@
+﻿@page "/Settings"
+@rendermode InteractiveServer
+@attribute [Authorize]
+<PageTitle>Settings</PageTitle>
+
+<RadzenCard Visible="_isAdmin">
+    <h2>Admin Settings</h2>
+    <MyNumericInput Label="Max flight by imports" Value="_maxImportFlightCount" ValueChanged="MaxImportFlightCountChanged" />
+</RadzenCard>
+<RadzenCard>
+    <h2>User Settings</h2>
+    <p>To be done...</p>
+</RadzenCard>
+
+

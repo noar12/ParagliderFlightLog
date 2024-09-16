@@ -8,6 +8,7 @@
 
 @page "/FlightsList"
 @rendermode InteractiveServer
+@attribute [Authorize]
 <PageTitle>Flight list</PageTitle>
 <InputFile OnChange="@OnAddFlights" multiple accept=".igc" />
 
