@@ -102,6 +102,24 @@
                     </RadzenColumn>
 
                 </RadzenRow>
+
+                <RadzenCard Style="margin-top: 15px">
+                        <RadzenText TextStyle="TextStyle.H4" Text="Long Time No See" />
+                        @if (_sitesToReturnTo is not null)
+                        {
+                            <ol>
+                                @foreach (var s in _sitesToReturnTo)
+                                {
+                                    <li>@s.Name in @s.Country</li>
+                                }
+                            </ol>
+                        }
+                        else
+                        {
+                            <p>Loading...</p>
+                        }
+                    </RadzenCard>
+             
             </RadzenColumn>
             <RadzenColumn SizeSM="6">
                 <RadzenCard>

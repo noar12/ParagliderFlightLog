@@ -32,6 +32,7 @@ public partial class Index
     private List<FlightViewModel>? _topScorers = null;
     private List<FlightViewModel>? _longestFlights = null;
     private List<FlightViewModel>? _highestFlights = null;
+    private List<SiteViewModel>? _sitesToReturnTo = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -61,6 +62,7 @@ public partial class Index
             await Task.Run(() => _topScorers = FlightStatisticService.TopScorer().ToList());
             await Task.Run(() => _longestFlights = FlightStatisticService.TopLongestFlight().ToList());
             //await Task.Run(() => _highestFlights = FlightStatisticService.TopHighestFlight().ToList());// this take too much time because height is not store in the db
+            await Task.Run(() => _sitesToReturnTo = CoreService.GetRandomSitesToReturnTo(TimeSpan.FromDays(365.25)));
             StateHasChanged(); // that's ugly but it is the only way I found to display something to the user before every thing is set
             // OnInitialized is execute twice (once before connecting the SignalR and the page is not rendering at this point) and another time after.
         }

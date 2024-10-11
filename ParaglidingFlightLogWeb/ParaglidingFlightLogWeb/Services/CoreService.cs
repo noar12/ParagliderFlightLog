@@ -199,6 +199,24 @@ namespace ParaglidingFlightLogWeb.Services
                 return null;
             }
         }
+        /// <summary>
+        /// Get a list of up to <paramref name="maxSiteCount"/> sites from the one that have not been visited since <paramref name="olderThan"/>
+        /// </summary>
+        /// <param name="maxSiteCount"></param>
+        /// <returns></returns>
+        public List<SiteViewModel> GetRandomSitesToReturnTo(TimeSpan olderThan, int maxSiteCount = 3)
+        {
+            var lastTakeOffTime = DateTime.UtcNow - olderThan;
+            var recentlyFlownSitesId = FlightListViewModel
+                .Where(x => x.TakeOffDateTime > lastTakeOffTime && x.TakeOffSite is not null)
+                .Select(x => x.TakeOffSite!.Site_ID);
+                var output = SiteListViewModel.Where(x=> !recentlyFlownSitesId.Any(id => x.Site_ID == id))
+                .Distinct()
+                .OrderBy(_ => Random.Shared.Next())
+                .Take(maxSiteCount)
+                .ToList();
+            return output;
+        }
 
         public List<FlightViewModel> FlightListViewModel { get; private set; } = [];
         public List<SiteViewModel> SiteListViewModel { get; private set; } = [];
