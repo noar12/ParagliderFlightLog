@@ -20,7 +20,10 @@
                             <input type="hidden" name="ReturnUrl" value="" />
                             <RadzenButton Icon="logout" ButtonType="ButtonType.Submit" Text="Logout" ButtonStyle="ButtonStyle.Light" Variant="Variant.Text"></RadzenButton>
                         </form>
-                        <RadzenLabel>Hello, @context.User.Identity!.Name</RadzenLabel>
+                        <div>
+                            Hello,
+                            <MyMaxSizeTextDisplay Value="@context.User.Identity!.Name" MaxChar="15"></MyMaxSizeTextDisplay>
+                        </div>
                     </RadzenStack>
                 </RadzenColumn>
 

@@ -1,0 +1,19 @@
+﻿@GetValueDisplay()
+
+@code {
+    [Parameter]
+    public string Value { get; set; } = "";
+    [Parameter]
+    public int MaxChar { get; set; }
+    private string GetValueDisplay()
+    {
+        if (Value.Length > MaxChar)
+        {
+            return $"{Value.Substring(0, MaxChar)}...";
+        }
+        else
+        {
+            return Value;
+        }
+    }
+}
