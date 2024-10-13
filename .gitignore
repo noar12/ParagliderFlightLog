@@ -369,3 +369,4 @@ FodyWeavers.xsd
 /ParaglidingFlightLogWeb/ParaglidingFlightLogWeb/tmp
 /ParaglidingFlightLogWeb/ParaglidingFlightLogWeb/appsettings.Development.json
 /Tools/igc-xc-score.exe
+/ParaglidingFlightLogWeb/ParaglidingFlightLogWeb/appsettings.Production.json
