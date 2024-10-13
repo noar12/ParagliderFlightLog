@@ -7,14 +7,18 @@ namespace ParaglidingFlightLogWeb.Components.Pages;
 
 public partial class Settings
 {
-    private List<string>? _adminsId = new();
+    private List<string>? _adminsId = [];
     private bool _isAdmin;
     private double _maxImportFlightCount;
-    [Inject] public IConfiguration Config { get; set; } = null!;
+    [Inject] private IConfiguration Config { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <returns></returns>
     protected override async Task OnInitializedAsync()
     {
-        _adminsId = Config.GetSection("Administration:Admins").Get<List<string>>(); ;
+        _adminsId = Config.GetSection("Administration:Admins").Get<List<string>>();
         var userClaim = (await AuthenticationStateTask).User;
         if (userClaim?.Identity?.Name is null)
         {
@@ -32,6 +36,6 @@ public partial class Settings
 
     private void WriteAdminSettings(string v, double maxImportFlightCount)
     {
-        
+        throw new NotImplementedException();
     }
 }

@@ -5,8 +5,17 @@
 	/// </summary>
 	public class FlightPoint
 	{
+		/// <summary>
+		/// Latitude in decimal
+		/// </summary>
 		public double Latitude { get; set; }
+		/// <summary>
+		/// Longitude in decimal
+		/// </summary>
 		public double Longitude { get; set; }
-		public double Height { get; set; }
+		/// <summary>
+		/// Altitude (AMSL) in [m]
+		/// </summary>
+		public double Altitude { get; set; }
 	}
 }

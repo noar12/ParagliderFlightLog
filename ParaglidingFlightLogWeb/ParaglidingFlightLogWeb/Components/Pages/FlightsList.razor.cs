@@ -13,7 +13,9 @@ using ParaglidingFlightLogWeb.Services;
 
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
-
+/// <summary>
+/// Page where the flights are listed and managed
+/// </summary>
 public partial class FlightsList
 {
     private const int MAX_FILE_COUNT = 10;
@@ -40,7 +42,10 @@ public partial class FlightsList
             return SelectedFlights.Count > 0 ? SelectedFlights[SelectedFlights.Count - 1] : null;
         }
     }
-
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <returns></returns>
     protected override async Task OnInitializedAsync()
     {
         var userClaim = (await AuthenticationStateTask).User;
@@ -185,6 +190,6 @@ public partial class FlightsList
 
     private void ComputeFlightScore()
     {
-        Mvm.EnqueueFlight(LastSelectedFlight);
+        Mvm.EnqueueFlightForScore(LastSelectedFlight);
     }
 }

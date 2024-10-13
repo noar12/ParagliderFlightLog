@@ -39,7 +39,7 @@ namespace ParaglidingFlightLogWeb.Services
         {
             return _mainViewModel.FlightListViewModel
             .Where(f => f.TakeOffDateTime > new DateTime(year, 1, 1, 0, 0, 0, DateTimeKind.Utc))
-            .OrderByDescending(f => f.MaxHeight)
+            .OrderByDescending(f => f.MaxAltitude)
             .Take(listSize);
         }
         public int LastYearSiteCount

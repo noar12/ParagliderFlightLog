@@ -28,12 +28,13 @@ public partial class Index
     FlightViewModel? _flightToRemember = null;
     private List<FlightViewModel>? _thisYearTopScorers = null;
     private List<FlightViewModel>? _thisYearLongestFlights = null;
-    private List<FlightViewModel>? _thisYearHighestFlights = null;
     private List<FlightViewModel>? _topScorers = null;
     private List<FlightViewModel>? _longestFlights = null;
-    private List<FlightViewModel>? _highestFlights = null;
     private List<SiteViewModel>? _sitesToReturnTo = null;
-
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <returns></returns>
     protected override async Task OnInitializedAsync()
     {
         var sw = Stopwatch.StartNew();
@@ -51,6 +52,11 @@ public partial class Index
             _logger.LogInformation("Index page intialzed for {user} in {time_ms} ms", currentUser.UserName, sw.ElapsedMilliseconds);
         }
     }
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <param name="firstRender"></param>
+    /// <returns></returns>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
