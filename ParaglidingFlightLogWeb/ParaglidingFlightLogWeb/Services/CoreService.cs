@@ -90,7 +90,9 @@ public class CoreService
         {
             _logger.LogDebug("importing {filePath}", filePath);
             var flight = _flightLog.ImportFlightFromIGC(filePath);
-            FlightListViewModel.Add(new FlightViewModel(flight.ToFlight(), _flightLog));
+            var fvm = new FlightViewModel(flight.ToFlight(), _flightLog);
+            FlightListViewModel.Add(fvm);
+            EnqueueFlightForScore(fvm);
         }
     }
     /// <summary>
