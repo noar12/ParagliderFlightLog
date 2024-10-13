@@ -19,20 +19,25 @@
 
 <AuthorizeView>
     <Authorized>
-        <RadzenRow>
+        <RadzenRow AlignItems="AlignItems.Stretch">
             <RadzenColumn SizeSM="6">
-                <RadzenCard Style="margin-bottom: 15px">
-                    <RadzenText TextStyle="TextStyle.H4" Text="Interesting facts" />
+               <RadzenRow>
+                   <RadzenColumn>
+                        <RadzenCard Style="margin-bottom: 15px">
+                            <RadzenText TextStyle="TextStyle.H4" Text="Interesting facts" />
 
-                    <RadzenRow>
-                        <RadzenColumn>
-                            <MyNumericIndicator Format="F0" Label="Number of sites during the last year" Value="@FlightStatisticService.LastYearSiteCount" />
-                        </RadzenColumn>
-                        <RadzenColumn>
-                            <MyTextIndicator Label="Glider with the oldest last check" Text="@($"{FlightStatisticService.OldestCheckUsedGlider?.FullName} ({FlightStatisticService.OldestCheckUsedGlider?.LastCheckDateTime.ToString("d")} with {FlightStatisticService.OldestCheckUsedGlider?.FlightTimeSinceLastCheck} flight hours)")" />
-                        </RadzenColumn>
-                    </RadzenRow>
-                </RadzenCard>
+                            <RadzenRow>
+                                <RadzenColumn>
+                                    <MyNumericIndicator Format="F0" Label="Number of sites during the last year" Value="@FlightStatisticService.LastYearSiteCount" />
+                                </RadzenColumn>
+                                <RadzenColumn>
+                                    <MyTextIndicator Label="Glider with the oldest last check" Text="@($"{FlightStatisticService.OldestCheckUsedGlider?.FullName} ({FlightStatisticService.OldestCheckUsedGlider?.LastCheckDateTime.ToString("d")} with {FlightStatisticService.OldestCheckUsedGlider?.FlightTimeSinceLastCheck} flight hours)")" />
+                                </RadzenColumn>
+                            </RadzenRow>
+                        </RadzenCard>
+                   </RadzenColumn>
+                    
+               </RadzenRow>
                 <RadzenRow>
                     <RadzenColumn SizeSM="6">
                         <RadzenCard>
@@ -102,24 +107,26 @@
                     </RadzenColumn>
 
                 </RadzenRow>
-
-                <RadzenCard Style="margin-top: 15px">
-                        <RadzenText TextStyle="TextStyle.H4" Text="Long Time No See" />
-                        @if (_sitesToReturnTo is not null)
-                        {
-                            <ol>
-                                @foreach (var s in _sitesToReturnTo)
-                                {
-                                    <li>@s.Name in @s.Country</li>
-                                }
-                            </ol>
-                        }
-                        else
-                        {
-                            <p>Loading...</p>
-                        }
-                    </RadzenCard>
-             
+                <RadzenRow>
+                    <RadzenColumn>
+                        <RadzenCard Style="margin-top: 15px">
+                            <RadzenText TextStyle="TextStyle.H4" Text="Long Time No See" />
+                            @if (_sitesToReturnTo is not null)
+                            {
+                                <ol>
+                                    @foreach (var s in _sitesToReturnTo)
+                                    {
+                                        <li>@s.Name in @s.Country</li>
+                                    }
+                                </ol>
+                            }
+                            else
+                            {
+                                <p>Loading...</p>
+                            }
+                        </RadzenCard>
+                    </RadzenColumn>
+                </RadzenRow>
             </RadzenColumn>
             <RadzenColumn SizeSM="6">
                 <RadzenCard>
