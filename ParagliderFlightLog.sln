@@ -12,6 +12,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParaglidingFlightLogWeb.Client", "ParaglidingFlightLogWeb\ParaglidingFlightLogWeb.Client\ParaglidingFlightLogWeb.Client.csproj", "{7360A2A6-694F-43E6-85D4-50E952B59E63}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E25BDE4F-8FBF-48C6-98E2-D3C660AF1A7B}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
