@@ -41,7 +41,7 @@ public class FlightWithData
             REF_TakeOffSite_ID = REF_TakeOffSite_ID,
             REF_Glider_ID = REF_Glider_ID,
             TakeOffDateTime = TakeOffDateTime,
-            FlightDuration_s = FlightDuration_s,
+            FlightDuration_s = (int)FlightDuration.TotalSeconds,
             Comment = Comment,
             XcScore = XcScore
         };
