@@ -16,7 +16,7 @@ Paraglider Flight Log  allows to keep track of the flight of several paraglider 
 * Javascript
 
 ## Installation
-This project has not automatic installation process (yet...). Here are a quick overview of the steps needed to make it run. I could add an automatic installation process if there is some shown interest (Feel free to create an issue if so).
+This project has not any automatic installation process (yet...). Here is a quick overview of the steps needed to make it run. I could add an automatic installation process if there is some shown interests (Feel free to create an issue if so).
 
 The app needs a working .Net8 runtime
 
@@ -25,10 +25,10 @@ The app needs a working .Net8 runtime
  I use and test this project on a raspberry pi 3. The publish settings are as follow for this architecture
 ![Publish settings](Images/publishSettings.png)
 * Move the resulting file to the location of your choice
-* run the app by executing `./ParaglidingFlightLogWeb`
+* Run the app by executing `./ParaglidingFlightLogWeb`
+* Use a Web Browser to access the app. It should be available on http://localhost:5000 if you run it on the same computer you use to access it.
 
-
-Optionaly you can install igc-xc-score available here (https://github.com/mmomtchev/igc-xc-score) and complete the corresponding settings in the appsettings.json file
+Optionaly you can install Node in order to run an instance of igc-xc-score available here (https://github.com/mmomtchev/igc-xc-score) and complete the corresponding settings in the appsettings.json file
 
 To make the app start at boot on a linux with systemd enabled, you can take the following steps:
 
@@ -44,7 +44,7 @@ cd <Path to your app installation>
 
 ```
 
-Create a service using the procedure here (https://linuxhandbook.com/create-systemd-services/) as an inspiration.
+* Create a service using the procedure here (https://linuxhandbook.com/create-systemd-services/) as an inspiration.
 
 ## Using the app
 
@@ -55,10 +55,11 @@ Sevreral user can use the app to manage their own flights.
 
 If you are not logged the app will show you this screen.
 
-[!Welcome unknown user](Images/WelcomeUnknownUser.png)
+![Welcome unknown user](Images/WelcomeUnknownUser.png)
 
 You can click on `Log In` or use the left navigation menu to register and log in.
 For now the email confirmation is not implemented since the app is intended for local use only. (Feel free to add an issue on this sibject if there is an insterest)
+!!! The app use http so the data will not be encripted. This is ok for trusty local network use but certainly not to be use on WWW.!!!
 ### Dashboard
 
 Once logged you are welcomed with a Dashboard
