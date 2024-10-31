@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using System.Data;
-using System.Linq;
-using System.Text;
 using Dapper;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 

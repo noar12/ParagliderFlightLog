@@ -10,7 +10,7 @@ using ParaglidingFlightLogWeb.Data;
 using System.Security.Claims;
 using System.Text.Json;
 
-namespace Microsoft.AspNetCore.Routing
+namespace ParaglidingFlightLogWeb.Components.Account
 {
     internal static class IdentityComponentsEndpointRouteBuilderExtensions
     {

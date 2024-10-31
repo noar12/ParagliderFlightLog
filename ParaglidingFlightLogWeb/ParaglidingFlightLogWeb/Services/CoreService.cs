@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using ParaglidingFlightLogWeb.ViewModels;
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
-using ParagliderFlightLog.XcScoreWapper;
 using Microsoft.Identity.Client;
+using ParagliderFlightLog.Services;
 
 namespace ParaglidingFlightLogWeb.Services;
 

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Configuration;
 using ParagliderFlightLog.DataAccess;
-using ParagliderFlightLog.XcScoreWapper;
+using ParagliderFlightLog.Services;
 using ParaglidingFlightLogWeb.Client.Pages;
 using ParaglidingFlightLogWeb.Components;
 using ParaglidingFlightLogWeb.Components.Account;

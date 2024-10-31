@@ -1,21 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using System.Globalization;
-using System.Data;
-using Microsoft.Data.Sqlite;
-using Dapper;
 using System.Collections;
-using System.Collections.Specialized;
 using ParagliderFlightLog.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Runtime.CompilerServices;
 using System.Diagnostics;
 
 namespace ParagliderFlightLog.DataAccess;
@@ -78,7 +66,7 @@ public class FlightLogDB
     {
         _logger.LogInformation("Migrating db from v1.1.0");
         string sql = @"ALTER TABLE Flights ADD GeoJsonScore TEXT;
-            UPDATE DbInformations SET VersionMinor = 2;";
+            UPDATE DbInformations SET VersionMinor = 2;"; // no where clause because there suppose to be only one row
         _db.SaveData(sql, new { _userId }, LoadConnectionString());
     }
 
@@ -86,7 +74,7 @@ public class FlightLogDB
     {
         _logger.LogInformation("Migrating db from v1.0.0");
         string sql = @"ALTER TABLE DbInformations ADD UserId TEXT;
-            UPDATE DbInformations SET VersionMinor = 1, UserId = @_userId;";
+            UPDATE DbInformations SET VersionMinor = 1, UserId = @_userId;";// no where clause because there suppose to be only one row
         _db.SaveData(sql, new { _userId }, LoadConnectionString());
         MigrateFromv1_1_0();
     }
@@ -186,7 +174,7 @@ public class FlightLogDB
         }
     }
 
-    internal void WriteFlightsInDB(List<FlightWithData> newItems)
+    internal void WriteFlightsInDB(List<FlightWithData>? newItems)
     {
         if (newItems != null)
         {
@@ -320,18 +308,17 @@ public class FlightLogDB
 
     private Site FindOrCreateTakeOffSiteByLocation(FlightPoint takeOffPoint)
     {
-        Site? output = null;
         string sqlGetAllSites = @"SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude
                                     FROM Sites";
         List<Site> sites = _db.LoadData<Site, dynamic>(sqlGetAllSites, new { }, LoadConnectionString());
 
-        output = sites.Find(s => takeOffPoint
-        .DistanceFrom(new FlightPoint()
-        {
-            Longitude = s.Longitude,
-            Latitude = s.Latitude,
-            Altitude = s.Altitude
-        }) < s.SiteRadius);
+        Site? output = sites.Find(s => takeOffPoint
+            .DistanceFrom(new FlightPoint()
+            {
+                Longitude = s.Longitude,
+                Latitude = s.Latitude,
+                Altitude = s.Altitude
+            }) < s.SiteRadius);
         if (output == null)
         {
             List<Site> unknownSiteNames = GetUnknownSites();
@@ -764,7 +751,7 @@ public class FlightLogDB
     /// </summary>
     /// <param name="flight"></param>
     /// <returns></returns>
-    public FlightWithData? GetFlightWithData(Flight flight)
+    public FlightWithData GetFlightWithData(Flight flight)
     {
         string sql = @"SELECT Flight_ID, IgcFileContent, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s
         FROM Flights

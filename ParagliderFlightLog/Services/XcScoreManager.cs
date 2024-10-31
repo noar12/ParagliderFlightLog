@@ -4,9 +4,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
-using System.Diagnostics;
 
-namespace ParagliderFlightLog.XcScoreWapper;
+namespace ParagliderFlightLog.Services;
 
 public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration config) : IDisposable
 {

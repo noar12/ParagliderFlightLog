@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data;
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Dapper;
 using ParagliderFlightLog.Models;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace ParagliderFlightLog.DataAccess
 {

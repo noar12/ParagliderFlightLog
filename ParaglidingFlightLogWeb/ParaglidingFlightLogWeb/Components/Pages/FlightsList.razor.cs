@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
 using Microsoft.JSInterop;
-using ParagliderFlightLog.XcScoreWapper;
 using ParaglidingFlightLogWeb.Services;
 
 
