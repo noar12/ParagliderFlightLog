@@ -48,7 +48,8 @@
                                 <ol>
                                     @foreach (var f in _thisYearTopScorers)
                                     {
-                                        <li>@f.TakeOffSite with a @f.XcScore?.Points.ToString("N2") points @f.XcScore?.Type</li>
+                                        string path = $"/FlightsList/{f.FlightID}";
+                                        <li>@f.TakeOffSite with a @f.XcScore?.Points.ToString("N2") points @f.XcScore?.Type <RadzenLink Icon="pageview" Path="@path" Text="Flight" /></li>
                                     }
                                 </ol>
                             }
@@ -62,7 +63,8 @@
                                 <ol>
                                     @foreach (var f in _thisYearLongestFlights)
                                     {
-                                        <li>@f.TakeOffSite with @f.FlightDuration</li>
+                                        string path = $"/FlightsList/{f.FlightID}";
+                                        <li>@f.TakeOffSite with @f.FlightDuration <RadzenLink Icon="pageview" Path="@path" Text="Flight" /></li>
                                     }
                                 </ol>
                             }
@@ -81,7 +83,8 @@
                                 <ol>
                                     @foreach (var f in _topScorers)
                                     {
-                                        <li>@f.TakeOffSite with a @f.XcScore?.Points.ToString("N2") points @f.XcScore?.Type</li>
+                                        string path = $"/FlightsList/{f.FlightID}";
+                                        <li>@f.TakeOffSite with a @f.XcScore?.Points.ToString("N2") points @f.XcScore?.Type <RadzenLink Icon="pageview" Path="@path" Text="Flight" /></li>
                                     }
                                 </ol>
                             }
@@ -95,7 +98,8 @@
                                 <ol>
                                     @foreach (var f in _longestFlights)
                                     {
-                                        <li>@f.TakeOffSite with @f.FlightDuration</li>
+                                        string path = $"/FlightsList/{f.FlightID}";
+                                        <li>@f.TakeOffSite with @f.FlightDuration <RadzenLink Icon="pageview" Path="@path" Text="Flight" /></li>
                                     }
                                 </ol>
                             }

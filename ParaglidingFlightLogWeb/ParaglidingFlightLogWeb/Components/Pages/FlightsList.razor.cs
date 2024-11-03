@@ -12,6 +12,7 @@ using ParaglidingFlightLogWeb.Services;
 
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
+
 /// <summary>
 /// Page where the flights are listed and managed
 /// </summary>
@@ -21,6 +22,11 @@ public partial class FlightsList
     private const long MAX_FILE_SIZE = 2 * 1024 * 1024;
     private const string ALLOWED_FILE_EXTENSION = ".igc";
 
+    /// <summary>
+    /// Flight Id reflecting what flight is currently selected or used to acces a flight directly at page loading
+    /// </summary>
+    [Parameter]
+    public string FlightId { get; set; } = "";
 
     [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
     [Inject] DialogService DialogService { get; set; } = null!;
@@ -34,6 +40,7 @@ public partial class FlightsList
     private RadzenDataGrid<FlightViewModel> dataGrid = new();
 
     IList<FlightViewModel> SelectedFlights = [];
+
     FlightViewModel? LastSelectedFlight
     {
         get
@@ -41,6 +48,7 @@ public partial class FlightsList
             return SelectedFlights.Count > 0 ? SelectedFlights[SelectedFlights.Count - 1] : null;
         }
     }
+
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
@@ -56,17 +64,34 @@ public partial class FlightsList
             await Mvm.Init(userId);
         }
     }
+    /// <summary>
+    /// <inheritdoc />
+    /// </summary>
+    /// <param name="firstRender"></param>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (string.IsNullOrEmpty(FlightId))
+        {
+            return;
+        }
+
+        var flight = Mvm.FlightListViewModel.FirstOrDefault(x => x.FlightID == FlightId);
+        if (flight is not null)
+        {
+            await dataGrid.SelectRow(flight);
+        }
+    }
 
     void ShowContextMenuWithItems(MouseEventArgs args)
     {
         if (SelectedFlights is not null && SelectedFlights.Count == 1)
         {
             ContextMenuService.Open(args,
-                                    [
-                                        new() { Text = "Edit flight", Value = EFlightAction.Edit },
-                                        new() { Text = "Remove flights", Value = EFlightAction.Remove },
-                                    ],
-                                    OnMenuItemClick);
+                [
+                    new() { Text = "Edit flight", Value = EFlightAction.Edit },
+                    new() { Text = "Remove flights", Value = EFlightAction.Remove },
+                ],
+                OnMenuItemClick);
         }
     }
 
@@ -87,11 +112,12 @@ public partial class FlightsList
 
         ContextMenuService.Close();
     }
+
     async Task OnShowMapClick()
     {
         await DialogService.OpenAsync<ShowFlightOnMap>($"Flight trace on map",
-        new Dictionary<string, object>() { { "FlightToShow", LastSelectedFlight! }, { "Height", 500 } },
-        new DialogOptions() { Width = "900px", Resizable = true, Draggable = false });
+            new Dictionary<string, object>() { { "FlightToShow", LastSelectedFlight! }, { "Height", 500 } },
+            new DialogOptions() { Width = "900px", Resizable = true, Draggable = false });
     }
 
     enum EFlightAction
@@ -102,7 +128,8 @@ public partial class FlightsList
 
     async Task OnRemoveFlights(IList<FlightViewModel> flightsToRemove)
     {
-        var answer = await DialogService.Confirm($"Are you sure you want to delete {SelectedFlights.Count} flight(s)?", "Flight remove confirmation", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
+        var answer = await DialogService.Confirm($"Are you sure you want to delete {SelectedFlights.Count} flight(s)?",
+            "Flight remove confirmation", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" });
         if (answer == true)
         {
             foreach (FlightViewModel fvm in flightsToRemove)
@@ -117,7 +144,9 @@ public partial class FlightsList
 
     async Task OnEditFlight()
     {
-        await DialogService.OpenAsync<EditFlight>($"Edit flight", new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight! }, { "ViewModel", Mvm } }, new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = false });
+        await DialogService.OpenAsync<EditFlight>($"Edit flight",
+            new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight! }, { "ViewModel", Mvm } },
+            new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = false });
         StateHasChanged();
     }
 
@@ -131,7 +160,9 @@ public partial class FlightsList
             NotifyUser($"Cannot accept more than {MAX_FILE_COUNT} files");
             return;
         }
-        if (e.GetMultipleFiles(MAX_FILE_COUNT).Select(f => f.Name).Any(n => !n.ToLower().EndsWith(ALLOWED_FILE_EXTENSION)))
+
+        if (e.GetMultipleFiles(MAX_FILE_COUNT).Select(f => f.Name)
+            .Any(n => !n.ToLower().EndsWith(ALLOWED_FILE_EXTENSION)))
         {
             NotifyUser("Only igc file");
             return;
@@ -141,12 +172,12 @@ public partial class FlightsList
         {
             try
             {
-
                 if (file.Size > MAX_FILE_SIZE)
                 {
                     NotifyUser($"Individual file has to be smaller than {MAX_FILE_SIZE / 1024} kB");
                     return;
                 }
+
                 var trustedFileNameForFileStorage = Path.GetRandomFileName();
                 var path = Path.Combine(Environment.ContentRootPath, "tmp", trustedFileNameForFileStorage);
                 await using FileStream fs = new(path, FileMode.Create);
@@ -181,9 +212,7 @@ public partial class FlightsList
     {
         NotificationService.Notify(new NotificationMessage
         {
-            Severity = severity,
-            Duration = 4000,
-            Summary = message,
+            Severity = severity, Duration = 4000, Summary = message,
         });
     }
 

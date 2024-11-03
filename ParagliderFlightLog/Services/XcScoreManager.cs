@@ -6,7 +6,11 @@ using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
 
 namespace ParagliderFlightLog.Services;
-
+/// <summary>
+/// Service to manage the use of the external XcScore calculator
+/// </summary>
+/// <param name="logger"></param>
+/// <param name="config"></param>
 public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration config) : IDisposable
 {
     private readonly Queue<ProcessRequest> _processRequests = new();
@@ -114,7 +118,7 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
         _computeTask?.Wait();
     }
 
-    protected virtual void Dispose(bool disposing)
+    private void Dispose(bool disposing)
     {
         if (!_disposedValue)
         {
@@ -126,7 +130,9 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
             _disposedValue = true;
         }
     }
-
+    /// <summary>
+    /// Will stop and dispose the service
+    /// </summary>
     public void Dispose()
     {
         // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
