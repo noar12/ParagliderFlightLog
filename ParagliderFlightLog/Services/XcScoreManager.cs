@@ -124,6 +124,8 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
         {
             if (disposing)
             {
+                _running = false;
+                _computeTask?.Wait();
                 _computeTask?.Dispose();
             }
             _processRequests.Clear();

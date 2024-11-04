@@ -17,6 +17,9 @@
 
         /// <remarks/>
         Spain,
+        
+        /// <remarks/>
+        Greece,
     }
     public enum EWindOrientation
     {
