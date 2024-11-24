@@ -74,15 +74,19 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
             {
                 try
                 {
-                    var result = await Cli
-    .Wrap($"{GetCalculatorCmd()}")
-    .WithArguments($"{GetCjsPath()}")
-    .WithValidation(CommandResultValidation.None)
-    .ExecuteBufferedAsync(token);
-                    bool isReady = result.StandardOutput.StartsWith("igc-xc-score");
-                    ScoreEngineInstalled = isReady;
                     await Task.Delay(1000, token);
-                    _running = isReady;
+                    if (!_running || !ScoreEngineInstalled)
+                    {
+                        var result = await Cli
+                            .Wrap($"{GetCalculatorCmd()}")
+                            .WithArguments($"{GetCjsPath()}")
+                            .WithValidation(CommandResultValidation.None)
+                            .ExecuteBufferedAsync(token);
+                        bool isReady = result.StandardOutput.StartsWith("igc-xc-score");
+                        ScoreEngineInstalled = isReady;
+                        await Task.Delay(1000, token);
+                        _running = isReady;
+                    }
                 }
                 catch (Exception ex)
                 {
