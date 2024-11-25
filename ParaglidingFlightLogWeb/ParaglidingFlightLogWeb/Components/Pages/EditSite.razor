@@ -2,7 +2,7 @@
 @using ParaglidingFlightLogWeb.ViewModels
 @using ParaglidingFlightLogWeb.Components.Subs
 @rendermode InteractiveServer
-
+@inject ILogger<EditSite> Logger
 <div class="container">
     <div class="col-4">
         <MyTextInput Label="Name" @bind-Value=@SiteToEdit.Name />
@@ -31,7 +31,10 @@
     public SiteViewModel SiteToEdit { get; set; } = null!;
     [Parameter]
     public CoreService ViewModel { get; set; } = null!;
-
+    protected override void OnInitialized()
+    {
+        Logger.LogInformation("Initialized");
+    }
 
 
 }

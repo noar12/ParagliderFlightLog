@@ -76,6 +76,7 @@
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
         }
+        Logger.LogInformation("Initialized");
     }
 
     public async Task LoginUser()
@@ -93,14 +94,16 @@
             RedirectManager.RedirectTo(
                 "Account/LoginWith2fa",
                 new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+            Logger.LogInformation("Login requires two factor for {EmailInput}", Input.Email);
         }
         else if (result.IsLockedOut)
         {
-            Logger.LogWarning("User account locked out.");
+            Logger.LogWarning("User account locked out for {EmailInput}.", Input.Email);
             RedirectManager.RedirectTo("Account/Lockout");
         }
         else
         {
+            Logger.LogWarning("User ({EmailInput}) failed to log", Input.Email);
             errorMessage = "Error: Invalid login attempt.";
         }
     }

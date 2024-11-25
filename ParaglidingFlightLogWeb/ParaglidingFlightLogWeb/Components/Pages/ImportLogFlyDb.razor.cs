@@ -14,8 +14,8 @@ namespace ParaglidingFlightLogWeb.Components.Pages
     public partial class ImportLogFlyDb
     {
         [Inject] private CoreService Mvm { get; set; } = null!;
-        [Inject] private ILogger<ImportLogFlyDb>? Logger { get; set; } = null!;
-        [Inject] private IWebHostEnvironment? Environment { get; set; } = null!;
+        [Inject] private ILogger<ImportLogFlyDb> Logger { get; set; } = null!;
+        [Inject] private IWebHostEnvironment Environment { get; set; } = null!;
         [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
         [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
         private bool _success = false;
@@ -33,6 +33,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 if (currentUser == null) return;
                 string userId = currentUser.Id;
                 await Mvm.Init(userId);
+                Logger.LogInformation("Initialized for {User}", currentUser.UserName);
             }
         }
         private async Task OnLogFlyDbChosen(InputFileChangeEventArgs e)

@@ -24,7 +24,8 @@ public partial class Settings
         {
             _isAdmin = false;
         }
-        else{
+        else
+        {
             _isAdmin = _adminsId?.Contains(userClaim.Identity.Name) ?? false;
         }
     }

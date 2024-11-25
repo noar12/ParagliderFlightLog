@@ -14,6 +14,7 @@ public partial class FlightsStatistic
     [Inject] FlightStatisticService FlightStatistic { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] ILogger<FlightsStatistic> Logger { get; set; } = null!;
     protected override async Task OnInitializedAsync()
     {
         var userClaim = (await AuthenticationStateTask).User;
@@ -24,10 +25,13 @@ public partial class FlightsStatistic
             string userId = currentUser.Id;
             await Core.Init(userId);
             _yearToAnalyse = DateTime.Now.Year;
+            Logger.LogInformation("Initialized for {User}", currentUser.UserName);
             if (FlightStatistic.FlightsCount == 0)
                 return;
             OnAnalyze();
+            
         }
+        
     }
 
     private bool _allYearAnalysis = false;

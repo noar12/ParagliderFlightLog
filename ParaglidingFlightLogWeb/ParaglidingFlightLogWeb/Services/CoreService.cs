@@ -30,15 +30,18 @@ public class CoreService
     /// <param name="logger"></param>
     /// <param name="logFlyDB"></param>
     /// <param name="xcScoreManagerData"></param>
-    public CoreService(FlightLogDB flightLogDB, ILogger<CoreService> logger, LogFlyDB logFlyDB, XcScoreManagerData xcScoreManagerData)
+    public CoreService(FlightLogDB flightLogDB, ILogger<CoreService> logger, LogFlyDB logFlyDB,
+        XcScoreManagerData xcScoreManagerData)
     {
         _flightLog = flightLogDB;
         _logger = logger;
         _logFlyDB = logFlyDB;
         _xcScoreManagerData = xcScoreManagerData;
+        _logger.LogInformation("initialized");
     }
+
     /// <summary>
-    /// Init the page for <paramref name="userId"/>
+    /// Init the service for <paramref name="userId"/>
     /// </summary>
     /// <param name="userId"></param>
     /// <returns></returns>
@@ -59,6 +62,7 @@ public class CoreService
         _flightLog.DeleteFlight(flightViewModel.Flight);
         FlightListViewModel.Remove(flightViewModel);
     }
+
     /// <summary>
     /// Call the db to edit the <paramref name="glider"/> infos
     /// </summary>
@@ -77,7 +81,6 @@ public class CoreService
     /// <exception cref="NotImplementedException"></exception>
     public void AddGlider()
     {
-
         throw new NotImplementedException();
     }
 
@@ -96,6 +99,7 @@ public class CoreService
             EnqueueFlightForScore(fvm);
         }
     }
+
     /// <summary>
     /// List of all the year where a flight has been made
     /// </summary>
@@ -106,7 +110,6 @@ public class CoreService
             List<int> l_yearsOfFlying = FlightListViewModel.Select(f => f.TakeOffDateTime.Year).Distinct().ToList();
             l_yearsOfFlying.Sort();
             return l_yearsOfFlying;
-
         }
     }
 
@@ -120,9 +123,10 @@ public class CoreService
     {
         // Linq Sum does not have an overload for IEnumerable<TimeSpan>...
         return new TimeSpan(FlightListViewModel
-        .Where(x => x.TakeOffDateTime >= start && x.TakeOffDateTime <= end)
-        .Sum(x => x.FlightDuration.Ticks));
+            .Where(x => x.TakeOffDateTime >= start && x.TakeOffDateTime <= end)
+            .Sum(x => x.FlightDuration.Ticks));
     }
+
     /// <summary>
     /// Return a List of all the flight in the period specified between "start" and "end"
     /// </summary>
@@ -134,11 +138,13 @@ public class CoreService
         return FlightListViewModel.Where(f => f.TakeOffDateTime > start && f.TakeOffDateTime < end).ToList();
     }
 
-    internal async Task<(int importedSitesCount, int improtedGlidersCount, int importedFlightCount)> ImportLogFlyDb(string path)
+    internal async Task<(int importedSitesCount, int improtedGlidersCount, int importedFlightCount)>
+        ImportLogFlyDb(string path)
     {
         await _flightLog.BackupDb();
         await Task.Run(() => _logFlyDB.LoadLogFlyDB(path));
-        (int importedSitesCount, int improtedGlidersCount, int importedFlightCount) = await Task.Run(_logFlyDB.ImportInFlightLogDB);
+        (int importedSitesCount, int improtedGlidersCount, int importedFlightCount) =
+            await Task.Run(_logFlyDB.ImportInFlightLogDB);
 
         return (importedSitesCount, improtedGlidersCount, importedFlightCount);
     }
@@ -152,8 +158,10 @@ public class CoreService
             var siteVm = new SiteViewModel(item, _flightLog);
             output.Add(siteVm);
         }
+
         return output;
     }
+
     /// <summary>
     /// Put the flight in the queue to calculate its score
     /// </summary>
@@ -163,6 +171,7 @@ public class CoreService
         if (lastSelectedFlight?.FlightWithData is null) return;
         _xcScoreManagerData.QueueFlightForScoring(lastSelectedFlight.FlightWithData, _flightLog);
     }
+
     /// <summary>
     /// Get a flight to remember. 
     /// </summary>
@@ -172,11 +181,13 @@ public class CoreService
         double anniversaryFlightProbability = 0;
         var random = new Random();
         double kindOfMemory = random.NextDouble();
-        var anniversaryFlight = FlightListViewModel.Where(f => f.TakeOffDateTime.Day == DateTime.Today.Day && f.TakeOffDateTime.Month == DateTime.Today.Month).ToArray();
+        var anniversaryFlight = FlightListViewModel.Where(f =>
+            f.TakeOffDateTime.Day == DateTime.Today.Day && f.TakeOffDateTime.Month == DateTime.Today.Month).ToArray();
         if (anniversaryFlight.Length > 0)
         {
             anniversaryFlightProbability = 0.9;
         }
+
         if (kindOfMemory < anniversaryFlightProbability)
         {
             return anniversaryFlight[random.Next(anniversaryFlight.Length)];
@@ -205,6 +216,7 @@ public class CoreService
             return null;
         }
     }
+
     /// <summary>
     /// Get a list of up to <paramref name="maxSiteCount"/> sites from the one that have not been visited since <paramref name="olderThan"/>
     /// </summary>
@@ -218,20 +230,23 @@ public class CoreService
             .Where(x => x.TakeOffDateTime > lastTakeOffTime && x.TakeOffSite is not null)
             .Select(x => x.TakeOffSite!.Site_ID);
         var output = SiteListViewModel.Where(x => !recentlyFlownSitesId.Any(id => x.Site_ID == id))
-        .Distinct()
-        .OrderBy(_ => Random.Shared.Next())
-        .Take(maxSiteCount)
-        .ToList();
+            .Distinct()
+            .OrderBy(_ => Random.Shared.Next())
+            .Take(maxSiteCount)
+            .ToList();
         return output;
     }
+
     /// <summary>
     /// All the flights
     /// </summary>
     public List<FlightViewModel> FlightListViewModel { get; private set; } = [];
+
     /// <summary>
     /// All the sites
     /// </summary>
     public List<SiteViewModel> SiteListViewModel { get; private set; } = [];
+
     /// <summary>
     /// All the glider
     /// </summary>

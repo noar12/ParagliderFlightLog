@@ -35,6 +35,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 if (currentUser == null) return;
                 string userId = currentUser.Id;
                 await Core.Init(userId);
+                Logger.LogInformation("Initialized for {User}", currentUser.UserName);
             }
         }
 

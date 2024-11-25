@@ -1,8 +1,9 @@
 ﻿@using ParaglidingFlightLogWeb.ViewModels
 @using ParaglidingFlightLogWeb.Services
 @rendermode InteractiveServer
+@inject ILogger<EditFlight> Logger
 
-        <RadzenFormField Text="Glider" Variant="Variant.Outlined">
+<RadzenFormField Text="Glider" Variant="Variant.Outlined">
             <RadzenDropDown AllowFiltering="true"
                             FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                             Data=@ViewModel.GliderListViewModel
@@ -26,6 +27,9 @@
     public FlightViewModel FlightToEdit { get; set; } = null!;
     [Parameter]
     public CoreService ViewModel { get; set; } = null!;
-
+    protected override void OnInitialized()
+    {
+        Logger.LogInformation("Initialized");
+    }
 
 }

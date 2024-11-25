@@ -30,8 +30,7 @@ try
     builder.Services.AddScoped<IdentityUserAccessor>();
     builder.Services.AddScoped<IdentityRedirectManager>();
     builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
-    builder.Services.AddSingleton<XcScoreManagerData>();
-    builder.Services.AddHostedService<XcScoreManager>();
+
 
     builder.Services.AddAuthentication(options =>
     {
@@ -60,8 +59,9 @@ try
     builder.Services.AddScoped<FlightLogDB>();
     builder.Services.AddScoped<LogFlyDB>();
     builder.Services.AddScoped<SqliteDataAccess>();
-    builder.Services.AddSingleton<XcScoreManager>();
-
+    builder.Services.AddSingleton<XcScoreManagerData>();
+    builder.Services.AddHostedService<XcScoreManager>();
+    
     var app = builder.Build();
 
     var config = app.Services.GetService<IConfiguration>()!;

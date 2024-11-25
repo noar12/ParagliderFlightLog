@@ -1,6 +1,7 @@
 ﻿@using ParaglidingFlightLogWeb.ViewModels
 @using ParaglidingFlightLogWeb.Components.Subs
 @rendermode InteractiveServer
+@inject ILogger<EditGlider> Logger
 
 <div class="container">
     <div class="col-4">
@@ -17,7 +18,10 @@
 @code {
     [Parameter]
     public GliderViewModel GliderToEdit { get; set; } = null!;
-
+    protected override void OnInitialized()
+    {
+        Logger.LogInformation("Initialized");
+    }
 
 
 

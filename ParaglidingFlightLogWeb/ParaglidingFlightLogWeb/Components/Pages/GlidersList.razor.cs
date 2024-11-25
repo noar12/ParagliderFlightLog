@@ -22,6 +22,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
         [Inject] DialogService DialogService { get; set; } = null!;
         [Inject] CoreService Core { get; set; } = null!;
+        [Inject] ILogger<GlidersList> Logger { get; set; } = null!;
         [CascadingParameter]
         private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
         [Inject]
@@ -35,6 +36,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 if (currentUser == null) return;
                 string userId = currentUser.Id;
                 await Core.Init(userId);
+                Logger.LogInformation("Initialized for {User}", currentUser.UserName);
             }
         }
         void ShowContextMenuWithItems(MouseEventArgs args)

@@ -33,7 +33,7 @@ public partial class FlightsList
     [Inject] NotificationService NotificationService { get; set; } = null!;
     [Inject] IWebHostEnvironment Environment { get; set; } = null!;
     [Inject] CoreService Mvm { get; set; } = null!;
-    [Inject] ILogger<Index> Logger { get; set; } = null!;
+    [Inject] ILogger<FlightsList> Logger { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
 
@@ -62,6 +62,7 @@ public partial class FlightsList
             if (currentUser == null) return;
             string userId = currentUser.Id;
             await Mvm.Init(userId);
+            Logger.LogInformation("Initialized for {User}", currentUser.UserName);
         }
     }
     /// <summary>

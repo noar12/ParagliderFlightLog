@@ -509,6 +509,7 @@ public class FlightLogDB
         string sqlStatement = "UPDATE Flights SET REF_TakeOffSite_ID = @Site_ID WHERE Flight_ID = @Flight_ID;";
         _db.SaveData(sqlStatement, new { site.Site_ID, flight.Flight_ID }, LoadConnectionString());
     }
+
     /// <summary>
     /// Retrieve all flight from the Db. Those flight does not contains the IGC data to lighten the ram usage a bit
     /// </summary>
@@ -550,6 +551,7 @@ public class FlightLogDB
         if (scoreJson == null) return null;
         else return XcScore.FromJson(scoreJson);
     }
+
     /// <summary>
     /// Get all sites in the db
     /// </summary>
@@ -564,6 +566,7 @@ public class FlightLogDB
         _logger.LogInformation("All sites requested and get in {GetAllSitesDuration_ms} ms", sw.ElapsedMilliseconds);
         return output;
     }
+
     /// <summary>
     /// Get all the glider in the db
     /// </summary>
