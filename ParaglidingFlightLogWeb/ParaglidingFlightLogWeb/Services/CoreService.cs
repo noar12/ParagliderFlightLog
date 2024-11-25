@@ -21,20 +21,21 @@ public class CoreService
     private readonly FlightLogDB _flightLog;
     private readonly ILogger<CoreService> _logger;
     private readonly LogFlyDB _logFlyDB;
-    private readonly XcScoreManager _xcScoreManager;
+    private readonly XcScoreManagerData _xcScoreManagerData;
+
     /// <summary>
     /// ctor
     /// </summary>
     /// <param name="flightLogDB"></param>
     /// <param name="logger"></param>
     /// <param name="logFlyDB"></param>
-    /// <param name="xcScoreManager"></param>
-    public CoreService(FlightLogDB flightLogDB, ILogger<CoreService> logger, LogFlyDB logFlyDB, XcScoreManager xcScoreManager)
+    /// <param name="xcScoreManagerData"></param>
+    public CoreService(FlightLogDB flightLogDB, ILogger<CoreService> logger, LogFlyDB logFlyDB, XcScoreManagerData xcScoreManagerData)
     {
         _flightLog = flightLogDB;
         _logger = logger;
         _logFlyDB = logFlyDB;
-        _xcScoreManager = xcScoreManager;
+        _xcScoreManagerData = xcScoreManagerData;
     }
     /// <summary>
     /// Init the page for <paramref name="userId"/>
@@ -88,7 +89,7 @@ public class CoreService
     {
         foreach (string filePath in filePaths)
         {
-            _logger.LogDebug("importing {filePath}", filePath);
+            _logger.LogDebug("importing {FilePath}", filePath);
             var flight = _flightLog.ImportFlightFromIGC(filePath);
             var fvm = new FlightViewModel(flight.ToFlight(), _flightLog);
             FlightListViewModel.Add(fvm);
@@ -160,7 +161,7 @@ public class CoreService
     public void EnqueueFlightForScore(FlightViewModel? lastSelectedFlight)
     {
         if (lastSelectedFlight?.FlightWithData is null) return;
-        _xcScoreManager.QueueFlightForScoring(lastSelectedFlight.FlightWithData, _flightLog);
+        _xcScoreManagerData.QueueFlightForScoring(lastSelectedFlight.FlightWithData, _flightLog);
     }
     /// <summary>
     /// Get a flight to remember. 

@@ -30,6 +30,8 @@ try
     builder.Services.AddScoped<IdentityUserAccessor>();
     builder.Services.AddScoped<IdentityRedirectManager>();
     builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+    builder.Services.AddSingleton<XcScoreManagerData>();
+    builder.Services.AddHostedService<XcScoreManager>();
 
     builder.Services.AddAuthentication(options =>
     {
@@ -67,7 +69,6 @@ try
     .ReadFrom.Configuration(config)
     .CreateLogger();
     Log.Information("Application starting up");
-    app.Services.GetService<XcScoreManager>()?.Start(new CancellationTokenSource().Token);
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -97,7 +98,8 @@ try
 
     //app.UseSerilogRequestLogging(); // log all the request
 
-    app.Run();
+    await app.RunAsync();
+    Log.Information("Application stopped");
 }
 catch (Exception ex)
 {
@@ -106,6 +108,6 @@ catch (Exception ex)
 }
 finally
 {
-    Log.CloseAndFlush();
+    await Log.CloseAndFlushAsync();
 }
 

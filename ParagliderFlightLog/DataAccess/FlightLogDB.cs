@@ -522,7 +522,7 @@ public class FlightLogDB
         {
             flight.XcScore = await GetFlightScoreAsync(flight);
         }
-        _logger.LogInformation("All flights requested and get in {GetAllFlightsDuration_ms}", sw.ElapsedMilliseconds);
+        _logger.LogInformation("All flights requested and get in {GetAllFlightsDuration_ms} ms", sw.ElapsedMilliseconds);
         return output;
 
     }
@@ -561,7 +561,7 @@ public class FlightLogDB
         string sqlStatement = @"SELECT Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude
                                     FROM Sites;";
         var output = await _db.LoadDataAsync<Site, dynamic>(sqlStatement, new { }, LoadConnectionString());
-        _logger.LogInformation("All sites requested and get in {GetAllSitesDuration_ms}", sw.ElapsedMilliseconds);
+        _logger.LogInformation("All sites requested and get in {GetAllSitesDuration_ms} ms", sw.ElapsedMilliseconds);
         return output;
     }
     /// <summary>
@@ -575,7 +575,7 @@ public class FlightLogDB
         string sqlStatement = @"SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name
                                 FROM Gliders;";
         var output = await _db.LoadDataAsync<Glider, dynamic>(sqlStatement, new { }, LoadConnectionString());
-        _logger.LogInformation("All glider requested and get in {GetAllGlidersDuration_ms}", sw.ElapsedMilliseconds);
+        _logger.LogInformation("All glider requested and get in {GetAllGlidersDuration_ms} ms", sw.ElapsedMilliseconds);
         return output;
 
     }

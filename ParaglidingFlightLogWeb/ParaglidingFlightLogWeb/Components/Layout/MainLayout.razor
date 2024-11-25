@@ -1,6 +1,6 @@
 ﻿@using ParagliderFlightLog.Services
 @inherits LayoutComponentBase
-@inject XcScoreManager XcScoreManager
+@inject XcScoreManagerData XcScoreManagerData
 
 <PageTitle>Paraglider Flight Log</PageTitle>
 <RadzenLayout style="position: relative">
@@ -10,7 +10,7 @@
         @Body
     </RadzenBody>
     <RadzenFooter>
-        <center>XcScore calculator available : @XcScoreManager.ScoreEngineInstalled &nbsp; XcScore processing: @XcScoreManager.FlightToProcess &nbsp; &copy; 2020 - @DateTime.Now.Year - Arnaud Moretti</center>
+        <center>XcScore calculator available : @XcScoreManagerData.ScoreEngineInstalled &nbsp; XcScore processing: @XcScoreManagerData.FlightToProcess &nbsp; &copy; 2020 - @DateTime.Now.Year - Arnaud Moretti</center>
     </RadzenFooter>
 </RadzenLayout>
 

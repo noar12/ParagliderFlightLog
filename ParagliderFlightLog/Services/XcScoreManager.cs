@@ -1,6 +1,7 @@
 ﻿using CliWrap;
 using CliWrap.Buffered;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
@@ -11,28 +12,23 @@ namespace ParagliderFlightLog.Services;
 /// </summary>
 /// <param name="logger"></param>
 /// <param name="config"></param>
-public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration config) : IDisposable
+public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration config, XcScoreManagerData xcScoreManagerData) : BackgroundService
 {
-    private readonly Queue<ProcessRequest> _processRequests = new();
     private bool _running;
-    private Task? _computeTask;
-    private bool _disposedValue;
-
-    /// <summary>
-    /// Number of flight in the queue still to process
-    /// </summary>
-    public int FlightToProcess => _processRequests.Count;
-    /// <summary>
-    /// Indicates if a score engine is installed
-    /// </summary>
-    public bool ScoreEngineInstalled { get; private set; } = true;
 
 
-    private async Task Compute(CancellationToken token)
+
+
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        while (!token.IsCancellationRequested && _running)
+        _running = true;
+        logger.LogInformation("Starting XcScore manager. Calculator Cmd: {CalculatorCmd}, OutputDirectory: {OutputDirectory}",
+            GetCalculatorCmd(), GetTmpFileDirectory());
+        while (!stoppingToken.IsCancellationRequested && _running)
         {
-            if (_processRequests.TryDequeue(out var request))
+            var request = xcScoreManagerData.GetNextProcessRequest();
+            if (request is not null)
             {
                 string flightPath = Path.Combine(GetTmpFileDirectory(), Path.GetRandomFileName());
                 string scorePath = Path.Combine(GetTmpFileDirectory(), Path.GetRandomFileName());
@@ -40,21 +36,23 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                 try
                 {
                     // writing file data to a file to give it to the external calculator
-                    await File.WriteAllTextAsync(flightPath, request.Flight.IgcFileContent, token);
+                    await File.WriteAllTextAsync(flightPath, request.Flight.IgcFileContent, stoppingToken);
                     // execute the external calculator on the file and output the result in another file
                     var result = await Cli
-                    .Wrap($"{GetCalculatorCmd()}")
-                    .WithArguments($"{GetCjsPath()} {flightPath} out={scorePath} scoring=XContest")
-                    .WithValidation(CommandResultValidation.None)
-                    .ExecuteBufferedAsync(token);
-                    logger.LogInformation("Flight score result : {standard}", result.StandardOutput);
+                        .Wrap($"{GetCalculatorCmd()}")
+                        .WithArguments($"{GetCjsPath()} {flightPath} out={scorePath} scoring=XContest")
+                        .WithValidation(CommandResultValidation.None)
+                        .ExecuteBufferedAsync(stoppingToken);
+                    logger.LogInformation("Flight score result : {Standard}", result.StandardOutput);
                     if (!result.IsSuccess)
                     {
-                        logger.LogError("Flight score exited with error code {errorCode} : {error}", result.ExitCode, result.StandardError);
+                        logger.LogError("Flight score exited with error code {ErrorCode} : {Error}", result.ExitCode,
+                            result.StandardError);
                         continue;
                     }
+
                     // Reading the result to put it in the requested flight and if ok write in the database associated with the request
-                    string scoreText = File.ReadAllText(scorePath);
+                    string scoreText = await File.ReadAllTextAsync(scorePath);
                     var xcScore = XcScore.FromJson(scoreText);
                     if (xcScore != null)
                     {
@@ -62,89 +60,50 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                         request.Db.UpdateFlight(request.Flight.ToFlight());
                     }
                 }
+                catch (TaskCanceledException cancelEx)
+                {
+                    logger.LogWarning(cancelEx, "Task canceled during score calculation");
+                }
                 catch (Exception ex)
                 {
                     _running = false;
-                    ScoreEngineInstalled = false;
+                    xcScoreManagerData.ScoreEngineInstalled = false;
                     logger.LogCritical(ex, "Score engine cannot be executed");
-                    throw;
                 }
             }
             else
             {
                 try
                 {
-                    await Task.Delay(1000, token);
-                    if (!_running || !ScoreEngineInstalled)
+                    await Task.Delay(1000, stoppingToken);
+                    if (!_running || !xcScoreManagerData.ScoreEngineInstalled)
                     {
                         var result = await Cli
                             .Wrap($"{GetCalculatorCmd()}")
                             .WithArguments($"{GetCjsPath()}")
                             .WithValidation(CommandResultValidation.None)
-                            .ExecuteBufferedAsync(token);
+                            .ExecuteBufferedAsync(stoppingToken);
                         bool isReady = result.StandardOutput.StartsWith("igc-xc-score");
-                        ScoreEngineInstalled = isReady;
-                        await Task.Delay(1000, token);
+                        xcScoreManagerData.ScoreEngineInstalled = isReady;
+                        await Task.Delay(1000, stoppingToken);
                         _running = isReady;
                     }
+                }
+                catch (TaskCanceledException canceledException)
+                {
+                    logger.LogInformation(canceledException, "Task cancelled");
                 }
                 catch (Exception ex)
                 {
 
                     logger.LogError(ex, "Cannot launch xcengine using cli wrapper");
                     _running = false;
-                    ScoreEngineInstalled = false;
+                    xcScoreManagerData.ScoreEngineInstalled = false;
                 }
             }
         }
     }
-    public void QueueFlightForScoring(FlightWithData flight, FlightLogDB db)
-    {
-        if (string.IsNullOrEmpty(flight.IgcFileContent)) return;
-        var request = new ProcessRequest()
-        {
-            Flight = flight,
-            Db = db
-        };
-        _processRequests.Enqueue(request);
-    }
 
-    public void Start(CancellationToken token)
-    {
-        _running = true;
-        logger.LogInformation("Starting XcScore manager. Calculator Cmd: {CalculatorCmd}, OutputDirectory: {OutputDirectory}",
-        GetCalculatorCmd(), GetTmpFileDirectory());
-        _computeTask = Compute(token);
-    }
-    public void Stop()
-    {
-        _running = false;
-        _computeTask?.Wait();
-    }
-
-    private void Dispose(bool disposing)
-    {
-        if (!_disposedValue)
-        {
-            if (disposing)
-            {
-                _running = false;
-                _computeTask?.Wait();
-                _computeTask?.Dispose();
-            }
-            _processRequests.Clear();
-            _disposedValue = true;
-        }
-    }
-    /// <summary>
-    /// Will stop and dispose the service
-    /// </summary>
-    public void Dispose()
-    {
-        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-        Dispose(disposing: true);
-        GC.SuppressFinalize(this);
-    }
 
     private string GetCalculatorCmd()
     {
@@ -161,11 +120,7 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
         Directory.CreateDirectory(output);
         return output;
     }
-    private sealed class ProcessRequest
-    {
-        public FlightWithData Flight { get; set; } = null!;
-        public FlightLogDB Db { get; set; } = null!;
-    }
+
 }
 
 
