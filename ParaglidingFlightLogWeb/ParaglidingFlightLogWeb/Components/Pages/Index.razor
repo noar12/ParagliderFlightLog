@@ -21,9 +21,9 @@
     <Authorized>
         <RadzenRow AlignItems="AlignItems.Stretch">
             <RadzenColumn SizeSM="6">
-               <RadzenRow>
+                <RadzenRow>
                    <RadzenColumn>
-                        <RadzenCard Style="margin-bottom: 15px">
+                        <RadzenCard Style="margin-bottom: 15px; min-height: 170px;">
                             <RadzenText TextStyle="TextStyle.H4" Text="Interesting facts" />
 
                             <RadzenRow>
@@ -36,11 +36,10 @@
                             </RadzenRow>
                         </RadzenCard>
                    </RadzenColumn>
-                    
                </RadzenRow>
                 <RadzenRow>
-                    <RadzenColumn SizeSM="6">
-                        <RadzenCard>
+                <RadzenColumn SizeSM="6" >
+                        <RadzenCard Style="min-height: 400px;">
                             <RadzenText TextStyle="TextStyle.H4" Text="Flights of the year" />
                             <div><RadzenIcon Icon="sports_score" />Best Score</div>
                             @if (_thisYearTopScorers is not null)
@@ -49,7 +48,7 @@
                                     @foreach (var f in _thisYearTopScorers)
                                     {
                                         string path = $"/FlightsList/{f.FlightID}";
-                                        <li>@f.TakeOffSite with a @f.XcScore?.Points.ToString("N2") points @f.XcScore?.Type <RadzenLink Icon="pageview" Path="@path" Text="Flight" /></li>
+                                        <li><RadzenLink Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
                                     }
                                 </ol>
                             }
@@ -64,7 +63,7 @@
                                     @foreach (var f in _thisYearLongestFlights)
                                     {
                                         string path = $"/FlightsList/{f.FlightID}";
-                                        <li>@f.TakeOffSite with @f.FlightDuration <RadzenLink Icon="pageview" Path="@path" Text="Flight" /></li>
+                                        <li><RadzenLink Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
                                     }
                                 </ol>
                             }
@@ -74,8 +73,8 @@
                             }
                         </RadzenCard>
                     </RadzenColumn>
-                    <RadzenColumn SizeSM="6">
-                        <RadzenCard>
+                    <RadzenColumn SizeSM="6"> 
+                        <RadzenCard Style="min-height: 400px;">
                             <RadzenText TextStyle="TextStyle.H4" Text="Flights of your life" />
                             <div><RadzenIcon Icon="sports_score" />Best Score</div>
                             @if (_topScorers is not null)
@@ -84,7 +83,7 @@
                                     @foreach (var f in _topScorers)
                                     {
                                         string path = $"/FlightsList/{f.FlightID}";
-                                        <li>@f.TakeOffSite with a @f.XcScore?.Points.ToString("N2") points @f.XcScore?.Type <RadzenLink Icon="pageview" Path="@path" Text="Flight" /></li>
+                                        <li><RadzenLink Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
                                     }
                                 </ol>
                             }
@@ -99,7 +98,7 @@
                                     @foreach (var f in _longestFlights)
                                     {
                                         string path = $"/FlightsList/{f.FlightID}";
-                                        <li>@f.TakeOffSite with @f.FlightDuration <RadzenLink Icon="pageview" Path="@path" Text="Flight" /></li>
+                                        <li><RadzenLink Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
                                     }
                                 </ol>
                             }
@@ -113,7 +112,7 @@
                 </RadzenRow>
                 <RadzenRow>
                     <RadzenColumn>
-                        <RadzenCard Style="margin-top: 15px">
+                        <RadzenCard Style="margin-top: 15px;min-height: 200px">
                             <RadzenText TextStyle="TextStyle.H4" Text="Long Time No See" />
                             @if (_sitesToReturnTo is not null)
                             {
@@ -133,7 +132,7 @@
                 </RadzenRow>
             </RadzenColumn>
             <RadzenColumn SizeSM="6">
-                <RadzenCard>
+                <RadzenCard Style="min-height: 800px;">
                     <RadzenText TextStyle="TextStyle.H4" Text="Trigger some memories" />
                     @if (_flightToRemember is not null)
                     {
@@ -165,12 +164,12 @@
                         </RadzenRow>
                         <RadzenRow>
                             <RadzenColumn SizeSM="6">
-                                <MyTextIndicator Label="Comment" Text="@_flightToRemember.Comment" Bold=false />
+                                <MyTextIndicator Label="Comment" Text="@_flightToRemember.Comment" Bold=false Style="height:430px; overflow-y:auto;"/>
                             </RadzenColumn>
                             <RadzenColumn SizeSM="6">
                                 @if (_flightToRemember.FlightPoints.Count > 0)
                                 {
-                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="350" />
+                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="430" />
                                 }
 
                             </RadzenColumn>

@@ -34,7 +34,7 @@
         </RadzenColumn>
 
         <RadzenColumn Size="12" SizeSM="4">
-            <RadzenCard>
+            <RadzenCard Style="height: calc(100vh - 180px);">
                 @if (LastSelectedFlight != null)
                 {
                     <RadzenRow>
@@ -55,7 +55,7 @@
                             }
                         </RadzenColumn>
                 </RadzenRow>
-                    <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false />
+                    <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false Style="height:450px; overflow-y:auto;" />
                 }
                 else
                 {

@@ -201,7 +201,7 @@ public class CoreService
     private FlightViewModel? GetFlightWithBigComment()
     {
         var random = new Random();
-        int bigCommentLimit = 200;
+        int bigCommentLimit = 800;
         var flightWithBigComment = FlightListViewModel.Where(f => f.Comment.Length > bigCommentLimit).ToArray();
         if (flightWithBigComment.Length > 0)
         {
