@@ -25,8 +25,7 @@ public partial class FlightsList
     /// <summary>
     /// Flight Id reflecting what flight is currently selected or used to acces a flight directly at page loading
     /// </summary>
-    [Parameter]
-    public string FlightId { get; set; } = "";
+    [Parameter] public string FlightId { get; set; } = "";
 
     [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
     [Inject] DialogService DialogService { get; set; } = null!;
@@ -37,7 +36,7 @@ public partial class FlightsList
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
 
-    private RadzenDataGrid<FlightViewModel> dataGrid = new();
+    private RadzenDataGrid<FlightViewModel> _dataGrid = new();
 
     IList<FlightViewModel> SelectedFlights = [];
 
@@ -79,7 +78,7 @@ public partial class FlightsList
         var flight = Mvm.FlightListViewModel.FirstOrDefault(x => x.FlightID == FlightId);
         if (flight is not null)
         {
-            await dataGrid.SelectRow(flight);
+            await _dataGrid.SelectRow(flight);
         }
     }
 
@@ -140,7 +139,7 @@ public partial class FlightsList
         }
 
         StateHasChanged();
-        await dataGrid.Reload();
+        await _dataGrid.Reload();
     }
 
     async Task OnEditFlight()
@@ -206,7 +205,7 @@ public partial class FlightsList
         }
 
         StateHasChanged();
-        await dataGrid.Reload();
+        await _dataGrid.Reload();
     }
 
     private void NotifyUser(string message, NotificationSeverity severity = NotificationSeverity.Error)

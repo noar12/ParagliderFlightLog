@@ -6,6 +6,7 @@
 @using ParaglidingFlightLogWeb.Components.Subs
 @attribute [Authorize]
 @page "/SitesList"
+@page "/SitesList/{SiteId}"
 @rendermode InteractiveServer
 
 <PageTitle>Sites list</PageTitle>
@@ -17,7 +18,7 @@
     </RadzenRow>
    <RadzenRow>
     <RadzenColumn Size="12" SizeSM="6" Style="overflow: auto;">
-            <RadzenDataGrid AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+            <RadzenDataGrid @ref="_dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                             AllowSorting="true" Data="@Core.SiteListViewModel" TItem="SiteViewModel"
                             style="height: calc(100vh - 200px)"
                             SelectionMode="DataGridSelectionMode.Single"
@@ -32,7 +33,7 @@
             </RadzenDataGrid>
         </RadzenColumn>
         <RadzenColumn Size="12" SizeSM="6">
-            <RadzenCard>
+            <RadzenCard Style="height: calc(100vh - 200px)">
             <div class="row">
                 @if (LastSelectedSite is not null)
                 {
@@ -45,7 +46,7 @@
             </div>
 
 
-            <div class="row" id="map" style="height: 500px"></div>
+            <div class="row" id="map" style="height: calc(100vh - 300px)"></div>
             </RadzenCard>
 
         </RadzenColumn>

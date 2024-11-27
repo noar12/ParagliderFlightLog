@@ -23,7 +23,7 @@
             <RadzenColumn SizeSM="6">
                 <RadzenRow>
                    <RadzenColumn>
-                        <RadzenCard Style="margin-bottom: 15px; min-height: 170px;">
+                        <RadzenCard Style="margin-bottom: 15px;min-height: 200px ; height: calc(100vh - 750px);overflow-y:auto;">
                             <RadzenText TextStyle="TextStyle.H4" Text="Interesting facts" />
 
                             <RadzenRow>
@@ -39,7 +39,7 @@
                </RadzenRow>
                 <RadzenRow>
                 <RadzenColumn SizeSM="6" >
-                        <RadzenCard Style="min-height: 400px;">
+                        <RadzenCard Style="min-height: 400px ;height: calc(100vh - 600px);overflow-y:auto;">
                             <RadzenText TextStyle="TextStyle.H4" Text="Flights of the year" />
                             <div><RadzenIcon Icon="sports_score" />Best Score</div>
                             @if (_thisYearTopScorers is not null)
@@ -74,7 +74,7 @@
                         </RadzenCard>
                     </RadzenColumn>
                     <RadzenColumn SizeSM="6"> 
-                        <RadzenCard Style="min-height: 400px;">
+                        <RadzenCard Style="min-height: 400px ;height: calc(100vh - 600px);overflow-y:auto;">
                             <RadzenText TextStyle="TextStyle.H4" Text="Flights of your life" />
                             <div><RadzenIcon Icon="sports_score" />Best Score</div>
                             @if (_topScorers is not null)
@@ -112,14 +112,15 @@
                 </RadzenRow>
                 <RadzenRow>
                     <RadzenColumn>
-                        <RadzenCard Style="margin-top: 15px;min-height: 200px">
+                        <RadzenCard Style="min-height: 200px ;margin-top: 15px;height: calc(100vh - 750px);overflow-y:auto;">
                             <RadzenText TextStyle="TextStyle.H4" Text="Long Time No See" />
                             @if (_sitesToReturnTo is not null)
                             {
                                 <ol>
                                     @foreach (var s in _sitesToReturnTo)
                                     {
-                                        <li>@s.Name in @s.Country</li>
+                                        string path = $"/SitesList/{s.Site_ID}";
+                                        <li><RadzenLink Icon="pageview" Path="@path" Text=@($"{s.Name} in {s.Country}") /></li>
                                     }
                                 </ol>
                             }
@@ -132,7 +133,7 @@
                 </RadzenRow>
             </RadzenColumn>
             <RadzenColumn SizeSM="6">
-                <RadzenCard Style="min-height: 800px;">
+                <RadzenCard Style="min-height: 830px ;height: calc(100vh - 200px);">
                     <RadzenText TextStyle="TextStyle.H4" Text="Trigger some memories" />
                     @if (_flightToRemember is not null)
                     {
@@ -164,12 +165,12 @@
                         </RadzenRow>
                         <RadzenRow>
                             <RadzenColumn SizeSM="6">
-                                <MyTextIndicator Label="Comment" Text="@_flightToRemember.Comment" Bold=false Style="height:430px; overflow-y:auto;"/>
+                                <MyTextIndicator Label="Comment" Text="@_flightToRemember.Comment" Bold=false Style="min-height:480px; overflow-y:auto;height: calc(100vh - 550px);"/>
                             </RadzenColumn>
                             <RadzenColumn SizeSM="6">
                                 @if (_flightToRemember.FlightPoints.Count > 0)
                                 {
-                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="430" />
+                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="480" />
                                 }
 
                             </RadzenColumn>
