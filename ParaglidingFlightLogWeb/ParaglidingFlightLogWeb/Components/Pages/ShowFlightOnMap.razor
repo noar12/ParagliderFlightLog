@@ -6,7 +6,6 @@
 @using Serilog
 @inject ILogger<ShowFlightOnMap> Logger
 <PageTitle>Flight On Map</PageTitle>
-@_forDebug
 <RadzenCard>
     <div class="row" id="flightMap" style="@($"min-height: {_mapHeight}px;")"></div>
     <PlotlyChart @bind-Config="_chartConfig" @bind-Layout="_chartLayout" 
@@ -33,7 +32,6 @@
     private IList<ITrace> _trace = [];
     private int _chartHeight;
     private int _mapHeight;
-    private string _forDebug = "nothing";
 
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     /// <summary>
@@ -139,16 +137,12 @@
     }
     private async void HoverAction(IEnumerable<EventDataPoint> eventData)
     {
-        
         var eventDataPoints = eventData.ToList();
         if (eventDataPoints.Count > 0)
         {
-            
             var x = eventDataPoints[0].X;
-            _forDebug = $"x : {x}, {DateTime.TryParse(x.ToString(), out var _)}";
             if (DateTime.TryParse(x.ToString(), out var dateTime))
             {
-                _forDebug = $"we are here";
                 await HighlightMapPointAtTime(dateTime);
             }
         }
