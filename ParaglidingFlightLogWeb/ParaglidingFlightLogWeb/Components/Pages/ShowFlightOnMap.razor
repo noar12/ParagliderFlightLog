@@ -1,41 +1,186 @@
-﻿@using ParaglidingFlightLogWeb.ViewModels
+﻿@using System.Runtime.InteropServices.JavaScript
+@using ParaglidingFlightLogWeb.ViewModels
+@using Plotly.Blazor.ConfigLib
+@using Plotly.Blazor.Traces.ScatterLib
+@using Plotly.Blazor.Interop
+@using Serilog
+@inject ILogger<ShowFlightOnMap> Logger
 <PageTitle>Flight On Map</PageTitle>
-
+@_forDebug
 <RadzenCard>
-    <div class="row" id="flightMap" style="@($"min-height: {Height}px; height: calc(100vh - 550px);")" />
+    <div class="row" id="flightMap" style="@($"min-height: {_mapHeight}px;")"></div>
+    <PlotlyChart @bind-Config="_chartConfig" @bind-Layout="_chartLayout" 
+                 @bind-Data="_trace"
+                 HoverAction="HoverAction" AfterRender="SubscribeEvents"
+                 @ref="_chart" style="@($"min-height: {_chartHeight}px;")"/>
 </RadzenCard>
 
 @code {
-    [Parameter]
-    public FlightViewModel FlightToShow { get; set; } = null!;
-    [Parameter]
-    public int Height { get; set; }
-    private IJSObjectReference? module;
-    private object? flightMap;
-    [Inject] IJSRuntime jsRuntime { get; set; } = null!;
+    /// <summary>
+    /// Flight to show as FlightViewModel
+    /// </summary>
+    [Parameter] public FlightViewModel FlightToShow { get; set; } = null!;
+    /// <summary>
+    /// Height of the component
+    /// </summary>
+    [Parameter] public int Height { get; set; }
+    private IJSObjectReference? _module;
+    
+    private object? _flightMap;
+    private PlotlyChart? _chart;
+    private Config? _chartConfig;
+    private Layout? _chartLayout;
+    private IList<ITrace> _trace = [];
+    private int _chartHeight;
+    private int _mapHeight;
+    private string _forDebug = "nothing";
+
+    [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+    /// <summary>
+    /// <inheritdoc />
+    /// </summary>
+    protected override async Task OnInitializedAsync()
+    {
+
+    }
+
+    /// <summary>
+    /// <inheritdoc />
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        _chartHeight = Height / 4;
+        _mapHeight = 3 * Height / 4;
+        _chartLayout = new()
+        {
+            Title = new()
+            {
+                Text = "Altitude"
+            },
+            Height = _chartHeight,
+            AutoSize = true,
+            Margin = new()
+            {
+                AutoExpand = false,
+                B = 15,
+                L = 30,
+                R = 0,
+                T = 0,
+            },
+        };
+        _chartConfig = new()
+        {
+            DisplayModeBar = DisplayModeBarEnum.False
+        };
+    }
+
+    /// <summary>
+    /// <inheritdoc/>
+    /// </summary>
+    /// <param name="firstRender"></param>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            module = await jsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmap.js");
-            if (module != null)
+            _module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmap.js");
+            if (_module != null)
             {
-                flightMap = await module.InvokeAsync<IJSObjectReference>("load_map", "flightMap", 0, 0, 2);
+                _flightMap = await _module.InvokeAsync<IJSObjectReference>("load_map", "flightMap", 0, 0, 2);
             }
+            await GenerateAltitudeChart();
         }
         double[][] latlngs = FlightToShow.GetLatLngsArray();
-        if (module is not null && latlngs.Length > 0)
+        
+        if (_module is not null && latlngs.Length > 0 && _trace.Any())
         {
             //flightMap = await module.InvokeAsync<IJSObjectReference>("remove_all", flightMap); //this remove even the tile. It's a bit violent...
-            flightMap = await module.InvokeAsync<IJSObjectReference>("add_polyline",
-                                                            flightMap,
+            _flightMap = await _module.InvokeAsync<IJSObjectReference>("add_polyline",
+                                                            _flightMap,
                                                             latlngs);
             if (FlightToShow.XcScore is not null)
             {
-                flightMap = await module.InvokeAsync<IJSObjectReference>("add_geojson",
-                flightMap,
+                _flightMap = await _module.InvokeAsync<IJSObjectReference>("add_geojson",
+                _flightMap,
                 FlightToShow.XcScore.GeoJsonObject);
             }
         }
+    }
+
+    private static List<DateTime> GenerateDateTimeList(DateTime start, TimeSpan flightDuration, int sampleCount)
+    {
+        var output = new List<DateTime>();
+        var interval = TimeSpan.FromSeconds((int)(flightDuration.TotalSeconds / sampleCount));
+        for (int i = 0; i < sampleCount; i++)
+        {
+            output.Add(start + i * interval);
+        }
+        return output;
+    }
+    private async Task GenerateAltitudeChart()
+    {
+        _chart ??= new();
+        await _chart.Clear();
+        var times = GenerateDateTimeList(FlightToShow.TakeOffDateTime,
+                FlightToShow.FlightDuration,
+                FlightToShow.FlightPoints.Count)
+            .Cast<object>()
+            .ToList();
+        var altitudes = FlightToShow.FlightPoints.Select(x => x.Altitude).Cast<object>().ToList();
+        await _chart.AddTrace(
+            new Scatter()
+            {
+                Name = "Altitude",
+                Mode = ModeFlag.Lines,
+                X = times,
+                Y = altitudes,
+                HoverTemplate = "%{x} - %{y} m"
+            }
+        );
+    }
+    private async void HoverAction(IEnumerable<EventDataPoint> eventData)
+    {
+        
+        var eventDataPoints = eventData.ToList();
+        if (eventDataPoints.Count > 0)
+        {
+            
+            var x = eventDataPoints[0].X;
+            _forDebug = $"x : {x}, {DateTime.TryParse(x.ToString(), out var _)}";
+            if (DateTime.TryParse(x.ToString(), out var dateTime))
+            {
+                _forDebug = $"we are here";
+                await HighlightMapPointAtTime(dateTime);
+            }
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private async Task HighlightMapPointAtTime(DateTime dateTime)
+    {
+        
+        if (_module is null)
+        {
+            return;
+        }
+        
+        var sampleTimeFromStart = dateTime - FlightToShow.TakeOffDateTime;
+        int sampleIndex = (int)sampleTimeFromStart.TotalSeconds;
+        if (FlightToShow.FlightPoints.Count <= sampleIndex)
+        {
+            Logger.LogError("No sample to display at {DateTime}", dateTime);
+            return;
+        }
+        var pointToMark = FlightToShow.FlightPoints[sampleIndex];
+        
+
+        _flightMap = await _module.InvokeAsync<IJSObjectReference>("addOrMoveMarker",
+            _flightMap,
+            pointToMark.Latitude, pointToMark.Longitude, "mouseHoverFlightPoint") ;
+    }
+
+    private async void SubscribeEvents()
+    {
+        if(_chart is null) {return;}
+        await _chart.SubscribeHoverEvent();
     }
 }
