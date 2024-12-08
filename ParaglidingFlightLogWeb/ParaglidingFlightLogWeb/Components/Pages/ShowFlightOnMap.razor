@@ -10,7 +10,7 @@
     <div class="row" id="flightMap" style="@($"min-height: {_mapHeight}px;")"></div>
     <PlotlyChart @bind-Config="_chartConfig" @bind-Layout="_chartLayout" 
                  @bind-Data="_trace"
-                 HoverAction="HoverAction" AfterRender="SubscribeEvents"
+                 ClickAction="HoverOrClickAction" HoverAction="HoverOrClickAction" AfterRender="SubscribeEvents"
                  @ref="_chart" style="@($"min-height: {_chartHeight}px;")"/>
 </RadzenCard>
 
@@ -135,7 +135,7 @@
             }
         );
     }
-    private async void HoverAction(IEnumerable<EventDataPoint> eventData)
+    private async void HoverOrClickAction(IEnumerable<EventDataPoint> eventData)
     {
         var eventDataPoints = eventData.ToList();
         if (eventDataPoints.Count > 0)
@@ -148,7 +148,7 @@
         }
         await InvokeAsync(StateHasChanged);
     }
-
+    
     private async Task HighlightMapPointAtTime(DateTime dateTime)
     {
         
@@ -176,5 +176,6 @@
     {
         if(_chart is null) {return;}
         await _chart.SubscribeHoverEvent();
+        await _chart.SubscribeClickEvent();
     }
 }
