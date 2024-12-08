@@ -20,17 +20,17 @@
 <AuthorizeView>
     <Authorized>
         <RadzenRow AlignItems="AlignItems.Stretch">
-            <RadzenColumn SizeSM="6">
+            <RadzenColumn SizeLG="6">
                 <RadzenRow>
                    <RadzenColumn>
-                        <RadzenCard Style="margin-bottom: 15px;min-height: 200px ; height: calc(100vh - 750px);overflow-y:auto;">
+                        <RadzenCard class="rz-overflow-auto" Style="margin-bottom: 15px;">
                             <RadzenText TextStyle="TextStyle.H4" Text="Interesting facts" />
 
                             <RadzenRow>
-                                <RadzenColumn>
+                                <RadzenColumn SizeMD="6">
                                     <MyNumericIndicator Format="F0" Label="Number of sites during the last year" Value="@FlightStatisticService.LastYearSiteCount" />
                                 </RadzenColumn>
-                                <RadzenColumn>
+                                <RadzenColumn SizeMD="6">
                                     <MyTextIndicator Label="Glider with the oldest last check" Text="@($"{FlightStatisticService.OldestCheckUsedGlider?.FullName} ({FlightStatisticService.OldestCheckUsedGlider?.LastCheckDateTime.ToString("d")} with {FlightStatisticService.OldestCheckUsedGlider?.FlightTimeSinceLastCheck} flight hours)")" />
                                 </RadzenColumn>
                             </RadzenRow>
@@ -38,8 +38,8 @@
                    </RadzenColumn>
                </RadzenRow>
                 <RadzenRow>
-                <RadzenColumn SizeSM="6" >
-                        <RadzenCard Style="min-height: 400px ;height: calc(100vh - 600px);overflow-y:auto;">
+                <RadzenColumn SizeMD="6" >
+                    <RadzenCard class="rz-overflow-auto">
                             <RadzenText TextStyle="TextStyle.H4" Text="Flights of the year" />
                             <div><RadzenIcon Icon="sports_score" />Best Score</div>
                             @if (_thisYearTopScorers is not null)
@@ -48,7 +48,7 @@
                                     @foreach (var f in _thisYearTopScorers)
                                     {
                                         string path = $"/FlightsList/{f.FlightID}";
-                                        <li><RadzenLink Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
+                                        <li><RadzenLink class="rz.overflow-auto rz-text-nowrap" Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
                                     }
                                 </ol>
                             }
@@ -63,7 +63,7 @@
                                     @foreach (var f in _thisYearLongestFlights)
                                     {
                                         string path = $"/FlightsList/{f.FlightID}";
-                                        <li><RadzenLink Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
+                                        <li><RadzenLink class="rz.overflow-auto rz-text-nowrap" Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
                                     }
                                 </ol>
                             }
@@ -73,8 +73,8 @@
                             }
                         </RadzenCard>
                     </RadzenColumn>
-                    <RadzenColumn SizeSM="6"> 
-                        <RadzenCard Style="min-height: 400px ;height: calc(100vh - 600px);overflow-y:auto;">
+                    <RadzenColumn SizeMD="6"> 
+                        <RadzenCard class="rz-overflow-auto">
                             <RadzenText TextStyle="TextStyle.H4" Text="Flights of your life" />
                             <div><RadzenIcon Icon="sports_score" />Best Score</div>
                             @if (_topScorers is not null)
@@ -83,7 +83,7 @@
                                     @foreach (var f in _topScorers)
                                     {
                                         string path = $"/FlightsList/{f.FlightID}";
-                                        <li><RadzenLink Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
+                                        <li><RadzenLink class="rz.overflow-auto rz-text-nowrap" Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
                                     }
                                 </ol>
                             }
@@ -98,7 +98,7 @@
                                     @foreach (var f in _longestFlights)
                                     {
                                         string path = $"/FlightsList/{f.FlightID}";
-                                        <li><RadzenLink Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
+                                        <li><RadzenLink class="rz.overflow-auto rz-text-nowrap" Icon="pageview" Path="@path" Text=@($"{f.TakeOffSite} with a {f.XcScore?.Points:N2} points {f.XcScore?.Type}") /></li>
                                     }
                                 </ol>
                             }
@@ -112,7 +112,7 @@
                 </RadzenRow>
                 <RadzenRow>
                     <RadzenColumn>
-                        <RadzenCard Style="min-height: 200px ;margin-top: 15px;height: calc(100vh - 750px);overflow-y:auto;">
+                        <RadzenCard class="rz-overflow-auto" Style="margin-top: 15px;">
                             <RadzenText TextStyle="TextStyle.H4" Text="Long Time No See" />
                             @if (_sitesToReturnTo is not null)
                             {
@@ -132,8 +132,8 @@
                     </RadzenColumn>
                 </RadzenRow>
             </RadzenColumn>
-            <RadzenColumn SizeSM="6">
-                <RadzenCard Style="min-height: 830px ;height: calc(100vh - 200px);">
+            <RadzenColumn SizeLG="6">
+                <RadzenCard class="rz-overflow-auto" >
                     <RadzenText TextStyle="TextStyle.H4" Text="Trigger some memories" />
                     @if (_flightToRemember is not null)
                     {
@@ -165,12 +165,12 @@
                         </RadzenRow>
                         <RadzenRow>
                             <RadzenColumn SizeSM="6">
-                                <MyTextIndicator Label="Comment" Text="@_flightToRemember.Comment" Bold=false Style="min-height:480px; overflow-y:auto;height: calc(100vh - 550px);"/>
+                                <MyTextIndicator Style="max-height: 400px;" Class="rz-overflow-auto" Label="Comment" Text="@_flightToRemember.Comment" Bold=false />
                             </RadzenColumn>
                             <RadzenColumn SizeSM="6">
                                 @if (_flightToRemember.FlightPoints.Count > 0)
                                 {
-                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="480" />
+                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="400" />
                                 }
 
                             </RadzenColumn>

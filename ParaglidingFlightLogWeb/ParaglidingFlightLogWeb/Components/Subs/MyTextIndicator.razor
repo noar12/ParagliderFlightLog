@@ -2,20 +2,17 @@
     <RadzenText TextStyle="TextStyle.Overline" Text="@Label" />
     @if (Bold)
     {
-        <RadzenText TextStyle="TextStyle.Body1" Style="@Style"><b>@Text</b></RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1" Style="@Style" class=@($"{Class}")><b>@Text</b></RadzenText>
     }
     else
     {
-        <RadzenText TextStyle="TextStyle.Body1" Style="@Style" class="rz-text-wrap">@Text</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1" Style="@Style" class=@($"rz-text-wrap {Class}")>@Text</RadzenText>
     }
 </RadzenColumn>
 @code {
-    [Parameter]
-    public string Label { get; set; } = "";
-    [Parameter]
-    public string Text { get; set; } = "";
-    [Parameter]
-    public bool Bold { get; set; } = true;
-    [Parameter]
-    public string Style { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string Text { get; set; } = "";
+    [Parameter] public bool Bold { get; set; } = true;
+    [Parameter] public string Style { get; set; } = "";
+    [Parameter] public string Class { get; set; } = "";
 }
