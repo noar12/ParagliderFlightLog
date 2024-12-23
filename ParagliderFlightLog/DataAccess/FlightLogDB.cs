@@ -713,11 +713,12 @@ public class FlightLogDB
     /// Backup the db
     /// </summary>
     /// <returns></returns>
-    public async Task BackupDb()
+    public async Task<string> BackupDb()
     {
         string dbPath = GetDbPath();
         string backupPath = Path.Combine(new FileInfo(dbPath).Directory!.FullName, $"FlightLogBackup{DateTime.Now:yyyyMMdd_HHmmss}.db");
         await Task.Run(() => File.Copy(dbPath, backupPath));
+        return backupPath;
     }
     private string GetDbPath()
     {
