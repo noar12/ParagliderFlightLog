@@ -51,6 +51,12 @@ namespace ParagliderFlightLog.Services
             _flightToProcessSubject.OnNext(_processRequests.Count);
             return request;
         }
+
+        public bool IsThereUserFlightEnqueue(string userId)
+        {
+            var anyRequestFromUser = _processRequests.FirstOrDefault(x => x.Db.UserId == userId);
+            return anyRequestFromUser != null;
+        }
         
         /// <summary>
         /// Indicates if a score engine is installed

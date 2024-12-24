@@ -11,7 +11,11 @@
 </RadzenCard>
 <RadzenCard>
     <h2>User Settings</h2>
-    <RadzenButton Click="CoreService.EnqueueAllUserFlightForScore" Text="Calculate Missing Flight Score" />
+    <RadzenButton Click="OnCalculateMissingFileClick" Text="Calculate Missing Flight Score" Disabled="@(HasUserRequestEnqueued())" />
+    @if (HasUserRequestEnqueued())
+    {
+        <RadzenText Text="You have some requests currently processing" />
+    }
 </RadzenCard>
 
 

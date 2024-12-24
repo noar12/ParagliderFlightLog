@@ -15,7 +15,8 @@ public class FlightLogDB
     private readonly SqliteDataAccess _db;
     private readonly IConfiguration _config;
     private readonly ILogger<FlightLogDB> _logger;
-    private string? _userId;
+    public string? UserId { get; private set; }
+
     /// <summary>
     /// Data access class
     /// </summary>
@@ -28,13 +29,14 @@ public class FlightLogDB
         _config = config;
         _logger = logger;
     }
+
     /// <summary>
     /// Init the data class for a specific <paramref name="userId"/>
     /// </summary>
     /// <param name="userId"></param>
     public void Init(string userId)
     {
-        _userId = userId;
+        UserId = userId;
         if (!_db.DbExists(LoadConnectionString()))
         {
             CreateFlightLogDB();
@@ -67,7 +69,7 @@ public class FlightLogDB
         _logger.LogInformation("Migrating db from v1.1.0");
         string sql = @"ALTER TABLE Flights ADD GeoJsonScore TEXT;
             UPDATE DbInformations SET VersionMinor = 2;"; // no where clause because there suppose to be only one row
-        _db.SaveData(sql, new { _userId }, LoadConnectionString());
+        _db.SaveData(sql, new { _userId = UserId }, LoadConnectionString());
     }
 
     private void MigrateFromv1_0_0()
@@ -75,7 +77,7 @@ public class FlightLogDB
         _logger.LogInformation("Migrating db from v1.0.0");
         string sql = @"ALTER TABLE DbInformations ADD UserId TEXT;
             UPDATE DbInformations SET VersionMinor = 1, UserId = @_userId;";// no where clause because there suppose to be only one row
-        _db.SaveData(sql, new { _userId }, LoadConnectionString());
+        _db.SaveData(sql, new { _userId = UserId }, LoadConnectionString());
         MigrateFromv1_1_0();
     }
 
@@ -88,7 +90,7 @@ public class FlightLogDB
     ""UserId""	TEXT NOT NULL
 )";
         _db.SaveData(sqlCreateDbInfo, new { }, LoadConnectionString());
-        var dbInfo = new DbInformations() { VersionMajor = 1, VersionMinor = 0, VersionFix = 0, UserId = _userId! };
+        var dbInfo = new DbInformations() { VersionMajor = 1, VersionMinor = 0, VersionFix = 0, UserId = UserId! };
         string sql = "INSERT INTO DbInformations (VersionMajor, VersionMinor, VersionFix, UserId) VALUES (@VersionMajor, @VersionMinor, @VersionFix, @UserId);";
         _db.SaveData(sql, dbInfo, LoadConnectionString());
         MigrateFromv1_0_0();
@@ -152,7 +154,7 @@ public class FlightLogDB
 )";
 
         _db.SaveData(sqlCreateDbInfo, new { }, LoadConnectionString());
-        var dbInfo = new DbInformations() { VersionMajor = 1, VersionMinor = 2, VersionFix = 0, UserId = _userId! };
+        var dbInfo = new DbInformations() { VersionMajor = 1, VersionMinor = 2, VersionFix = 0, UserId = UserId! };
         string sql = "INSERT INTO DbInformations (VersionMajor, VersionMinor, VersionFix, UserId) VALUES (@VersionMajor, @VersionMinor, @VersionFix, @UserId);";
         _db.SaveData(sql, dbInfo, LoadConnectionString());
         _db.SaveData(sqlCreateFlights, new { }, LoadConnectionString());
@@ -346,14 +348,14 @@ public class FlightLogDB
 
     private string LoadConnectionString(string connectionStringName = "Sqlite")
     {
-        if (_userId is null)
+        if (UserId is null)
         {
             _logger.LogError("Connection string cannot be build without a user id");
             return "";
         }
 
         string rawCs = _config.GetConnectionString(connectionStringName)!;
-        return rawCs.Replace("{UserId}", _userId);
+        return rawCs.Replace("{UserId}", UserId);
     }
     /// <summary>
     /// The take off time in UTC as a timestamp based on the igc data (date in meta data and time as the timestamp of the first sample)
