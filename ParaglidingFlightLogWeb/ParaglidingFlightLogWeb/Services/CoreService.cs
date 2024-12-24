@@ -171,7 +171,18 @@ public class CoreService
         if (lastSelectedFlight?.FlightWithData is null) return;
         _xcScoreManagerData.QueueFlightForScoring(lastSelectedFlight.FlightWithData, _flightLog);
     }
-
+    /// <summary>
+    /// Enqueue all the user flight without a score to the xcscore calculation queue
+    /// </summary>
+    public void EnqueueAllUserFlightForScore()
+    {
+        if (!_xcScoreManagerData.ScoreEngineInstalled) return;
+        foreach (var flight in FlightListViewModel.Where(x => x.XcScore is null).Select(f => f.FlightWithData))
+        {
+            if (flight is null) continue;
+            _xcScoreManagerData.QueueFlightForScoring(flight, _flightLog);
+        }
+    }
     /// <summary>
     /// Get a flight to remember. 
     /// </summary>

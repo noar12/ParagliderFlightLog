@@ -5,11 +5,13 @@
 
 <RadzenCard Visible="_isAdmin">
     <h2>Admin Settings</h2>
-    <MyNumericInput Label="Max flight by imports" Value="_maxImportFlightCount" ValueChanged="MaxImportFlightCountChanged" />
+    <h3>XcScore</h3>
+    <RadzenText>Installation is @(XcScoreManagerData.ScoreEngineInstalled ? "Running" : "Not Running")</RadzenText>
+    <RadzenText>Number of flight in queue: @_xcScoreQueueCount</RadzenText>
 </RadzenCard>
 <RadzenCard>
     <h2>User Settings</h2>
-    <p>To be done...</p>
+    <RadzenButton Click="CoreService.EnqueueAllUserFlightForScore" Text="Calculate Missing Flight Score" />
 </RadzenCard>
 
 

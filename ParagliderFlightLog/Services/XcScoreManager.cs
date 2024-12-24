@@ -52,7 +52,7 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                     }
 
                     // Reading the result to put it in the requested flight and if ok write in the database associated with the request
-                    string scoreText = await File.ReadAllTextAsync(scorePath);
+                    string scoreText = await File.ReadAllTextAsync(scorePath, stoppingToken);
                     var xcScore = XcScore.FromJson(scoreText);
                     if (xcScore != null)
                     {

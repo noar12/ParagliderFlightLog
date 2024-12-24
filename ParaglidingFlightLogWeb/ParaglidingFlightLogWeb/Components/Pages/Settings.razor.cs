@@ -1,16 +1,19 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Identity;
-using System.Xml;
+using ParagliderFlightLog.Services;
+using ParaglidingFlightLogWeb.Services;
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
 
-public partial class Settings
+public sealed partial class Settings : IDisposable
 {
     private List<string>? _adminsId = [];
     private bool _isAdmin;
-    private double _maxImportFlightCount;
+    private IDisposable? _disposable;
+    private int _xcScoreQueueCount;
     [Inject] private IConfiguration Config { get; set; } = null!;
+    [Inject] private CoreService CoreService { get; set; } = null!;
+    [Inject] private XcScoreManagerData XcScoreManagerData { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     /// <summary>
     /// <inheritdoc/>
@@ -20,7 +23,7 @@ public partial class Settings
     {
         _adminsId = Config.GetSection("Administration:Admins").Get<List<string>>();
         var userClaim = (await AuthenticationStateTask).User;
-        if (userClaim?.Identity?.Name is null)
+        if (userClaim.Identity?.Name is null)
         {
             _isAdmin = false;
         }
@@ -28,15 +31,24 @@ public partial class Settings
         {
             _isAdmin = _adminsId?.Contains(userClaim.Identity.Name) ?? false;
         }
+
+        if (_isAdmin && _disposable is null)
+        {
+            _disposable = XcScoreManagerData.FlightToProcess.Subscribe(async count => await XcScoreQueueHasChanged(count));
+        }
     }
 
-    private void MaxImportFlightCountChanged(double newValue){
-        _maxImportFlightCount = newValue;
-        WriteAdminSettings("MaxImportFlightCount", _maxImportFlightCount);
-    }
-
-    private void WriteAdminSettings(string v, double maxImportFlightCount)
+    private async Task XcScoreQueueHasChanged(int xcScoreQueueCount)
     {
-        throw new NotImplementedException();
+        _xcScoreQueueCount = xcScoreQueueCount;
+        await InvokeAsync(StateHasChanged);
     }
+
+    /// <summary>
+    /// Dispose the page
+    /// </summary>
+    public void Dispose() {
+        _disposable?.Dispose();
+    }
+    
 }
