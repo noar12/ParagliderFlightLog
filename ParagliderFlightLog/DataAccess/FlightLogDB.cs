@@ -37,8 +37,15 @@ public class FlightLogDB
     public void Init(string userId)
     {
         UserId = userId;
-        if (!_db.DbExists(LoadConnectionString()))
+        if (!SqliteDataAccess.DbExists(LoadConnectionString()))
         {
+            string? dbDir = Path.GetDirectoryName(SqliteDataAccess.GetDbPathFromConnectionString(LoadConnectionString()));
+            if (dbDir == null)
+            {
+                _logger.LogError("Unable to locate the database directory.");
+                return;
+            }
+            Directory.CreateDirectory(dbDir);
             CreateFlightLogDB();
         }
         else

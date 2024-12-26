@@ -14,15 +14,28 @@ namespace ParagliderFlightLog.DataAccess
         {
             _logger = logger;
         }
-        public bool DbExists(string connectionString)
+        /// <summary>
+        /// Return true if a db file corresponding to the <param name="connectionString"></param> exists
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        public static bool DbExists(string connectionString)
 		{
-			string pattern = @"(?<=Data Source=).*?(?=;)";
-			var rgx = new Regex(pattern);
-			Match match = rgx.Match(connectionString);
-			
-
-			return File.Exists(match.Value);
+			return File.Exists(GetDbPathFromConnectionString(connectionString));
 		}
+        /// <summary>
+        /// return the path of the connection string
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        public static string GetDbPathFromConnectionString(string connectionString)
+        {
+            string pattern = @"(?<=Data Source=).*?(?=;)";
+            var rgx = new Regex(pattern);
+            Match match = rgx.Match(connectionString);
+            return match.Value;
+        }
+        
 		public List<T> LoadData<T, U>(string sqlStatement, U parameters, string connectionString)
 		{
             // T is the model of the data we want to load
