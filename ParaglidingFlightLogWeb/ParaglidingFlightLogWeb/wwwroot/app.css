@@ -7,7 +7,9 @@ html, body {
     --rz-layout-background-color: none;
 }
 
-
+.rz-fileupload-files {
+    display: none !important;
+}
 
 a, .btn-link {
     color: #006bb7;

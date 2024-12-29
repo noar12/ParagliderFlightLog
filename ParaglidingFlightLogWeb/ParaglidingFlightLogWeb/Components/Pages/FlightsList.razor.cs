@@ -42,7 +42,7 @@ public partial class FlightsList
 
     IList<FlightViewModel> SelectedFlights = [];
     private int _flightUploadProgress;
-    private bool _showflightUploadProgress;
+    private bool _showFlightUploadProgress;
 
     FlightViewModel? LastSelectedFlight
     {
@@ -67,6 +67,7 @@ public partial class FlightsList
             await Mvm.Init(userId);
             Logger.LogInformation("Initialized for {User}", currentUser.UserName);
         }
+        
     }
 
     /// <summary>
@@ -211,6 +212,7 @@ public partial class FlightsList
 
         StateHasChanged();
         await _dataGrid.Reload();
+        _showFlightUploadProgress = false;
     }
 
     private void NotifyUser(string message, NotificationSeverity severity = NotificationSeverity.Error)
@@ -228,7 +230,7 @@ public partial class FlightsList
 
     private async Task OnFlightUploadProgress(UploadProgressArgs args)
     {
-        _showflightUploadProgress = true;
+        _showFlightUploadProgress = true;
         _flightUploadProgress = args.Progress;
     }
 }
