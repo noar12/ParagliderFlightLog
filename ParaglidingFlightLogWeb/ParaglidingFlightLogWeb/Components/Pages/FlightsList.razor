@@ -11,16 +11,15 @@
 @rendermode InteractiveServer
 @attribute [Authorize]
 <PageTitle>Flight list</PageTitle>
-<InputFile OnChange="@OnAddFlights" multiple accept=".igc" />
-@*<RadzenUpload Icon="add_circle"
+<RadzenUpload Icon="add_circle"
               ChooseText="Add new flight" 
               Multiple="true"
               Progress=@(args => OnFlightUploadProgress(args))
               Accept=".igc"
-              Change="OnAddNewFlights"
+              Change="OnAddFlights"
               MaxFileCount="MAX_FILE_COUNT"
               
-              />*@
+              />
 <RadzenProgressBar Value=@_flightUploadProgress class="rz-mt-6" Visible=@_showflightUploadProgress />
 @if (Mvm.FlightListViewModel.Count > 0)
 {

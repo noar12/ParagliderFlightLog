@@ -155,25 +155,25 @@ public partial class FlightsList
         StateHasChanged();
     }
 
-    async Task OnAddFlights(InputFileChangeEventArgs e)
+    async Task OnAddFlights(UploadChangeEventArgs e)
     {
         Logger.LogInformation("ContentRootPath is : {ContentRootPath}", Environment.ContentRootPath);
         var l_IgcFilePaths = new List<string>();
-
-        if (e.FileCount > MAX_FILE_COUNT)
+        var files = e.Files.ToList();
+        if (files.Count > MAX_FILE_COUNT)
         {
             NotifyUser($"Cannot accept more than {MAX_FILE_COUNT} files");
             return;
         }
 
-        if (e.GetMultipleFiles(MAX_FILE_COUNT).Select(f => f.Name)
+        if (files.Select(f => f.Name)
             .Any(n => !n.ToLower().EndsWith(ALLOWED_FILE_EXTENSION)))
         {
             NotifyUser("Only igc file");
             return;
         }
 
-        foreach (var file in e.GetMultipleFiles(MAX_FILE_COUNT))
+        foreach (var file in files)
         {
             try
             {
@@ -188,11 +188,11 @@ public partial class FlightsList
                 await using FileStream fs = new(path, FileMode.Create);
                 await file.OpenReadStream(MAX_FILE_SIZE).CopyToAsync(fs);
                 l_IgcFilePaths.Add(fs.Name);
-                Logger.LogDebug("File copied to {fs.Name}", fs.Name);
+                Logger.LogDebug("File copied to {Name}", fs.Name);
             }
             catch (Exception ex)
             {
-                Logger.LogError("File: {Filename} Error: {Error}", file.Name, ex.Message);
+                Logger.LogError(ex, "File: {Filename}", file.Name);
             }
         }
 
@@ -230,80 +230,5 @@ public partial class FlightsList
     {
         _showflightUploadProgress = true;
         _flightUploadProgress = args.Progress;
-    }
-
-    private async Task OnAddNewFlights(UploadChangeEventArgs arg)
-    {
-        Logger.LogInformation("ContentRootPath is : {ContentRootPath}", Environment.ContentRootPath);
-
-        if (arg.Files.Count() > MAX_FILE_COUNT)
-        {
-            NotifyUser($"Cannot accept more than {MAX_FILE_COUNT} files");
-            return;
-        }
-
-        if (arg.Files.Select(x => x.Name)
-            .Any(n => !n.ToLower().EndsWith(ALLOWED_FILE_EXTENSION)))
-        {
-            NotifyUser("Only igc file");
-            return;
-        }
-        var formData = new MultipartFormDataContent();
-        foreach (var file in arg.Files)
-        {
-            Logger.LogInformation("File received: {Name}", file.Name);
-            var content = new StreamContent(file.OpenReadStream());
-            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/octet-stream");
-            formData.Add(content, "files", file.Name);
-        }
-
-        try
-        {
-            HttpClient.BaseAddress = new Uri(Navigation.BaseUri);
-            
-            var response = await HttpClient.PostAsJsonAsync("api/FileUploader/upload-igc", formData);
-            if (response.IsSuccessStatusCode)
-            {
-                Logger.LogInformation("Files uploaded");
-                var result = await response.Content.ReadFromJsonAsync<UploadResult>();
-            
-                if (result != null && result.FilePaths.Count > 0)
-                {
-                    string[] filePathsStrings = result.FilePaths.ToArray();
-                    Mvm.AddFlightsFromIGC(filePathsStrings);
-                    Logger.LogInformation("Files imported");
-                    foreach (string filepath in filePathsStrings)
-                    {
-                        try
-                        {
-                            System.IO.File.Delete(filepath);
-                        }
-                        catch (System.IO.IOException ex)
-                        {
-                            Logger.LogError("Cannot delete {FilePath}: {Ex}", filepath, ex);
-                        }
-                    }
-                }
-            
-                StateHasChanged();
-                await _dataGrid.Reload();
-            }
-            else
-            {
-                Logger.LogError("{Message}", response.ReasonPhrase);
-            }
-        }
-        catch (Exception e)
-        {
-            Logger.LogError(e,"Cannot upload file");
-        }
-        
-        
-
-    }
-
-    private class UploadResult
-    {
-        public List<string> FilePaths { get; set; } = [];
     }
 }

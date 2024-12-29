@@ -27,7 +27,6 @@ public class FileUploaderController : ControllerBase
     /// <param name="files"></param>
     /// <returns></returns>
     [HttpPost("upload-igc", Name = "PostUploadIgc")]
-    [Consumes("multipart/form-data")]
     public async Task<IActionResult> PostUploadIgc(IFormFile[] files)
     {
         try
