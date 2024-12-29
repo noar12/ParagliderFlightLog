@@ -62,8 +62,6 @@ try
     builder.Services.AddScoped<SqliteDataAccess>();
     builder.Services.AddSingleton<XcScoreManagerData>();
     builder.Services.AddHostedService<XcScoreManager>();
-
-    builder.Services.AddControllers();
     
     var app = builder.Build();
 
@@ -100,7 +98,6 @@ try
     app.MapAdditionalIdentityEndpoints();
 
     //app.UseSerilogRequestLogging(); // log all the request
-    app.MapControllers();
     await app.RunAsync();
     Log.Information("Application stopped");
 }
