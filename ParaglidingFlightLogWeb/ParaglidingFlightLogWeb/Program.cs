@@ -12,7 +12,7 @@ using ParaglidingFlightLogWeb.Data;
 using ParaglidingFlightLogWeb.Services;
 using Radzen;
 using Serilog;
-
+using System.Globalization;
 
 
 try
@@ -64,7 +64,13 @@ try
     builder.Services.AddHostedService<XcScoreManager>();
     
     var app = builder.Build();
-
+    // Set the culture for something globally accepted... TODO Customize for each client
+    var customCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
+    customCulture.DateTimeFormat.ShortDatePattern = "dd.MM.yyyy";
+    customCulture.DateTimeFormat.LongDatePattern = "dd MMMM yyyy";
+    CultureInfo.DefaultThreadCurrentCulture = customCulture;
+    CultureInfo.DefaultThreadCurrentUICulture = customCulture;
+    
     var config = app.Services.GetService<IConfiguration>()!;
     Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(config)
