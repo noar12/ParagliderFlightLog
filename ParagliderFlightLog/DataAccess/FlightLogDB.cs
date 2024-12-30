@@ -868,7 +868,7 @@ public class FlightLogDB
     {
         if (UserId is null) { return []; }
         string sql = """
-                     SELECT Photo_ID, REF_FLIGHT_ID
+                     SELECT Photo_ID, REF_Flight_ID
                      FROM FlightPhotos
                      WHERE REF_FLIGHT_ID = @Flight_ID;
                      """;
@@ -887,6 +887,6 @@ public class FlightLogDB
                      (Photo_ID, REF_Flight_ID)
                      VALUES (@Photo_ID, @Ref_Flight_ID);
                      """;
-        _db.SaveData(sql, new{ Photo_ID = flightPhoto.ID, Ref_Flight_ID = flightPhoto.REF_Flight_ID}, LoadConnectionString());
+        _db.SaveData(sql, new{ Photo_ID = flightPhoto.Photo_ID, Ref_Flight_ID = flightPhoto.REF_Flight_ID}, LoadConnectionString());
     }
 }

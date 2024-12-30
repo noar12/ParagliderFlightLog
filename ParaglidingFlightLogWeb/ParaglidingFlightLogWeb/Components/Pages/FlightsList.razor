@@ -20,14 +20,15 @@
                   Change="OnAddFlights"
                   MaxFileCount="MAX_FILE_COUNT"
     />
-    <RadzenProgressBar Value=@_flightUploadProgress class="rz-mt-6" Visible=@_showFlightUploadProgress />
+    <RadzenProgressBar Value=@_flightUploadProgress class="rz-mt-6" Visible=@_showFlightUploadProgress/>
 </RadzenStack>
 
 @if (Mvm.FlightListViewModel.Count > 0)
 {
     <RadzenRow>
         <RadzenColumn Size="12" SizeSM="8" Style="overflow: auto;">
-            <RadzenDataGrid @ref="_dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+            <RadzenDataGrid @ref="_dataGrid" AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                             AllowPaging="false"
                             AllowVirtualization="true"
                             style="height: calc(100vh - 180px);"
@@ -35,9 +36,12 @@
                             SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedFlights
                             ContextMenu=@(args => ShowContextMenuWithItems(args))>
                 <Columns>
-                    <RadzenDataGridColumn MinWidth="200px" TItem="FlightViewModel" Property="TakeOffDateTime" Title="Date/Time" Width="150px" SortOrder="SortOrder.Descending" />
-                    <RadzenDataGridColumn MinWidth="200px" TItem="FlightViewModel" Property="TakeOffSiteName" Title="Site" Width="200px"/>
-                    <RadzenDataGridColumn MinWidth="150px" TItem="FlightViewModel" Property="FlightDuration" Title="Duration" Width="150px" />
+                    <RadzenDataGridColumn MinWidth="200px" TItem="FlightViewModel" Property="TakeOffDateTime"
+                                          Title="Date/Time" Width="150px" SortOrder="SortOrder.Descending"/>
+                    <RadzenDataGridColumn MinWidth="200px" TItem="FlightViewModel" Property="TakeOffSiteName"
+                                          Title="Site" Width="200px"/>
+                    <RadzenDataGridColumn MinWidth="150px" TItem="FlightViewModel" Property="FlightDuration"
+                                          Title="Duration" Width="150px"/>
                 </Columns>
             </RadzenDataGrid>
 
@@ -49,12 +53,17 @@
                 {
                     <RadzenRow>
                         <RadzenColumn>
-                            <RadzenButton Click="OnShowMapClick" Icon="map" Text="Show Flight On Map" Visible="@(LastSelectedFlight.FlightPoints.Count>0)"/>
-                            <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName" />
-                            <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxAltitude" UnitSymbol="m" Format="F0" />
-                            <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength" UnitSymbol="km" Format="F2" />
-                            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb" UnitSymbol="m/s" Format="F1" />
-                            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink" UnitSymbol="m/s" Format="F1" />
+                            <RadzenButton Click="OnShowMapClick" Icon="map" Text="Show Flight On Map"
+                                          Visible="@(LastSelectedFlight.FlightPoints.Count > 0)"/>
+                            <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName"/>
+                            <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxAltitude"
+                                                      UnitSymbol="m" Format="F0"/>
+                            <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength"
+                                                      UnitSymbol="km" Format="F2"/>
+                            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb"
+                                                      UnitSymbol="m/s" Format="F1"/>
+                            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink"
+                                                      UnitSymbol="m/s" Format="F1"/>
                         </RadzenColumn>
                         <RadzenColumn>
                             <RadzenStack Orientation="Orientation.Vertical">
@@ -67,7 +76,8 @@
                                               MaxFileCount="MAX_FILE_COUNT"
                                               Visible="@(LastSelectedFlight.FlightPoints.Count > 0)"
                                 />
-                                <RadzenProgressBar Value=@_flightUploadProgress class="rz-mt-6" Visible=@_showFlightUploadProgress />
+                                <RadzenProgressBar Value=@_flightUploadProgress class="rz-mt-6"
+                                                   Visible=@_showFlightUploadProgress/>
                             </RadzenStack>
                             @if (LastSelectedFlight.XcScore is not null)
                             {
@@ -75,15 +85,32 @@
                                 <MyTextIndicator Label="Type of flight" Text="@LastSelectedFlight.XcScore.Type"/>
                             }
                         </RadzenColumn>
-                </RadzenRow>
-                    <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false Style="height:450px; overflow-y:auto;" />
-                    <ul>
-                        @foreach (var photo in LastSelectedFlight.FlightWithData.FlightPhotos)
-                        {
-                            <li>@photo.PhotoFileName</li>
-                        }
-                    </ul>
-        
+                    </RadzenRow>
+                    <RadzenCarousel>
+                        <Items>
+
+                            <RadzenCarouselItem>
+                                <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false
+                                                 Style="height:450px; overflow-y:auto;"/>
+                            </RadzenCarouselItem>
+                            @if (LastSelectedFlight.FlightWithData is not null)
+                            {
+                                
+                                    @foreach (var photo in LastSelectedFlight.GetFlightPhotos())
+                                    {
+                                        <RadzenCarouselItem>
+                                        <RadzenImage
+                                            Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
+                                            AlternateText="A photo of flight uploaded by the user"
+                                            Style="max-height: 450px; max-width: 450px"
+                                        />
+                                        </RadzenCarouselItem>
+                                    }
+                                
+                            }
+
+                        </Items>
+                    </RadzenCarousel>
                 }
                 else
                 {

@@ -7,7 +7,7 @@ public class FlightPhoto
     /// <summary>
     /// ID
     /// </summary>
-    public string ID { get; set; } = Guid.NewGuid().ToString();
+    public string Photo_ID { get; set; } = Guid.NewGuid().ToString();
 
     /// <summary>
     /// User Id associated with the photo
@@ -25,5 +25,5 @@ public class FlightPhoto
     /// <summary>
     /// File name of the photo on the disk
     /// </summary>
-    public string PhotoFileName => $"{ID}.jpg";
+    public string PhotoFileName => $"{Photo_ID}.jpg";
 }

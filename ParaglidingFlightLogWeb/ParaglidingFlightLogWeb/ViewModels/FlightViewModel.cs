@@ -203,13 +203,11 @@ public class FlightViewModel
     /// <summary>
     /// Flight with all the data from the igc file
     /// </summary>
-    public FlightWithData? FlightWithData
-    {
-        get
-        {
-            return _flightWithData ??= _db.GetFlightWithData(_flight);
-        }
-    }
+    public FlightWithData FlightWithData => _flightWithData ??= _db.GetFlightWithData(_flight);
+    /// <summary>
+    /// Return the photo of the flights for the UI
+    /// </summary>
+    public List<FlightPhotoViewModel> GetFlightPhotos() => FlightWithData.FlightPhotos.Select(x => new FlightPhotoViewModel(x)).ToList();
 
     private double[] GetVerticalRate(int integrationStep)
     {

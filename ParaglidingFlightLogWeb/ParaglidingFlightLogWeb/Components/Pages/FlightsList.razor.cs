@@ -37,8 +37,7 @@ public partial class FlightsList
     [Inject] ILogger<FlightsList> Logger { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
-    [Inject] HttpClient HttpClient { get; set; } = null!;
-    [Inject] NavigationManager Navigation { get; set; } = null!;
+
     private RadzenDataGrid<FlightViewModel> _dataGrid = new();
 
     IList<FlightViewModel> SelectedFlights = [];
@@ -238,9 +237,9 @@ public partial class FlightsList
     private async Task AddPhotos(UploadChangeEventArgs e)
     {
         var files = e.Files.ToList();
-        if (files.Count > MAX_FILE_COUNT)
+        if (files.Count > MAX_PHOTO_COUNT)
         {
-            NotifyUser($"Cannot accept more than {MAX_FILE_COUNT} files");
+            NotifyUser($"Cannot accept more than {MAX_PHOTO_COUNT} files");
             return;
         }
 
@@ -269,10 +268,17 @@ public partial class FlightsList
                 Logger.LogError(ex, "File: {Filename}", file.Name);
             }
         }
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task OnPhotosProgress(UploadProgressArgs args)
     {
         throw new NotImplementedException();
+    }
+    
+
+    private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
+    {
+        return Mvm.GetBase64StringPhotoData(photo);
     }
 }

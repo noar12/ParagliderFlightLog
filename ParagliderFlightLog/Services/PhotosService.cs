@@ -57,5 +57,4 @@ public class PhotosService
         output = Path.Combine(output, userFlightPhotoDirName, flightPhoto.REF_Flight_ID, flightPhoto.PhotoFileName);
         return output;
     }
-    
 }

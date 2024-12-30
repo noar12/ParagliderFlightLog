@@ -286,4 +286,13 @@ public class CoreService
         };
         _photosService.SaveFlightPhoto(photo, _flightLog);
     }
+    /// <summary>
+    /// Return the base 64 encoded string of the image
+    /// </summary>
+    /// <param name="photo"></param>
+    /// <returns></returns>
+    public string GetBase64StringPhotoData(FlightPhotoViewModel photo)
+    {
+        return photo.GetBase64PhotoData(_photosService);
+    }
 }
