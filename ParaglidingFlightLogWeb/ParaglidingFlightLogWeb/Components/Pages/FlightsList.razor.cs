@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using Radzen;
 using Radzen.Blazor;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
-using Microsoft.JSInterop;
 using ParaglidingFlightLogWeb.Services;
 
 
@@ -21,6 +19,9 @@ public partial class FlightsList
     private const int MAX_FILE_COUNT = 10;
     private const long MAX_FILE_SIZE = 2 * 1024 * 1024;
     private const string ALLOWED_FILE_EXTENSION = ".igc";
+    private const int MAX_PHOTO_COUNT = 3;
+    private const int MAX_PHOTO_SIZE = 5*1024*1024;
+    private const string PHOTO_EXTENSION = ".jpg";
 
     /// <summary>
     /// Flight Id reflecting what flight is currently selected or used to acces a flight directly at page loading
@@ -159,7 +160,7 @@ public partial class FlightsList
     async Task OnAddFlights(UploadChangeEventArgs e)
     {
         Logger.LogInformation("ContentRootPath is : {ContentRootPath}", Environment.ContentRootPath);
-        var l_IgcFilePaths = new List<string>();
+        var igcFilePaths = new List<string>();
         var files = e.Files.ToList();
         if (files.Count > MAX_FILE_COUNT)
         {
@@ -188,7 +189,7 @@ public partial class FlightsList
                 var path = Path.Combine(Environment.ContentRootPath, "tmp", trustedFileNameForFileStorage);
                 await using FileStream fs = new(path, FileMode.Create);
                 await file.OpenReadStream(MAX_FILE_SIZE).CopyToAsync(fs);
-                l_IgcFilePaths.Add(fs.Name);
+                igcFilePaths.Add(fs.Name);
                 Logger.LogDebug("File copied to {Name}", fs.Name);
             }
             catch (Exception ex)
@@ -197,8 +198,8 @@ public partial class FlightsList
             }
         }
 
-        Mvm.AddFlightsFromIGC([.. l_IgcFilePaths]);
-        foreach (string filepath in l_IgcFilePaths)
+        Mvm.AddFlightsFromIGC([.. igcFilePaths]);
+        foreach (string filepath in igcFilePaths)
         {
             try
             {
@@ -232,5 +233,46 @@ public partial class FlightsList
     {
         _showFlightUploadProgress = true;
         _flightUploadProgress = args.Progress;
+    }
+
+    private async Task AddPhotos(UploadChangeEventArgs e)
+    {
+        var files = e.Files.ToList();
+        if (files.Count > MAX_FILE_COUNT)
+        {
+            NotifyUser($"Cannot accept more than {MAX_FILE_COUNT} files");
+            return;
+        }
+
+        if (files.Select(f => f.Name)
+            .Any(n => !n.ToLower().EndsWith(PHOTO_EXTENSION)))
+        {
+            NotifyUser("Only jpg file");
+            return;
+        }
+        foreach (var file in files)
+        {
+            try
+            {
+                if (file.Size > MAX_PHOTO_SIZE)
+                {
+                    NotifyUser($"Individual file has to be smaller than {MAX_PHOTO_SIZE/ 1024} kB");
+                    return;
+                }
+
+                using var memory = new MemoryStream();
+                await file.OpenReadStream(MAX_PHOTO_SIZE).CopyToAsync(memory);
+                Mvm.SavePhoto(LastSelectedFlight, memory);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "File: {Filename}", file.Name);
+            }
+        }
+    }
+
+    private async Task OnPhotosProgress(UploadProgressArgs args)
+    {
+        throw new NotImplementedException();
     }
 }

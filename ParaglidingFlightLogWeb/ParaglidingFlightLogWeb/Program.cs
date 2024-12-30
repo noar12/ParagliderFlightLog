@@ -62,7 +62,7 @@ try
     builder.Services.AddScoped<SqliteDataAccess>();
     builder.Services.AddSingleton<XcScoreManagerData>();
     builder.Services.AddHostedService<XcScoreManager>();
-    
+    builder.Services.AddTransient<PhotosService>();
     var app = builder.Build();
     // Set the culture for something globally accepted... TODO Customize for each client
     var customCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();

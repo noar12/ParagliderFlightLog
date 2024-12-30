@@ -78,11 +78,11 @@ public class FlightLogDB
         _logger.LogInformation("Migrating db from v1.2.0");
         const string sqlCreatePhotosTable = """
                                             BEGIN TRANSACTION;
-                                            CREATE TABLE "Photos" (
+                                            CREATE TABLE "FlightPhotos" (
                                                 "Photo_ID" TEXT NOT NULL UNIQUE,
-                                                "REF_FLIGHT_ID"    TEXT NOT NULL,
+                                                "REF_Flight_ID"    TEXT NOT NULL,
                                                 PRIMARY KEY("Photo_ID"),
-                                                FOREIGN KEY("REF_FLIGHT_ID") REFERENCES "Flights"("Flight_ID"));
+                                                FOREIGN KEY("REF_Flight_ID") REFERENCES "Flights"("Flight_ID"));
                                             UPDATE DbInformations SET VersionMinor = 3;
                                             COMMIT;
                                             """;
@@ -144,13 +144,14 @@ public class FlightLogDB
         return _db.LoadData<DbInformations, dynamic>(sql, new { }, LoadConnectionString())[0];
     }
 
-    private static void AddFlightProperties(FlightWithData flight)
+    private void AddFlightProperties(FlightWithData flight)
     {
         flight.FlightPoints = GetFlightPointsFromIgcContent(flight.IgcFileContent);
         flight.TakeOffPoint = GetTakeOffPointFromPointList(flight.FlightPoints);
         flight.FlightDuration = GetFlightDurationFromPointList(flight.FlightPoints) ??
                                 TimeSpan.FromSeconds(flight.FlightDuration_s);
         flight.IGC_GliderName = GetGliderNameFromIgcContent(flight.IgcFileContent);
+        flight.FlightPhotos = GetAllPhotoForFlight(flight.ToFlight());
     }
 
     private void CreateFlightLogDB()
@@ -191,11 +192,11 @@ public class FlightLogDB
     ""VersionFix""	INTEGER NOT NULL,
     ""UserId""	TEXT NOT NULL
 )";
-        string sqlCreatePhotosTable = @"CREATE TABLE ""Photos"" (
+        string sqlCreatePhotosTable = @"CREATE TABLE ""FlightPhotos"" (
     ""Photo_ID"" TEXT NOT NULL UNIQUE,
-    ""REF_FLIGHT_ID""    TEXT NOT NULL,
+    ""REF_Flight_ID""    TEXT NOT NULL,
     PRIMARY KEY(""Photo_ID""),
-    FOREIGN KEY(""REF_FLIGHT_ID"") REFERENCES ""Flights""(""Flight_ID""));";
+    FOREIGN KEY(""REF_Flight_ID"") REFERENCES ""Flights""(""Flight_ID""));";
         _logger.LogInformation("Create new db for {UserId}", UserId);
         _db.SaveData(sqlCreateDbInfo, new { }, LoadConnectionString());
         var dbInfo = new DbInformations() { VersionMajor = 1, VersionMinor = 3, VersionFix = 0, UserId = UserId! };
@@ -856,5 +857,36 @@ public class FlightLogDB
         output.XcScore = GetFlightScore(output);
 
         return output;
+    }
+    /// <summary>
+    /// Get the meta data of all the photo for the <paramref name="flight"/>
+    /// </summary>
+    /// <param name="flight"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public List<FlightPhoto> GetAllPhotoForFlight(Flight flight)
+    {
+        if (UserId is null) { return []; }
+        string sql = """
+                     SELECT Photo_ID, REF_FLIGHT_ID
+                     FROM FlightPhotos
+                     WHERE REF_FLIGHT_ID = @Flight_ID;
+                     """;
+        var output = _db.LoadData<FlightPhoto, dynamic>(sql, flight, LoadConnectionString());
+        foreach (var flightPhoto in output)
+        {
+            flightPhoto.REF_User_Id = UserId;
+        }
+        return output;
+    }
+    
+    public void WriteFlightPhoto(FlightPhoto flightPhoto)
+    {
+        string sql = """
+                     INSERT INTO FlightPhotos
+                     (Photo_ID, REF_Flight_ID)
+                     VALUES (@Photo_ID, @Ref_Flight_ID);
+                     """;
+        _db.SaveData(sql, new{ Photo_ID = flightPhoto.ID, Ref_Flight_ID = flightPhoto.REF_Flight_ID}, LoadConnectionString());
     }
 }

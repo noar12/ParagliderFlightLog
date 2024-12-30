@@ -22,6 +22,7 @@ public class CoreService
     private readonly ILogger<CoreService> _logger;
     private readonly LogFlyDB _logFlyDB;
     private readonly XcScoreManagerData _xcScoreManagerData;
+    private readonly PhotosService _photosService;
 
     /// <summary>
     /// ctor
@@ -30,13 +31,15 @@ public class CoreService
     /// <param name="logger"></param>
     /// <param name="logFlyDB"></param>
     /// <param name="xcScoreManagerData"></param>
+    /// <param name="photosService"></param>
     public CoreService(FlightLogDB flightLogDB, ILogger<CoreService> logger, LogFlyDB logFlyDB,
-        XcScoreManagerData xcScoreManagerData)
+        XcScoreManagerData xcScoreManagerData, PhotosService photosService)
     {
         _flightLog = flightLogDB;
         _logger = logger;
         _logFlyDB = logFlyDB;
         _xcScoreManagerData = xcScoreManagerData;
+        _photosService = photosService;
         _logger.LogInformation("initialized");
     }
 
@@ -262,4 +265,25 @@ public class CoreService
     /// All the glider
     /// </summary>
     public List<GliderViewModel> GliderListViewModel { get; private set; } = [];
+    
+    /// <summary>
+    /// Save photo to file disk and meta data to db
+    /// </summary>
+    /// <param name="lastSelectedFlight"></param>
+    /// <param name="stream"></param>
+    public void SavePhoto(FlightViewModel lastSelectedFlight, MemoryStream stream)
+    {
+        if (_flightLog.UserId is null)
+        {
+            _logger.LogWarning("FlightLogDb was not initialized");
+            return;
+        }
+        FlightPhoto photo = new FlightPhoto()
+        {
+            REF_Flight_ID = lastSelectedFlight.FlightID,
+            REF_User_Id = _flightLog.UserId,
+            PhotoStream = stream,
+        };
+        _photosService.SaveFlightPhoto(photo, _flightLog);
+    }
 }

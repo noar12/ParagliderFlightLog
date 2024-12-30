@@ -60,6 +60,10 @@ public class FlightWithData
     /// </summary>
     public XcScore? XcScore { get; set; }
     /// <summary>
+    /// List of all the photos of the flight
+    /// </summary>
+    public List<FlightPhoto> FlightPhotos { get; set; } = [];
+    /// <summary>
     /// Returns a Flight without some heavy data like the IGC content
     /// </summary>
     /// <returns></returns>
