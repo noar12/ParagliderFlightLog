@@ -135,51 +135,7 @@
             <RadzenColumn SizeLG="6">
                 <RadzenCard class="rz-overflow-auto" >
                     <RadzenText TextStyle="TextStyle.H4" Text="Trigger some memories" />
-                    @if (_flightToRemember is not null)
-                    {
-                        <RadzenRow>
-                            <RadzenColumn>
-                                <MyTextIndicator Label="Flight date" Text="@_flightToRemember.TakeOffDateTime.ToString("d")" />
-                            </RadzenColumn>
-                            <RadzenColumn>
-                                <MyTextIndicator Label="Site" Text="@_flightToRemember.TakeOffSiteName" />
-                            </RadzenColumn>
-                            <RadzenColumn>
-                                <MyTextIndicator Label="Glider" Text="@_flightToRemember.GliderName" />
-                            </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow>
-                            <RadzenColumn>
-                                <MyPhysicalValueIndicator Label="Max Height" Value="@_flightToRemember.MaxAltitude" UnitSymbol="m" Format="F0" />
-                                <MyPhysicalValueIndicator Label="Trace Length" Value="@_flightToRemember.TraceLength" UnitSymbol="km" Format="F2" />
-                                <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@_flightToRemember.MaxClimb" UnitSymbol="m/s" Format="F1" />
-                                <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@_flightToRemember.MaxSink" UnitSymbol="m/s" Format="F1" />
-                            </RadzenColumn>
-                            <RadzenColumn>
-                                @if (_flightToRemember.XcScore is not null)
-                                {
-                                    <MyNumericIndicator Label="Score" Value="@_flightToRemember.XcScore.Points" />
-                                    <MyTextIndicator Label="Type of flight" Text="@_flightToRemember.XcScore.Type" />
-                                }
-                            </RadzenColumn>
-                        </RadzenRow>
-                        <RadzenRow>
-                            <RadzenColumn SizeSM="6">
-                                <MyTextIndicator Style="max-height: 400px;" Class="rz-overflow-auto" Label="Comment" Text="@_flightToRemember.Comment" Bold=false />
-                            </RadzenColumn>
-                            <RadzenColumn SizeSM="6">
-                                @if (_flightToRemember.FlightPoints.Count > 0)
-                                {
-                                    <ShowFlightOnMap FlightToShow="@_flightToRemember" Height="400" />
-                                }
-
-                            </RadzenColumn>
-                        </RadzenRow>
-                    }
-                    else
-                    {
-                        <p>Loading...</p>
-                    }
+                    <FlightDetails Flight="_flightToRemember" CoreService="CoreService"/>
                 </RadzenCard>
             </RadzenColumn>
         </RadzenRow>

@@ -86,27 +86,24 @@
                             }
                         </RadzenColumn>
                     </RadzenRow>
-                    <RadzenCarousel>
+                    <RadzenCarousel Auto="false">
                         <Items>
 
                             <RadzenCarouselItem>
                                 <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false
                                                  Style="height:450px; overflow-y:auto;"/>
                             </RadzenCarouselItem>
-                            @if (LastSelectedFlight.FlightWithData is not null)
+
+
+                            @foreach (var photo in LastSelectedFlight.GetFlightPhotos())
                             {
-                                
-                                    @foreach (var photo in LastSelectedFlight.GetFlightPhotos())
-                                    {
-                                        <RadzenCarouselItem>
-                                        <RadzenImage
-                                            Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
-                                            AlternateText="A photo of flight uploaded by the user"
-                                            Style="max-height: 450px; max-width: 450px"
-                                        />
-                                        </RadzenCarouselItem>
-                                    }
-                                
+                                <RadzenCarouselItem>
+                                    <RadzenImage
+                                        Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
+                                        AlternateText="A photo of flight uploaded by the user"
+                                        Style="max-height: 450px; max-width: 450px"
+                                    />
+                                </RadzenCarouselItem>
                             }
 
                         </Items>

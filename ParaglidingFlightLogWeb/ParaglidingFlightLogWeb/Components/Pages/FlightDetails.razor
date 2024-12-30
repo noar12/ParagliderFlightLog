@@ -1,0 +1,85 @@
+@using ParaglidingFlightLogWeb.Services
+@using ParaglidingFlightLogWeb.ViewModels
+@if (Flight is not null)
+{
+    <RadzenRow>
+        <RadzenColumn>
+            <MyTextIndicator Label="Flight date" Text="@Flight.TakeOffDateTime.ToString("d")"/>
+        </RadzenColumn>
+        <RadzenColumn>
+            <MyTextIndicator Label="Site" Text="@Flight.TakeOffSiteName"/>
+        </RadzenColumn>
+        <RadzenColumn>
+            <MyTextIndicator Label="Glider" Text="@Flight.GliderName"/>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn>
+            <MyPhysicalValueIndicator Label="Max Height" Value="@Flight.MaxAltitude" UnitSymbol="m" Format="F0"/>
+            <MyPhysicalValueIndicator Label="Trace Length" Value="@Flight.TraceLength" UnitSymbol="km" Format="F2"/>
+            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@Flight.MaxClimb" UnitSymbol="m/s" Format="F1"/>
+            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@Flight.MaxSink" UnitSymbol="m/s" Format="F1"/>
+        </RadzenColumn>
+        <RadzenColumn>
+            @if (Flight.XcScore is not null)
+            {
+                <MyNumericIndicator Label="Score" Value="@Flight.XcScore.Points"/>
+                <MyTextIndicator Label="Type of flight" Text="@Flight.XcScore.Type"/>
+            }
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn SizeSM="6">
+            <RadzenCarousel Auto="false">
+                <Items>
+
+                    @if (!string.IsNullOrEmpty(Flight.Comment))
+                    {
+                        <RadzenCarouselItem>
+                            <MyTextIndicator Style="max-height: 400px;" Class="rz-overflow-auto" Label="Comment"
+                                             Text="@Flight.Comment" Bold="false"/>
+                        </RadzenCarouselItem>
+                    }
+
+                    @foreach (var photo in Flight.GetFlightPhotos())
+                    {
+                        <RadzenCarouselItem>
+                            <RadzenImage
+                                Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
+                                AlternateText="A photo of flight uploaded by the user"
+                                Style="max-height: 400px; max-width: 600px"
+                            />
+                        </RadzenCarouselItem>
+                    }
+                    
+                </Items>
+            </RadzenCarousel>
+        </RadzenColumn>
+        <RadzenColumn SizeSM="6">
+            @if (Flight.FlightPoints.Count > 0)
+            {
+                <ShowFlightOnMap FlightToShow="@Flight" Height="400"/>
+            }
+        </RadzenColumn>
+    </RadzenRow>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+
+    /// <summary>
+    /// Flight to display
+    /// </summary>
+    [Parameter]
+    public FlightViewModel? Flight { get; set; }
+
+    [Parameter] public CoreService CoreService { get; set; }
+
+    private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
+    {
+        return CoreService?.GetBase64StringPhotoData(photo) ?? "";
+    }
+}
