@@ -52,8 +52,6 @@
             {
                 <RadzenRow>
                     <RadzenColumn>
-                        <RadzenButton Click="OnShowMapClick" Icon="map" Text="Show Flight On Map"
-                                      Visible="@(LastSelectedFlight.FlightPoints.Count > 0)"/>
                         <MyTextIndicator Label="Glider" Text="@LastSelectedFlight.GliderName"/>
                         <MyPhysicalValueIndicator Label="Max Height" Value="@LastSelectedFlight.MaxAltitude"
                                                   UnitSymbol="m" Format="F0"/>
@@ -90,17 +88,21 @@
 
                         <RadzenCarouselItem>
                             <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false
-                                             Style="overflow-y:auto;"/>
+                                             Style="overflow-y:auto;" class="rz-h-100"/>
                         </RadzenCarouselItem>
-
-
+                        @if (LastSelectedFlight.FlightPoints.Count > 0)
+                        {
+                            <RadzenCarouselItem>
+                                <ShowFlightOnMap FlightToShow="LastSelectedFlight" Height="500" />
+                            </RadzenCarouselItem>
+                        }
                         @foreach (var photo in LastSelectedFlight.GetFlightPhotos())
                         {
                             <RadzenCarouselItem>
                                 <RadzenImage
                                     Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
                                     AlternateText="A photo of flight uploaded by the user"
-                                    Style="max-height: 450px; overflow-y:auto;"
+                                    Style="max-height: 500px; overflow-y:auto;"
                                 />
                             </RadzenCarouselItem>
                         }

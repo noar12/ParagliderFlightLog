@@ -6,13 +6,13 @@
 @using Serilog
 @inject ILogger<ShowFlightOnMap> Logger
 <PageTitle>Flight On Map</PageTitle>
-<RadzenCard>
-    <div class="row" id="flightMap" style="@($"min-height: {_mapHeight}px;")"></div>
+<div class="rz-w-100" >
+    <div id="flightMap" style="@($"min-height: {_mapHeight}px;")"></div>
     <PlotlyChart @bind-Config="_chartConfig" @bind-Layout="_chartLayout" 
                  @bind-Data="_trace"
                  ClickAction="HoverOrClickAction" HoverAction="HoverOrClickAction" AfterRender="SubscribeEvents"
                  @ref="_chart" style="@($"min-height: {_chartHeight}px;")"/>
-</RadzenCard>
+</div>
 
 @code {
     /// <summary>
