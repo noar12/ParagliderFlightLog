@@ -19,8 +19,8 @@ public partial class FlightsList
     private const int MAX_FILE_COUNT = 10;
     private const long MAX_FILE_SIZE = 2 * 1024 * 1024;
     private const string ALLOWED_FILE_EXTENSION = ".igc";
-    private const int MAX_PHOTO_COUNT = 3;
-    private const int MAX_PHOTO_SIZE = 5*1024*1024;
+    private const int MAX_PHOTO_COUNT = 5;
+    private const int MAX_PHOTO_SIZE = 7*1024*1024;
     private const string PHOTO_EXTENSION = ".jpg";
 
     /// <summary>
