@@ -29,38 +29,38 @@
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow>
-        <RadzenColumn SizeSM="6">
-            <RadzenCarousel Auto="false">
-                <Items>
 
-                    @if (!string.IsNullOrEmpty(Flight.Comment))
-                    {
-                        <RadzenCarouselItem>
-                            <MyTextIndicator Style="max-height: 400px;" Class="rz-overflow-auto" Label="Comment"
-                                             Text="@Flight.Comment" Bold="false"/>
-                        </RadzenCarouselItem>
-                    }
+        <RadzenCarousel PagerOverlay="false" Auto="false" class="rz-w-100 rz-h-auto">
+            <Items>
 
-                    @foreach (var photo in Flight.GetFlightPhotos())
-                    {
-                        <RadzenCarouselItem>
-                            <RadzenImage
-                                Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
-                                AlternateText="A photo of flight uploaded by the user"
-                                Style="max-height: 400px; max-width: 600px"
-                            />
-                        </RadzenCarouselItem>
-                    }
-                    
-                </Items>
-            </RadzenCarousel>
-        </RadzenColumn>
-        <RadzenColumn SizeSM="6">
-            @if (Flight.FlightPoints.Count > 0)
-            {
-                <ShowFlightOnMap FlightToShow="@Flight" Height="400"/>
-            }
-        </RadzenColumn>
+                @if (!string.IsNullOrEmpty(Flight.Comment))
+                {
+                    <RadzenCarouselItem>
+                        <MyTextIndicator Style="max-height: 400px;" Class="rz-h-100 rz-overflow-auto"
+                                         Label="Comment"
+                                         Text="@Flight.Comment" Bold="false"/>
+                    </RadzenCarouselItem>
+                }
+                @if (Flight.FlightPoints.Count > 0)
+                {
+                    <RadzenCarouselItem>
+                        <ShowFlightOnMap FlightToShow="@Flight" Height="400"/>
+                    </RadzenCarouselItem>
+                }
+                @foreach (var photo in Flight.GetFlightPhotos())
+                {
+                    <RadzenCarouselItem>
+                        <RadzenImage
+                            Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
+                            AlternateText="A photo of flight uploaded by the user"
+                            Style="max-height: 400px; overflow-y:auto;"
+                        />
+                    </RadzenCarouselItem>
+                }
+
+            </Items>
+        </RadzenCarousel>
+
     </RadzenRow>
 }
 else
@@ -82,4 +82,5 @@ else
     {
         return CoreService?.GetBase64StringPhotoData(photo) ?? "";
     }
+
 }
