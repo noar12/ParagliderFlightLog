@@ -271,7 +271,7 @@ public class CoreService
     /// </summary>
     /// <param name="lastSelectedFlight"></param>
     /// <param name="stream"></param>
-    public void SavePhoto(FlightViewModel lastSelectedFlight, MemoryStream stream)
+    public async Task SavePhoto(FlightViewModel lastSelectedFlight, MemoryStream stream)
     {
         if (_flightLog.UserId is null)
         {
@@ -284,7 +284,7 @@ public class CoreService
             REF_User_Id = _flightLog.UserId,
             PhotoStream = stream,
         };
-        _photosService.SaveFlightPhoto(photo, _flightLog);
+        await _photosService.SaveFlightPhoto(photo, _flightLog);
     }
     /// <summary>
     /// Return the base 64 encoded string of the image

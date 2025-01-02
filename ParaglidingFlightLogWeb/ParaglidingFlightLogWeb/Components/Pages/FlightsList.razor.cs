@@ -239,18 +239,19 @@ public partial class FlightsList
         var files = e.Files.ToList();
         if (files.Count > MAX_PHOTO_COUNT)
         {
-            NotifyUser($"Cannot accept more than {MAX_PHOTO_COUNT} files");
+            NotifyUser($"Cannot accept more than {MAX_PHOTO_COUNT} files", NotificationSeverity.Error);
             return;
         }
 
         if (files.Select(f => f.Name)
             .Any(n => !n.ToLower().EndsWith(PHOTO_EXTENSION)))
         {
-            NotifyUser("Only jpg file");
+            NotifyUser("Only jpg file", NotificationSeverity.Error);
             return;
         }
         foreach (var file in files)
         {
+            NotifyUser($"Starting {file.Name} upload...", NotificationSeverity.Info);
             try
             {
                 if (file.Size > MAX_PHOTO_SIZE)
@@ -261,7 +262,7 @@ public partial class FlightsList
 
                 using var memory = new MemoryStream();
                 await file.OpenReadStream(MAX_PHOTO_SIZE).CopyToAsync(memory);
-                Mvm.SavePhoto(LastSelectedFlight, memory);
+                await Mvm.SavePhoto(LastSelectedFlight, memory);
             }
             catch (Exception ex)
             {
