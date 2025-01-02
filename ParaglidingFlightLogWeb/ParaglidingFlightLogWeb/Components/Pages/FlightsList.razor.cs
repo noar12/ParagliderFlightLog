@@ -268,6 +268,7 @@ public partial class FlightsList
                 Logger.LogError(ex, "File: {Filename}", file.Name);
             }
         }
+        NotifyUser($"{files.Count} file(s) have been uploaded", NotificationSeverity.Success);
         await InvokeAsync(StateHasChanged);
     }
 
