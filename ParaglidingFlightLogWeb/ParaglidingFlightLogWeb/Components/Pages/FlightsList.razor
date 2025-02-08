@@ -64,6 +64,7 @@
                     </RadzenColumn>
                     <RadzenColumn>
                         <RadzenStack Orientation="Orientation.Vertical">
+                            <RadzenButton Icon="share" Click="ShareFlight" Text="Share" />
                             <RadzenUpload Icon="add_photo_alternate"
                                           ChooseText="Add photos"
                                           Multiple="true"
@@ -71,8 +72,7 @@
                                           Accept="@PHOTO_EXTENSION"
                                           Change="AddPhotos"
                                           MaxFileCount="MAX_FILE_COUNT"
-                                          Visible="@(LastSelectedFlight.FlightPoints.Count > 0)"
-                            />
+                                          Visible="@(LastSelectedFlight.FlightPoints.Count > 0)"/>
                             <RadzenProgressBar Value=@_flightUploadProgress class="rz-mt-6"
                                                Visible=@_showFlightUploadProgress/>
                         </RadzenStack>

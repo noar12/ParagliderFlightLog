@@ -35,6 +35,8 @@ public partial class FlightsList
     [Inject] IWebHostEnvironment Environment { get; set; } = null!;
     [Inject] CoreService Mvm { get; set; } = null!;
     [Inject] ILogger<FlightsList> Logger { get; set; } = null!;
+    [Inject] NavigationManager NavigationManager { get; set; } = null!;
+    [Inject] SharingService SharingService { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
 
@@ -282,5 +284,13 @@ public partial class FlightsList
     private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
     {
         return Mvm.GetBase64StringPhotoData(photo);
+    }
+
+    private async Task ShareFlight(MouseEventArgs arg)
+    {
+        if (LastSelectedFlight is null) { return; }
+        const int shareValidityDay = 2;
+        Uri baseUri = new (NavigationManager.BaseUri);
+        await SharingService.ShareFlightAsync(LastSelectedFlight, TimeSpan.FromDays(shareValidityDay),baseUri);
     }
 }
