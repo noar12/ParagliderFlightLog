@@ -4,6 +4,7 @@ using System.Collections;
 using ParagliderFlightLog.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using ParagliderFlightLog.Helpers;
 using System.Diagnostics;
 
 namespace ParagliderFlightLog.DataAccess;
@@ -146,7 +147,7 @@ public class FlightLogDB
 
     private void AddFlightProperties(FlightWithData flight)
     {
-        flight.FlightPoints = GetFlightPointsFromIgcContent(flight.IgcFileContent);
+        flight.FlightPoints = IgcHelper.GetFlightPointsFromIgcContent(flight.IgcFileContent);
         flight.TakeOffPoint = GetTakeOffPointFromPointList(flight.FlightPoints);
         flight.FlightDuration = GetFlightDurationFromPointList(flight.FlightPoints) ??
                                 TimeSpan.FromSeconds(flight.FlightDuration_s);
@@ -451,19 +452,7 @@ public class FlightLogDB
             : new FlightPoint() { Latitude = double.NaN, Longitude = double.NaN, Altitude = double.NaN };
     }
 
-    private static List<FlightPoint> GetFlightPointsFromIgcContent(string igcContent)
-    {
-        List<FlightPoint> output = [];
-        foreach (string line in igcContent.Split("\r\n"))
-        {
-            if (ParseIGCFlightData(line, out FlightPoint l_flightPoint))
-            {
-                output.Add(l_flightPoint);
-            }
-        }
 
-        return output;
-    }
 
     private static string GetGliderNameFromIgcContent(string igcContent)
     {
@@ -476,37 +465,7 @@ public class FlightLogDB
 
         return "";
     }
-
-    /// <summary>
-    /// Parse the IGC_Line as coordinate. Highly inspired from https://github.com/ringostarr80/RL.Geo/blob/master/RL.Geo/Gps/Serialization/IgcDeSerializer.cs
-    /// return true if it succeed false otherwise
-    /// </summary>
-    /// <param name="IGC_Line"></param>
-    /// <param name="parsedFlightPoint"></param>
-    /// <returns></returns>
-    private static bool ParseIGCFlightData(string IGC_Line, out FlightPoint parsedFlightPoint)
-    {
-        const string COORDINATE_REGEX =
-            @"^B(?<UTCTimeHour>\d\d)(?<UTCTimeMinute>\d\d)(?<UTCTimeSecond>\d\d)(?<d1>\d\d)(?<m1>\d\d\d\d\d)(?<dir1>[NnSs])(?<d2>\d\d\d)(?<m2>\d\d\d\d\d)(?<dir2>[EeWw])A(?<BaroAlt>\d\d\d\d\d)(?<GPS_Alt>\d\d\d\d\d)";
-        var match = Regex.Match(IGC_Line, COORDINATE_REGEX);
-        if (match.Success)
-        {
-            var deg1 = double.Parse(match.Groups["d1"].Value, CultureInfo.InvariantCulture) +
-                       double.Parse(match.Groups["m1"].Value, CultureInfo.InvariantCulture) / 1000 / 60;
-            var dir1 = Regex.IsMatch(match.Groups["dir1"].Value, "[Ss]") ? -1d : 1d;
-            var deg2 = double.Parse(match.Groups["d2"].Value, CultureInfo.InvariantCulture) +
-                       double.Parse(match.Groups["m2"].Value, CultureInfo.InvariantCulture) / 1000 / 60;
-            var dir2 = Regex.IsMatch(match.Groups["dir2"].Value, "[Ww]") ? -1d : 1d;
-            var height = double.Parse(match.Groups["GPS_Alt"].Value, CultureInfo.InvariantCulture);
-            parsedFlightPoint =
-                new FlightPoint() { Latitude = deg1 * dir1, Longitude = deg2 * dir2, Altitude = height };
-            return true;
-        }
-
-        parsedFlightPoint = new FlightPoint() { Altitude = double.NaN, Latitude = double.NaN, Longitude = double.NaN };
-        return false;
-    }
-
+    
     /// <summary>
     /// Get the glider referenced as used during the <paramref name="flight"/>
     /// </summary>

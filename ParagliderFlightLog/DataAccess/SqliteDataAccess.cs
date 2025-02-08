@@ -62,7 +62,18 @@ namespace ParagliderFlightLog.DataAccess
 			{
                 _logger.LogError(ex, "The statement: {sqlStatement}, {parameter}", sqlStatement, parameters);
 			}
-            
+        }
+        public async Task SaveDataAsync<T>(string sqlStatement, T parameters, string connectionString)
+        {
+            try
+            {
+                using IDbConnection connection = new SqliteConnection(connectionString);
+                await connection.ExecuteAsync(sqlStatement, parameters);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "The statement: {sqlStatement}, {parameter}", sqlStatement, parameters);
+            }
         }
 #pragma warning restore CA1822 // Mark members as static
 	}

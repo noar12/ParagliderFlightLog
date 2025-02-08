@@ -1,11 +1,8 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging.Configuration;
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Services;
-using ParaglidingFlightLogWeb.Client.Pages;
 using ParaglidingFlightLogWeb.Components;
 using ParaglidingFlightLogWeb.Components.Account;
 using ParaglidingFlightLogWeb.Data;
@@ -59,10 +56,12 @@ try
     builder.Services.AddScoped<FlightStatisticService>();
     builder.Services.AddScoped<FlightLogDB>();
     builder.Services.AddScoped<LogFlyDB>();
-    builder.Services.AddScoped<SqliteDataAccess>();
+    builder.Services.AddSingleton<SqliteDataAccess>();
     builder.Services.AddSingleton<XcScoreManagerData>();
     builder.Services.AddHostedService<XcScoreManager>();
     builder.Services.AddTransient<PhotosService>();
+    builder.Services.AddSingleton<SharingService>();
+    builder.Services.AddSingleton<SharedDb>();
     var app = builder.Build();
     // Set the culture for something globally accepted... TODO Customize for each client
     var customCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
@@ -110,6 +109,7 @@ try
 catch (Exception ex)
 {
     Log.Fatal(ex, "The application failed to start");
+    throw;
 }
 finally
 {
