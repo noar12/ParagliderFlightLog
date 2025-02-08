@@ -3,14 +3,16 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace ParagliderFlightLog.Helpers;
-
+/// <summary>
+/// Set of method to help with IGC file
+/// </summary>
 public static class IgcHelper
 {
     /// <summary>
-    /// Parse the IGC_Line as coordinate. Highly inspired from https://github.com/ringostarr80/RL.Geo/blob/master/RL.Geo/Gps/Serialization/IgcDeSerializer.cs
+    /// Parse the <paramref name="igcLine"/> as coordinate. Highly inspired from https://github.com/ringostarr80/RL.Geo/blob/master/RL.Geo/Gps/Serialization/IgcDeSerializer.cs
     /// return true if it succeed false otherwise
     /// </summary>
-    /// <param name="IGC_Line"></param>
+    /// <param name="igcLine"></param>
     /// <param name="parsedFlightPoint"></param>
     /// <returns></returns>
     private static bool ParseIGCFlightData(string igcLine, out FlightPoint parsedFlightPoint)
@@ -34,6 +36,11 @@ public static class IgcHelper
         parsedFlightPoint = new FlightPoint() { Altitude = double.NaN, Latitude = double.NaN, Longitude = double.NaN };
         return false;
     }
+    /// <summary>
+    /// Get a list of FlightPoint from an IGC content
+    /// </summary>
+    /// <param name="igcContent"></param>
+    /// <returns></returns>
     public static List<FlightPoint> GetFlightPointsFromIgcContent(string igcContent)
     {
         List<FlightPoint> output = [];

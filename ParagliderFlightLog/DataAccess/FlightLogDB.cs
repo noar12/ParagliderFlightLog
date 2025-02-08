@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using System.Globalization;
 using System.Collections;
 using ParagliderFlightLog.Models;
 using Microsoft.Extensions.Configuration;
@@ -17,6 +16,9 @@ public class FlightLogDB
     private readonly SqliteDataAccess _db;
     private readonly IConfiguration _config;
     private readonly ILogger<FlightLogDB> _logger;
+    /// <summary>
+    /// The UserId of the user this instance is scoped for
+    /// </summary>
     public string? UserId { get; private set; }
 
     /// <summary>
@@ -838,14 +840,17 @@ public class FlightLogDB
         }
         return output;
     }
-    
+    /// <summary>
+    /// Write the the meta data of a photo to the Db
+    /// </summary>
+    /// <param name="flightPhoto"></param>
     public void WriteFlightPhoto(FlightPhoto flightPhoto)
     {
         string sql = """
                      INSERT INTO FlightPhotos
                      (Photo_ID, REF_Flight_ID)
-                     VALUES (@Photo_ID, @Ref_Flight_ID);
+                     VALUES (@Photo_ID, @REF_Flight_ID);
                      """;
-        _db.SaveData(sql, new{ Photo_ID = flightPhoto.Photo_ID, Ref_Flight_ID = flightPhoto.REF_Flight_ID}, LoadConnectionString());
+        _db.SaveData(sql, new{ flightPhoto.Photo_ID, flightPhoto.REF_Flight_ID}, LoadConnectionString());
     }
 }

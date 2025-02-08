@@ -12,6 +12,10 @@ namespace ParagliderFlightLog.DataAccess
         private readonly FlightLogDB _flightLogDB;
         private List<LogFlyVol> m_LogFlyVolCollection = [];
         private List<LogFlySite> m_LogFlySiteCollection = [];
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="flightLogDb"></param>
         public LogFlyDB(FlightLogDB flightLogDb)
         {
             _flightLogDB = flightLogDb;

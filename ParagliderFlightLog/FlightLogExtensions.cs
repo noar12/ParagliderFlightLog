@@ -2,6 +2,9 @@
 
 namespace ParagliderFlightLog
 {
+    /// <summary>
+    /// Set of usefull extension to manipulate Data from the FlightLog
+    /// </summary>
     public static class FlightLogExtensions
     {
         /// <summary>
