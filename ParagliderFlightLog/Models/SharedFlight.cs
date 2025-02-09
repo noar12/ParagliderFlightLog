@@ -45,4 +45,8 @@ public class SharedFlight
     /// Time of take off
     /// </summary>
     public DateTime TakeOffDateTime { get; set; }
+    /// <summary>
+    /// Photos of the flight
+    /// </summary>
+    public List<FlightPhoto> Photos { get; set; } = [];
 }

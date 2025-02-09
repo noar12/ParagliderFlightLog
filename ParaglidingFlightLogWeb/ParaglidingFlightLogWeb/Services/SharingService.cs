@@ -36,7 +36,7 @@ public class SharingService
         FlightWithData flight = flightVm.FlightWithData;
         string siteName = flightVm.TakeOffSiteName;
         string gliderName = flightVm.GliderName;
-        string id = await _db.CreateSharedFlightAsync(flight, siteName, gliderName, validity);
+        string id = await _db.CreateSharedFlightAsync(flight, siteName, gliderName, flight.FlightPhotos, validity);
         var uri = new Uri(baseUrl, $"shared/{id}");
         return uri;
     }

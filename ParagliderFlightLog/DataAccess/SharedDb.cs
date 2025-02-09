@@ -14,6 +14,7 @@ public class SharedDb
     private readonly IConfiguration _config;
     private readonly ILogger<SharedDb> _logger;
     private bool _isInitialized;
+
     /// <summary>
     /// ctor
     /// </summary>
@@ -79,16 +80,19 @@ public class SharedDb
                                               	PRIMARY KEY("Id")
                                               );
                                               """;
-        
-        await _db.SaveDataAsync(sqlCreateDbInfo, new{}, LoadConnectionString());
-        await _db.SaveDataAsync(sqlCreateSharedFlights, new{}, LoadConnectionString());
-        
-        DbInformations dbInformations = new()
-        {
-            VersionMajor = 1,
-            VersionMinor = 0,
-            VersionFix = 0,
-        };  
+        string sqlCreatePhotosTable = """
+                                      CREATE TABLE "FlightPhotos" (
+                                          "Photo_ID" TEXT NOT NULL UNIQUE,
+                                          "REF_Flight_ID"    TEXT NOT NULL,
+                                          "REF_User_Id"    TEXT NOT NULL,
+                                          PRIMARY KEY("Photo_ID"),
+                                          FOREIGN KEY("REF_Flight_ID") REFERENCES "SharedFlights"("Id"));
+                                      """;
+        await _db.SaveDataAsync(sqlCreateDbInfo, new { }, LoadConnectionString());
+        await _db.SaveDataAsync(sqlCreateSharedFlights, new { }, LoadConnectionString());
+        await _db.SaveDataAsync(sqlCreatePhotosTable, new { }, LoadConnectionString());
+
+        DbInformations dbInformations = new() { VersionMajor = 1, VersionMinor = 0, VersionFix = 0, };
         const string sqlInsertDbInfo = """
                                        INSERT INTO DbInformations (VersionMajor, VersionMinor, VersionFix)
                                        VALUES (@VersionMajor, @VersionMinor, @VersionFix);
@@ -105,9 +109,11 @@ public class SharedDb
     /// <param name="gliderName"></param>
     /// <param name="validity"></param>
     /// <returns></returns>
-    public async Task<string> CreateSharedFlightAsync(FlightWithData flight, string siteName, string gliderName, TimeSpan validity)
+    public async Task<string> CreateSharedFlightAsync(FlightWithData flight, string siteName, string gliderName,
+        List<FlightPhoto> photos, TimeSpan validity)
     {
         if (!_isInitialized) { await InitAsync(); }
+
         DateTime endOfShare = DateTime.UtcNow + validity;
         SharedFlight flightToShare = new()
         {
@@ -120,11 +126,20 @@ public class SharedDb
             EndOfShareDateTime = endOfShare,
             TakeOffDateTime = flight.TakeOffDateTime,
         };
-        const string sql = """
-                     INSERT INTO SharedFlights (Id, Comment, SiteName, GliderName, FlightDuration_s, TakeOffDateTime, IgcFileContent, GeoJsonScore, EndOfShareDateTime)
-                     VALUES (@Id, @Comment, @SiteName, @GliderName, @FlightDuration_s, @TakeOffDateTime, @IgcFileContent, @GeoJsonScore, @EndOfShareDateTime);
-                     """;
-        await _db.SaveDataAsync(sql, flightToShare, LoadConnectionString());
+        const string sqlInsertFlight = """
+                                       INSERT INTO SharedFlights (Id, Comment, SiteName, GliderName, FlightDuration_s, TakeOffDateTime, IgcFileContent, GeoJsonScore, EndOfShareDateTime)
+                                       VALUES (@Id, @Comment, @SiteName, @GliderName, @FlightDuration_s, @TakeOffDateTime, @IgcFileContent, @GeoJsonScore, @EndOfShareDateTime);
+                                       """;
+        const string sqlInsertPhoto = """
+                                      INSERT INTO FlightPhotos (Photo_ID, REF_Flight_ID, REF_User_Id)
+                                      VALUES (@Photo_ID, @REF_Flight_ID, @REF_User_Id);
+                                      """;
+        await _db.SaveDataAsync(sqlInsertFlight, flightToShare, LoadConnectionString());
+        foreach (FlightPhoto photo in photos)
+        {
+            await _db.SaveDataAsync(sqlInsertPhoto, new{photo.Photo_ID, @REF_Flight_ID = flightToShare.Id, photo.REF_User_Id}, LoadConnectionString());
+        }
+
         return flightToShare.Id;
     }
 
@@ -137,11 +152,14 @@ public class SharedDb
     public async Task<SharedFlight> GetSharedFlightAsync(string flightId)
     {
         if (!_isInitialized) { await InitAsync(); }
+
         const string sql = "SELECT * FROM SharedFlights WHERE Id=@flightId";
-        List<SharedFlight> sharedFlights = _db.LoadData<SharedFlight, dynamic>(sql, new { flightId }, LoadConnectionString());
+        List<SharedFlight> sharedFlights =
+            _db.LoadData<SharedFlight, dynamic>(sql, new { flightId }, LoadConnectionString());
         if (sharedFlights.Count > 1) { throw new InvalidOperationException("Multiple flights with the same id"); }
 
         sharedFlights[0].FlightPoints = IgcHelper.GetFlightPointsFromIgcContent(sharedFlights[0].IgcFileContent);
+        sharedFlights[0].Photos = GetAllPhotoForFlight(flightId);
         return sharedFlights[0];
     }
 
@@ -161,5 +179,23 @@ public class SharedDb
         if (!dbInfoExists) return null;
         sql = "SELECT VersionMajor,VersionMinor, VersionFix FROM DbInformations";
         return _db.LoadData<DbInformations, dynamic>(sql, new { }, LoadConnectionString())[0];
+    }
+    
+    /// <summary>
+    /// Get the meta data of all the photo for the <paramref name="flight"/>
+    /// </summary>
+    /// <param name="flight"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    private List<FlightPhoto> GetAllPhotoForFlight(string flightId)
+    {
+        string sql = """
+                     SELECT Photo_ID, REF_Flight_ID, REF_User_Id
+                     FROM FlightPhotos
+                     WHERE REF_FLIGHT_ID = @flightId;
+                     """;
+        var output = _db.LoadData<FlightPhoto, dynamic>(sql, new{flightId}, LoadConnectionString());
+        
+        return output;
     }
 }
