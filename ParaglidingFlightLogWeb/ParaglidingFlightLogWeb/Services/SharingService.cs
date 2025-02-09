@@ -23,7 +23,7 @@ public class SharingService
     }
 
     /// <summary>
-    /// Create a new flight based on <param name="flightVm" /> that will be accessible to other to share. Returns the URI to the share flight
+    /// Create a new flight based on <paramref name="flightVm" /> that will be accessible to other to share. Returns the URI to the share flight
     /// </summary>
     /// <param name="flightVm"></param>
     /// <param name="comment"></param>
@@ -38,7 +38,17 @@ public class SharingService
         string siteName = flightVm.TakeOffSiteName;
         string gliderName = flightVm.GliderName;
         string id = await _db.CreateSharedFlightAsync(flight, comment, siteName, gliderName, flight.FlightPhotos, validity);
-        var uri = new Uri(baseUrl, $"shared/{id}");
+        var uri = new Uri(baseUrl, $"sharedflight/{id}");
         return uri;
+    }
+    /// <summary>
+    /// Get the shared flight based on the <paramref name="flightId"/>
+    /// </summary>
+    /// <param name="flightId"></param>
+    /// <returns></returns>
+    public async Task<SharedFlightViewModel?> GetSharedFlightAsync(string flightId)
+    {
+        SharedFlight? flight = await _db.GetSharedFlightAsync(flightId);
+        return flight is null ? null : new SharedFlightViewModel(flight);
     }
 }

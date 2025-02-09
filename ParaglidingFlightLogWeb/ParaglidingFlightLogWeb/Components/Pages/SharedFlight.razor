@@ -1,0 +1,44 @@
+@page "/SharedFlight/{SharedFlightId}"
+@using ParaglidingFlightLogWeb.Services
+@using ParaglidingFlightLogWeb.ViewModels
+@inject SharingService SharingService
+@if (_flight is null)
+{
+    <RadzenText>Loading...</RadzenText>
+    return;
+}
+<RadzenText TextStyle="TextStyle.H3">Shared flight</RadzenText>
+<RadzenRow>
+    <RadzenColumn>
+        <MyTextIndicator Label="Flight date" Text="@_flight.TakeOffDateTime" />
+    </RadzenColumn>
+    <RadzenColumn>
+        <MyTextIndicator Label="Site" Text="@_flight.SiteName"/>
+    </RadzenColumn>
+    <RadzenColumn>
+        <MyTextIndicator Label="Glider" Text="@_flight.GliderName"/>
+    </RadzenColumn>
+    <RadzenColumn>
+        <MyPhysicalValueIndicator Label="Max Height" Value="@_flight.MaxAltitude" UnitSymbol="m" Format="F0"/>
+
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+    /// <summary>
+    /// Id of the shared flight that will be displayed
+    /// </summary>
+    [Parameter] public string? SharedFlightId { get; set; }
+    private bool _initialized = false;
+    private SharedFlightViewModel? _flight;
+    /// <summary>
+    /// <inheritdoc />
+    /// </summary>
+    protected override async Task OnParametersSetAsync()
+    {
+        if (SharedFlightId is null) { return; }
+        _flight = await SharingService.GetSharedFlightAsync(SharedFlightId);
+        _initialized = true;
+    }
+
+}

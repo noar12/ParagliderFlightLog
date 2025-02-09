@@ -162,12 +162,12 @@ public class FlightViewModel
     {
         get
         {
-            double l_TraceLegnth = 0.0;
+            double traceLength = 0.0;
             for (int i = 1; i < FlightPoints.Count; i++)
             {
-                l_TraceLegnth += FlightPoints[i].DistanceFrom(FlightPoints[i - 1]) / 1000;
+                traceLength += FlightPoints[i].DistanceFrom(FlightPoints[i - 1]) / 1000;
             }
-            return l_TraceLegnth;
+            return traceLength;
         }
     }
     /// <summary>

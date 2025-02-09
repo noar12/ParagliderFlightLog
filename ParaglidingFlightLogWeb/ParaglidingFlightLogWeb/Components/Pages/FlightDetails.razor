@@ -76,7 +76,7 @@ else
     [Parameter]
     public FlightViewModel? Flight { get; set; }
 
-    [Parameter] public CoreService CoreService { get; set; }
+    [Parameter] public CoreService? CoreService { get; set; }
 
     private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
     {

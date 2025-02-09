@@ -156,7 +156,7 @@ public class SharedDb
     /// <param name="flightId"></param>
     /// <returns></returns>
     /// <exception cref="InvalidOperationException"></exception>
-    public async Task<SharedFlight> GetSharedFlightAsync(string flightId)
+    public async Task<SharedFlight?> GetSharedFlightAsync(string flightId)
     {
         if (!_isInitialized) { await InitAsync(); }
 
@@ -165,9 +165,26 @@ public class SharedDb
             _db.LoadData<SharedFlight, dynamic>(sql, new { flightId }, LoadConnectionString());
         if (sharedFlights.Count > 1) { throw new InvalidOperationException("Multiple flights with the same id"); }
 
-        sharedFlights[0].FlightPoints = IgcHelper.GetFlightPointsFromIgcContent(sharedFlights[0].IgcFileContent);
-        sharedFlights[0].Photos = GetAllPhotoForFlight(flightId);
-        return sharedFlights[0];
+        if (sharedFlights.Count == 0) { return null;}
+        SharedFlight flight = sharedFlights[0];
+        if (flight.EndOfShareDateTime < DateTime.UtcNow)
+        {
+            await DeleteFlightAsync(flightId);
+            return null;
+        }
+        flight.FlightPoints = IgcHelper.GetFlightPointsFromIgcContent(sharedFlights[0].IgcFileContent);
+        flight.Photos = GetAllPhotoForFlight(flightId);
+        return flight;
+    }
+
+    private async Task DeleteFlightAsync(string flightId)
+    {
+        const string deleteFlight = "DELETE FROM SharedFlights WHERE Id=@flightId";
+        const string deletePhotos = "DELETE FROM FlightPhotos WHERE REF_Flight_ID=@flightId";
+        
+        await _db.SaveDataAsync(deletePhotos, new { flightId }, LoadConnectionString());
+        await _db.SaveDataAsync(deleteFlight, new { flightId }, LoadConnectionString());
+        _logger.LogInformation("Shared Flight {flightId} deleted", flightId);
     }
 
     private async Task<string> IsThisFlightSharedAsync(string flightId)
