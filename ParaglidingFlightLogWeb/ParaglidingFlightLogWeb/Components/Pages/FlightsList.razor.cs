@@ -286,11 +286,11 @@ public partial class FlightsList
         return Mvm.GetBase64StringPhotoData(photo);
     }
 
-    private async Task ShareFlight(MouseEventArgs arg)
+    private async Task OpenShareFlight(MouseEventArgs arg)
     {
         if (LastSelectedFlight is null) { return; }
-        const int shareValidityDay = 2;
-        Uri baseUri = new (NavigationManager.BaseUri);
-        await SharingService.ShareFlightAsync(LastSelectedFlight, TimeSpan.FromDays(shareValidityDay),baseUri);
+        await DialogService.OpenAsync<ShareFlightForm>("Share Flight",
+            new Dictionary<string, object>() { { "Flight", LastSelectedFlight } },
+            new DialogOptions() { Resizable = true, Draggable = false });
     }
 }

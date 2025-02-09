@@ -69,6 +69,7 @@ public class SharedDb
         const string sqlCreateSharedFlights = """
                                               CREATE TABLE "SharedFlights" (
                                               	"Id"	TEXT NOT NULL UNIQUE,
+                                              	"SourceFlightId"	TEXT NOT NULL UNIQUE,
                                               	"Comment"	TEXT,
                                               	"SiteName"	TEXT NOT NULL,
                                               	"GliderName"	REAL NOT NULL,
@@ -105,19 +106,24 @@ public class SharedDb
     /// Create a flight to share with the web. Returns a guid to identify the created flight
     /// </summary>
     /// <param name="flight"></param>
+    /// <param name="comment"></param>
     /// <param name="siteName"></param>
     /// <param name="gliderName"></param>
     /// <param name="validity"></param>
     /// <returns></returns>
-    public async Task<string> CreateSharedFlightAsync(FlightWithData flight, string siteName, string gliderName,
+    public async Task<string> CreateSharedFlightAsync(FlightWithData flight, string comment, string siteName,
+        string gliderName,
         List<FlightPhoto> photos, TimeSpan validity)
     {
         if (!_isInitialized) { await InitAsync(); }
+        string flightToShareId = await IsThisFlightSharedAsync(flight.Flight_ID);
+        if (!string.IsNullOrEmpty(flightToShareId)) { return flightToShareId; }
 
         DateTime endOfShare = DateTime.UtcNow + validity;
         SharedFlight flightToShare = new()
         {
-            Comment = flight.Comment,
+            Comment = comment,
+            SourceFlightId = flight.Flight_ID,
             FlightDuration_s = flight.FlightDuration_s,
             IgcFileContent = flight.IgcFileContent,
             GeoJsonScore = flight.XcScore?.GeoJsonText ?? "",
@@ -127,8 +133,8 @@ public class SharedDb
             TakeOffDateTime = flight.TakeOffDateTime,
         };
         const string sqlInsertFlight = """
-                                       INSERT INTO SharedFlights (Id, Comment, SiteName, GliderName, FlightDuration_s, TakeOffDateTime, IgcFileContent, GeoJsonScore, EndOfShareDateTime)
-                                       VALUES (@Id, @Comment, @SiteName, @GliderName, @FlightDuration_s, @TakeOffDateTime, @IgcFileContent, @GeoJsonScore, @EndOfShareDateTime);
+                                       INSERT INTO SharedFlights (Id, SourceFlightId, Comment, SiteName, GliderName, FlightDuration_s, TakeOffDateTime, IgcFileContent, GeoJsonScore, EndOfShareDateTime)
+                                       VALUES (@Id, @SourceFlightId, @Comment, @SiteName, @GliderName, @FlightDuration_s, @TakeOffDateTime, @IgcFileContent, @GeoJsonScore, @EndOfShareDateTime);
                                        """;
         const string sqlInsertPhoto = """
                                       INSERT INTO FlightPhotos (Photo_ID, REF_Flight_ID, REF_User_Id)
@@ -137,7 +143,8 @@ public class SharedDb
         await _db.SaveDataAsync(sqlInsertFlight, flightToShare, LoadConnectionString());
         foreach (FlightPhoto photo in photos)
         {
-            await _db.SaveDataAsync(sqlInsertPhoto, new{photo.Photo_ID, @REF_Flight_ID = flightToShare.Id, photo.REF_User_Id}, LoadConnectionString());
+            await _db.SaveDataAsync(sqlInsertPhoto,
+                new { photo.Photo_ID, @REF_Flight_ID = flightToShare.Id, photo.REF_User_Id }, LoadConnectionString());
         }
 
         return flightToShare.Id;
@@ -163,6 +170,22 @@ public class SharedDb
         return sharedFlights[0];
     }
 
+    private async Task<string> IsThisFlightSharedAsync(string flightId)
+    {
+        if (!_isInitialized) { await InitAsync(); }
+
+        const string sql = "SELECT Id FROM SharedFlights WHERE SourceFlightId=@flightId";
+        List<string> sharedFlightId =
+            _db.LoadData<string, dynamic>(sql, new { flightId }, LoadConnectionString());
+
+        if (sharedFlightId.Count > 0)
+        {
+            return sharedFlightId[0];
+        }
+
+        return "";
+    }
+
     private string LoadConnectionString(string connectionStringName = "SharedDataSqlite")
     {
         string? cs = _config.GetConnectionString(connectionStringName);
@@ -180,7 +203,7 @@ public class SharedDb
         sql = "SELECT VersionMajor,VersionMinor, VersionFix FROM DbInformations";
         return _db.LoadData<DbInformations, dynamic>(sql, new { }, LoadConnectionString())[0];
     }
-    
+
     /// <summary>
     /// Get the meta data of all the photo for the <paramref name="flight"/>
     /// </summary>
@@ -194,8 +217,8 @@ public class SharedDb
                      FROM FlightPhotos
                      WHERE REF_FLIGHT_ID = @flightId;
                      """;
-        var output = _db.LoadData<FlightPhoto, dynamic>(sql, new{flightId}, LoadConnectionString());
-        
+        var output = _db.LoadData<FlightPhoto, dynamic>(sql, new { flightId }, LoadConnectionString());
+
         return output;
     }
 }

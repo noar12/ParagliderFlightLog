@@ -7,6 +7,10 @@ public class SharedFlight
     /// </summary>
     public string Id { get; set; } = Guid.NewGuid().ToString();
     /// <summary>
+    /// Id of the original flight that is shared
+    /// </summary>
+    public string SourceFlightId { get; set; } = null!;
+    /// <summary>
     /// Comment
     /// </summary>
     public string? Comment { get; set; }

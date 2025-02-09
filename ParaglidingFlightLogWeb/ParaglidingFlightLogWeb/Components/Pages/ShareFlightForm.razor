@@ -1,0 +1,57 @@
+@using ParagliderFlightLog.Models
+@using ParaglidingFlightLogWeb.Services
+@using ParaglidingFlightLogWeb.ViewModels
+
+@inject NavigationManager NavigationManager
+@inject SharingService SharingService
+@inject IJSRuntime JSRuntime
+
+<RadzenStack Orientation="Orientation.Vertical">
+    <RadzenText TextStyle="TextStyle.H3">Flight data sharing</RadzenText>
+    <MyNumericInput Label="Validity in days" @bind-Value="@_validity" />
+    <MyTextInput Label="Comment (shared version)" @bind-Value="@_comment" />
+    <RadzenButton Text="Share" Click="@ShareFlight" />
+    @if (_shareUri is not null)
+    {
+        <MyTextIndicator Style="max-width: 400px;" Label="Share this link" Text="@_shareUri.ToString()" />
+        <RadzenButton Icon="content_copy" Text="Copy to Clipboard" Click="CopyTextToClipboard" />
+    }
+</RadzenStack>
+
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            console.log('Text copied to clipboard');
+        }).catch(function(error) {
+            console.error('Error copying text: ', error);
+        });
+    }
+</script>
+@code {
+    private double _validity; 
+    private string _comment;
+    private Uri? _shareUri;
+    
+    [Parameter] public FlightViewModel? Flight { get; set; }
+    
+    protected override void OnInitialized()
+    {
+        _validity = 2;
+        _comment = Flight.Comment;
+    }
+
+    private async Task ShareFlight()
+    {
+        if (Flight is null) { return; }
+        
+        Uri baseUri = new (NavigationManager.BaseUri);
+        _shareUri = await SharingService.ShareFlightAsync(Flight, _comment, TimeSpan.FromDays(_validity),baseUri);
+    }
+
+    private async Task CopyTextToClipboard()
+    {
+        if (_shareUri is null) { return; }
+        await JSRuntime.InvokeVoidAsync("copyToClipboard", _shareUri.ToString());
+    }
+
+}
