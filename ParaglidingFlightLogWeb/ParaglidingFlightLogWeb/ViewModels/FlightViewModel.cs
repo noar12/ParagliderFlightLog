@@ -137,20 +137,7 @@ public class FlightViewModel
             return _flightWithData?.FlightPoints ?? [];
         }
     }
-    /// <summary>
-    /// jagged array specifically designed to be passed to leaflet lib
-    /// </summary>
-    /// <returns></returns>
-    public double[][] GetLatLngsArray()
-    {
-        double[][] output = new double[FlightPoints.Count][];
-        for (int i = 0; i < output.Length; i++)
-        {
-            var currentFlightPoint = FlightPoints[i];
-            output[i] = [currentFlightPoint.Latitude, currentFlightPoint.Longitude];
-        }
-        return output;
-    }
+
     /// <summary>
     /// Comment
     /// </summary>
@@ -158,18 +145,7 @@ public class FlightViewModel
     /// <summary>
     /// Get the trace length in km
     /// </summary>
-    public double TraceLength
-    {
-        get
-        {
-            double traceLength = 0.0;
-            for (int i = 1; i < FlightPoints.Count; i++)
-            {
-                traceLength += FlightPoints[i].DistanceFrom(FlightPoints[i - 1]) / 1000;
-            }
-            return traceLength;
-        }
-    }
+    public double TraceLength => ViewModelHelpers.GetTraceLength(FlightPoints);
     /// <summary>
     /// Maximum climb on the flight integrated over 8 secondes.
     /// </summary>
@@ -179,7 +155,7 @@ public class FlightViewModel
         {
             if (FlightPoints.Count > 0)
             {
-                return GetVerticalRate(INTEGRATION_STEP).Max();
+                return ViewModelHelpers.GetVerticalRate(FlightPoints, INTEGRATION_STEP).Max();
             }
             else
             {
@@ -195,7 +171,7 @@ public class FlightViewModel
         get
         {
             if (FlightPoints.Count > 0)
-                return GetVerticalRate(INTEGRATION_STEP).Min();
+                return ViewModelHelpers.GetVerticalRate(FlightPoints, INTEGRATION_STEP).Min();
             else
                 return 0.0;
         }
@@ -209,19 +185,6 @@ public class FlightViewModel
     /// </summary>
     public List<FlightPhotoViewModel> GetFlightPhotos() => FlightWithData.FlightPhotos.Select(x => new FlightPhotoViewModel(x)).ToList();
 
-    private double[] GetVerticalRate(int integrationStep)
-    {
-        _flightWithData ??= _db.GetFlightWithData(_flight);
-        if (_flightWithData is not null && FlightPoints.Count != 0)
-        {
-            var l_verticalRates = new List<double>();
-            for (int i = integrationStep; i < _flightWithData.FlightPoints.Count; i++)
-            {
-                l_verticalRates.Add((FlightPoints[i].Altitude - FlightPoints[i - INTEGRATION_STEP].Altitude) / INTEGRATION_STEP);
-            }
-            return [.. l_verticalRates];
-        }
-        return [];
-    }
+    
 
 }

@@ -44,7 +44,11 @@
                 @if (Flight.FlightPoints.Count > 0)
                 {
                     <RadzenCarouselItem>
-                        <ShowFlightOnMap FlightToShow="@Flight" Height="400"/>
+                        <ShowFlightOnMap FlightPoints="@Flight.FlightPoints"
+                                         TakeOffDateTime="@Flight.TakeOffDateTime"
+                                         FlightDuration="@Flight.FlightDuration"
+                                         XcScore="@Flight.XcScore"
+                                         Height="400"/>
                     </RadzenCarouselItem>
                 }
                 @foreach (var photo in Flight.GetFlightPhotos())

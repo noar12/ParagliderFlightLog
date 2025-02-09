@@ -2,6 +2,7 @@
 @using ParaglidingFlightLogWeb.Services
 @using ParaglidingFlightLogWeb.ViewModels
 @inject SharingService SharingService
+<PageTitle>Shared Flight</PageTitle>
 @if (_flight is null)
 {
     <RadzenText>Loading...</RadzenText>
@@ -18,12 +19,63 @@
     <RadzenColumn>
         <MyTextIndicator Label="Glider" Text="@_flight.GliderName"/>
     </RadzenColumn>
+</RadzenRow>
+<RadzenRow>
     <RadzenColumn>
-        <MyPhysicalValueIndicator Label="Max Height" Value="@_flight.MaxAltitude" UnitSymbol="m" Format="F0"/>
-
+        <MyPhysicalValueIndicator Label="Max Altitude" Value="@_flight.MaxAltitude" UnitSymbol="m" Format="F0"/>
+        <MyPhysicalValueIndicator Label="Trace Length" Value="@_flight.TraceLength" UnitSymbol="km" Format="F2"/>
+        <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@_flight.MaxClimb" UnitSymbol="m/s" Format="F1"/>
+        <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@_flight.MaxSink" UnitSymbol="m/s" Format="F1"/>
+    </RadzenColumn>
+    <RadzenColumn>
+        @if (_flight.XcScore is not null)
+        {
+            <MyNumericIndicator Label="Score" Value="@_flight.XcScore.Points"/>
+            <MyTextIndicator Label="Type of flight" Text="@_flight.XcScore.Type"/>
+        }
     </RadzenColumn>
 </RadzenRow>
+<RadzenRow>
+    <RadzenCarousel PagerOverlay="false" Auto="false" class="rz-w-100 rz-h-auto">
+        <Items>
+        @if (!string.IsNullOrEmpty(_flight.Comment))
+        {
+            <RadzenCarouselItem>
+                <MyTextIndicator Style="max-height: 400px;" Class="rz-h-100 rz-overflow-auto"
+                                 Label="Comment"
+                                 Text="@_flight.Comment" Bold="false"/>
+            </RadzenCarouselItem>
 
+        }
+
+
+        @if (_flight.FlightPoints.Count > 0)
+        {
+            <RadzenCarouselItem>
+                <ShowFlightOnMap FlightPoints="@_flight.FlightPoints"
+                                 TakeOffDateTime="@_flight.TakeOffDateTimeData"
+                                 FlightDuration="@_flight.FlightDuration"
+                                 XcScore="@_flight.XcScore"
+                                 Height="400"/>
+            </RadzenCarouselItem>
+
+        }
+
+        @foreach (var photo in _flight.GetFlightPhotos())
+        {
+            <RadzenCarouselItem>
+                <RadzenImage
+                    Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
+                    AlternateText="A photo of flight uploaded by the user"
+                    Style="max-height: 400px; overflow-y:auto;"
+                />
+            </RadzenCarouselItem>
+
+        }
+        </Items>
+    </RadzenCarousel>
+
+</RadzenRow>
 @code {
     /// <summary>
     /// Id of the shared flight that will be displayed
@@ -39,6 +91,10 @@
         if (SharedFlightId is null) { return; }
         _flight = await SharingService.GetSharedFlightAsync(SharedFlightId);
         _initialized = true;
+        await InvokeAsync(StateHasChanged);
     }
-
+    private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
+    {
+        return SharingService?.GetBase64StringPhotoData(photo) ?? "";
+    }
 }

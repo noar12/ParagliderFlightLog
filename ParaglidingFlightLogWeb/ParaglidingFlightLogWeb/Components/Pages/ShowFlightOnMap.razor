@@ -1,11 +1,11 @@
 ﻿@using System.Runtime.InteropServices.JavaScript
+@using ParagliderFlightLog.Models
 @using ParaglidingFlightLogWeb.ViewModels
 @using Plotly.Blazor.ConfigLib
 @using Plotly.Blazor.Traces.ScatterLib
 @using Plotly.Blazor.Interop
 @using Serilog
 @inject ILogger<ShowFlightOnMap> Logger
-<PageTitle>Flight On Map</PageTitle>
 <div class="rz-w-100" >
     <div id="flightMap" style="@($"min-height: {_mapHeight}px;")"></div>
     <PlotlyChart @bind-Config="_chartConfig" @bind-Layout="_chartLayout" 
@@ -15,10 +15,15 @@
 </div>
 
 @code {
-    /// <summary>
+    /*/// <summary>
     /// Flight to show as FlightViewModel
     /// </summary>
-    [Parameter] public FlightViewModel FlightToShow { get; set; } = null!;
+    [Parameter] public FlightViewModel FlightToShow { get; set; } = null!;*/
+    
+    [Parameter] public List<FlightPoint> FlightPoints { get; set; } = null!;
+    [Parameter] public XcScoreViewModel? XcScore { get; set; }
+    [Parameter] public DateTime TakeOffDateTime { get; set; }
+    [Parameter] public TimeSpan FlightDuration { get; set; }
     /// <summary>
     /// Height of the component
     /// </summary>
@@ -32,14 +37,14 @@
     private IList<ITrace> _trace = [];
     private int _chartHeight;
     private int _mapHeight;
-
+    
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
     /// <summary>
     /// <inheritdoc />
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-
+        
     }
 
     /// <summary>
@@ -87,7 +92,7 @@
             }
             await GenerateAltitudeChart();
         }
-        double[][] latlngs = FlightToShow.GetLatLngsArray();
+        double[][] latlngs = ViewModelHelpers.GetLatLngsArray(FlightPoints);
         
         if (_module is not null && latlngs.Length > 0 && _trace.Any())
         {
@@ -95,11 +100,11 @@
             _flightMap = await _module.InvokeAsync<IJSObjectReference>("add_polyline",
                                                             _flightMap,
                                                             latlngs);
-            if (FlightToShow.XcScore is not null)
+            if (XcScore is not null)
             {
                 _flightMap = await _module.InvokeAsync<IJSObjectReference>("add_geojson",
                 _flightMap,
-                FlightToShow.XcScore.GeoJsonObject);
+                XcScore.GeoJsonObject);
             }
         }
     }
@@ -118,12 +123,12 @@
     {
         _chart ??= new();
         await _chart.Clear();
-        var times = GenerateDateTimeList(FlightToShow.TakeOffDateTime,
-                FlightToShow.FlightDuration,
-                FlightToShow.FlightPoints.Count)
+        var times = GenerateDateTimeList(TakeOffDateTime,
+                FlightDuration,
+                FlightPoints.Count)
             .Cast<object>()
             .ToList();
-        var altitudes = FlightToShow.FlightPoints.Select(x => x.Altitude).Cast<object>().ToList();
+        var altitudes = FlightPoints.Select(x => x.Altitude).Cast<object>().ToList();
         await _chart.AddTrace(
             new Scatter()
             {
@@ -157,14 +162,14 @@
             return;
         }
         
-        var sampleTimeFromStart = dateTime - FlightToShow.TakeOffDateTime;
+        var sampleTimeFromStart = dateTime - TakeOffDateTime;
         int sampleIndex = (int)sampleTimeFromStart.TotalSeconds;
-        if (FlightToShow.FlightPoints.Count <= sampleIndex)
+        if (FlightPoints.Count <= sampleIndex)
         {
             Logger.LogError("No sample to display at {DateTime}", dateTime);
             return;
         }
-        var pointToMark = FlightToShow.FlightPoints[sampleIndex];
+        var pointToMark = FlightPoints[sampleIndex];
         
 
         _flightMap = await _module.InvokeAsync<IJSObjectReference>("addOrMoveMarker",

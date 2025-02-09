@@ -1,5 +1,6 @@
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
+using ParagliderFlightLog.Services;
 using ParaglidingFlightLogWeb.ViewModels;
 
 namespace ParaglidingFlightLogWeb.Services;
@@ -10,16 +11,19 @@ public class SharingService
 {
     private readonly ILogger<SharingService> _logger;
     private readonly SharedDb _db;
+    private readonly PhotosService _photosService;
 
     /// <summary>
     /// ctor
     /// </summary>
     /// <param name="logger"></param>
     /// <param name="db"></param>
-    public SharingService(ILogger<SharingService> logger, SharedDb db)
+    /// <param name="photosService"></param>
+    public SharingService(ILogger<SharingService> logger, SharedDb db, PhotosService photosService)
     {
         _logger = logger;
         _db = db;
+        _photosService = photosService;
     }
 
     /// <summary>
@@ -50,5 +54,14 @@ public class SharingService
     {
         SharedFlight? flight = await _db.GetSharedFlightAsync(flightId);
         return flight is null ? null : new SharedFlightViewModel(flight);
+    }
+    /// <summary>
+    /// Return the base 64 encoded string of the image
+    /// </summary>
+    /// <param name="photo"></param>
+    /// <returns></returns>
+    public string GetBase64StringPhotoData(FlightPhotoViewModel photo)
+    {
+        return photo.GetBase64PhotoData(_photosService);
     }
 }

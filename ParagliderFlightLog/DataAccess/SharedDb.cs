@@ -45,15 +45,28 @@ public class SharedDb
         }
         else
         {
-            DbInformations? dbInfo = GetDbInformations();
+            DbInformations? dbInfo = await GetDbInformationsAsync();
             if (dbInfo is null)
             {
                 _logger.LogError("Unable to get the database informations.");
                 return;
             }
+            await CleanOldSharedFlightsAsync();
         }
-
+        
         _isInitialized = true;
+    }
+
+    private async Task CleanOldSharedFlightsAsync()
+    {
+        const string sqlGetOldFlights = "SELECT * FROM SharedFlights WHERE EndOfShareDateTime < @now";
+        List<SharedFlight> oldFlights = await _db.LoadDataAsync<SharedFlight, dynamic>(sqlGetOldFlights, new { now = DateTime.UtcNow }, LoadConnectionString());
+        
+        foreach (SharedFlight flight in oldFlights)
+        {
+            _logger.LogInformation("Shared Flight {flightId} is expired", flight.Id);
+            await DeleteFlightAsync(flight);
+        }
     }
 
     private async Task CreateSharedDbAsync()
@@ -87,7 +100,7 @@ public class SharedDb
                                           "REF_Flight_ID"    TEXT NOT NULL,
                                           "REF_User_Id"    TEXT NOT NULL,
                                           PRIMARY KEY("Photo_ID"),
-                                          FOREIGN KEY("REF_Flight_ID") REFERENCES "SharedFlights"("Id"));
+                                          FOREIGN KEY("REF_Flight_ID") REFERENCES "SharedFlights"("SourceFlightId"));
                                       """;
         await _db.SaveDataAsync(sqlCreateDbInfo, new { }, LoadConnectionString());
         await _db.SaveDataAsync(sqlCreateSharedFlights, new { }, LoadConnectionString());
@@ -144,7 +157,7 @@ public class SharedDb
         foreach (FlightPhoto photo in photos)
         {
             await _db.SaveDataAsync(sqlInsertPhoto,
-                new { photo.Photo_ID, @REF_Flight_ID = flightToShare.Id, photo.REF_User_Id }, LoadConnectionString());
+                new { photo.Photo_ID, @REF_Flight_ID = flightToShare.SourceFlightId, photo.REF_User_Id }, LoadConnectionString());
         }
 
         return flightToShare.Id;
@@ -162,29 +175,29 @@ public class SharedDb
 
         const string sql = "SELECT * FROM SharedFlights WHERE Id=@flightId";
         List<SharedFlight> sharedFlights =
-            _db.LoadData<SharedFlight, dynamic>(sql, new { flightId }, LoadConnectionString());
+            await _db.LoadDataAsync<SharedFlight, dynamic>(sql, new { flightId }, LoadConnectionString());
         if (sharedFlights.Count > 1) { throw new InvalidOperationException("Multiple flights with the same id"); }
 
         if (sharedFlights.Count == 0) { return null;}
         SharedFlight flight = sharedFlights[0];
         if (flight.EndOfShareDateTime < DateTime.UtcNow)
         {
-            await DeleteFlightAsync(flightId);
+            await DeleteFlightAsync(flight);
             return null;
         }
         flight.FlightPoints = IgcHelper.GetFlightPointsFromIgcContent(sharedFlights[0].IgcFileContent);
-        flight.Photos = GetAllPhotoForFlight(flightId);
+        flight.Photos = await GetAllPhotoForFlightAsync(flight.SourceFlightId);
         return flight;
     }
 
-    private async Task DeleteFlightAsync(string flightId)
+    private async Task DeleteFlightAsync(SharedFlight flight)
     {
         const string deleteFlight = "DELETE FROM SharedFlights WHERE Id=@flightId";
         const string deletePhotos = "DELETE FROM FlightPhotos WHERE REF_Flight_ID=@flightId";
         
-        await _db.SaveDataAsync(deletePhotos, new { flightId }, LoadConnectionString());
-        await _db.SaveDataAsync(deleteFlight, new { flightId }, LoadConnectionString());
-        _logger.LogInformation("Shared Flight {flightId} deleted", flightId);
+        await _db.SaveDataAsync(deletePhotos, new { flight.SourceFlightId }, LoadConnectionString());
+        await _db.SaveDataAsync(deleteFlight, new { flight.Id }, LoadConnectionString());
+        _logger.LogInformation("Shared Flight {flightId} deleted", flight.Id);
     }
 
     private async Task<string> IsThisFlightSharedAsync(string flightId)
@@ -193,7 +206,7 @@ public class SharedDb
 
         const string sql = "SELECT Id FROM SharedFlights WHERE SourceFlightId=@flightId";
         List<string> sharedFlightId =
-            _db.LoadData<string, dynamic>(sql, new { flightId }, LoadConnectionString());
+            await _db.LoadDataAsync<string, dynamic>(sql, new { flightId }, LoadConnectionString());
 
         if (sharedFlightId.Count > 0)
         {
@@ -211,14 +224,14 @@ public class SharedDb
         return cs;
     }
 
-    private DbInformations? GetDbInformations()
+    private async Task<DbInformations?> GetDbInformationsAsync()
     {
         string dbInfoTable = "DbInformations";
         string sql = "SELECT name FROM sqlite_master WHERE type='table' AND name=@dbInfoTable";
-        bool dbInfoExists = _db.LoadData<string, dynamic>(sql, new { dbInfoTable }, LoadConnectionString()).Count == 1;
+        bool dbInfoExists = (await _db.LoadDataAsync<string, dynamic>(sql, new { dbInfoTable }, LoadConnectionString())).Count == 1;
         if (!dbInfoExists) return null;
         sql = "SELECT VersionMajor,VersionMinor, VersionFix FROM DbInformations";
-        return _db.LoadData<DbInformations, dynamic>(sql, new { }, LoadConnectionString())[0];
+        return (await _db.LoadDataAsync<DbInformations, dynamic>(sql, new { }, LoadConnectionString()))[0];
     }
 
     /// <summary>
@@ -227,14 +240,14 @@ public class SharedDb
     /// <param name="flight"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    private List<FlightPhoto> GetAllPhotoForFlight(string flightId)
+    private async Task<List<FlightPhoto>> GetAllPhotoForFlightAsync(string flightId)
     {
         string sql = """
                      SELECT Photo_ID, REF_Flight_ID, REF_User_Id
                      FROM FlightPhotos
                      WHERE REF_FLIGHT_ID = @flightId;
                      """;
-        var output = _db.LoadData<FlightPhoto, dynamic>(sql, new { flightId }, LoadConnectionString());
+        var output = await _db.LoadDataAsync<FlightPhoto, dynamic>(sql, new { flightId }, LoadConnectionString());
 
         return output;
     }

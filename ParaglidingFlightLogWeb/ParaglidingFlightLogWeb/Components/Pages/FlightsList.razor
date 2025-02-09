@@ -64,7 +64,7 @@
                     </RadzenColumn>
                     <RadzenColumn>
                         <RadzenStack Orientation="Orientation.Vertical">
-                            <RadzenButton Icon="share" Click="OpenShareFlight" Text="Share" />
+                            <RadzenButton Icon="share" Click="OpenShareFlight" Text="Share"/>
                             <RadzenUpload Icon="add_photo_alternate"
                                           ChooseText="Add photos"
                                           Multiple="true"
@@ -93,7 +93,11 @@
                         @if (LastSelectedFlight.FlightPoints.Count > 0)
                         {
                             <RadzenCarouselItem>
-                                <ShowFlightOnMap FlightToShow="LastSelectedFlight" Height="500" />
+                                <ShowFlightOnMap FlightPoints="@LastSelectedFlight.FlightPoints"
+                                                 TakeOffDateTime="@LastSelectedFlight.TakeOffDateTime"
+                                                 FlightDuration="@LastSelectedFlight.FlightDuration"
+                                                 XcScore="@LastSelectedFlight.XcScore"
+                                                 Height="500"/>
                             </RadzenCarouselItem>
                         }
                         @foreach (var photo in LastSelectedFlight.GetFlightPhotos())
