@@ -99,8 +99,9 @@ public class SharedDb
                                           "Photo_ID" TEXT NOT NULL UNIQUE,
                                           "REF_Flight_ID"    TEXT NOT NULL,
                                           "REF_User_Id"    TEXT NOT NULL,
+                                          "REF_SharedFlight_ID"    TEXT,
                                           PRIMARY KEY("Photo_ID"),
-                                          FOREIGN KEY("REF_Flight_ID") REFERENCES "SharedFlights"("SourceFlightId"));
+                                          FOREIGN KEY("REF_SharedFlight_ID") REFERENCES "SharedFlights"("Id"));
                                       """;
         await _db.SaveDataAsync(sqlCreateDbInfo, new { }, LoadConnectionString());
         await _db.SaveDataAsync(sqlCreateSharedFlights, new { }, LoadConnectionString());
@@ -150,14 +151,14 @@ public class SharedDb
                                        VALUES (@Id, @SourceFlightId, @Comment, @SiteName, @GliderName, @FlightDuration_s, @TakeOffDateTime, @IgcFileContent, @GeoJsonScore, @EndOfShareDateTime);
                                        """;
         const string sqlInsertPhoto = """
-                                      INSERT INTO FlightPhotos (Photo_ID, REF_Flight_ID, REF_User_Id)
-                                      VALUES (@Photo_ID, @REF_Flight_ID, @REF_User_Id);
+                                      INSERT INTO FlightPhotos (Photo_ID, REF_Flight_ID, REF_User_Id, REF_SharedFlight_ID)
+                                      VALUES (@Photo_ID, @REF_Flight_ID, @REF_User_Id, @REF_SharedFlight_ID);
                                       """;
         await _db.SaveDataAsync(sqlInsertFlight, flightToShare, LoadConnectionString());
         foreach (FlightPhoto photo in photos)
         {
             await _db.SaveDataAsync(sqlInsertPhoto,
-                new { photo.Photo_ID, @REF_Flight_ID = flightToShare.SourceFlightId, photo.REF_User_Id }, LoadConnectionString());
+                new { photo.Photo_ID, REF_Flight_ID = flightToShare.SourceFlightId, photo.REF_User_Id, REF_SharedFlight_ID = flightToShare.Id }, LoadConnectionString());
         }
 
         return flightToShare.Id;
@@ -186,16 +187,16 @@ public class SharedDb
             return null;
         }
         flight.FlightPoints = IgcHelper.GetFlightPointsFromIgcContent(sharedFlights[0].IgcFileContent);
-        flight.Photos = await GetAllPhotoForFlightAsync(flight.SourceFlightId);
+        flight.Photos = await GetAllPhotoForFlightAsync(flight.Id);
         return flight;
     }
 
     private async Task DeleteFlightAsync(SharedFlight flight)
     {
-        const string deleteFlight = "DELETE FROM SharedFlights WHERE Id=@flightId";
-        const string deletePhotos = "DELETE FROM FlightPhotos WHERE REF_Flight_ID=@flightId";
+        const string deleteFlight = "DELETE FROM SharedFlights WHERE Id=@Id";
+        const string deletePhotos = "DELETE FROM FlightPhotos WHERE REF_SharedFlight_ID=@Id";
         
-        await _db.SaveDataAsync(deletePhotos, new { flight.SourceFlightId }, LoadConnectionString());
+        await _db.SaveDataAsync(deletePhotos, new { flight.Id }, LoadConnectionString());
         await _db.SaveDataAsync(deleteFlight, new { flight.Id }, LoadConnectionString());
         _logger.LogInformation("Shared Flight {flightId} deleted", flight.Id);
     }
@@ -245,7 +246,7 @@ public class SharedDb
         string sql = """
                      SELECT Photo_ID, REF_Flight_ID, REF_User_Id
                      FROM FlightPhotos
-                     WHERE REF_FLIGHT_ID = @flightId;
+                     WHERE REF_SharedFlight_ID = @flightId;
                      """;
         var output = await _db.LoadDataAsync<FlightPhoto, dynamic>(sql, new { flightId }, LoadConnectionString());
 
