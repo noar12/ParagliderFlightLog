@@ -5,6 +5,17 @@
 
 @rendermode InteractiveServer
 <PageTitle>Shared Flight</PageTitle>
+<HeadContent>
+    <meta name="description" content="@_description">
+    <meta property="og:description" content="@_description" />
+    <meta property="og:title" content="@_title" />@*
+    <meta property="og:image" content="/paraglidingLogBackground1200x630.jpg" />
+        <meta property="og:image:type" content="image/jpeg" />
+   <meta property="og:image:width" content="1200" />
+   <meta property="og:image:height" content="1630" />
+    *@
+
+</HeadContent>
 @if (_flight is null)
 {
     <RadzenText>Loading...</RadzenText>
@@ -85,6 +96,8 @@
     [Parameter] public string? SharedFlightId { get; set; }
     private bool _initialized = false;
     private SharedFlightViewModel? _flight;
+    private string _description;
+    private string _title;
     /// <summary>
     /// <inheritdoc />
     /// </summary>
@@ -92,6 +105,12 @@
     {
         if (SharedFlightId is null) { return; }
         _flight = await SharingService.GetSharedFlightAsync(SharedFlightId);
+        if (_flight is not null)
+        {
+            _title = $"Flight from {_flight.SiteName} on {_flight.TakeOffDateTime}.";
+            _description = $"Flight Share \u26f3 {_flight.SiteName} - \u231b {_flight.FlightDuration} h \u22ba {_flight.MaxAltitude} m - \ud83c\udfc6 {_flight.XcScore?.Points:N2} pts";
+        }
+
         _initialized = true;
         await InvokeAsync(StateHasChanged);
     }
