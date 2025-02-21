@@ -2,6 +2,9 @@
     <RadzenTextBox Value="@Value" Change="OnChange"/>
 </RadzenFormField>
 @code {
+    /// <summary>
+    /// Value of the text input
+    /// </summary>
     [Parameter]
     public string Value { get; set; } = "";
     [Parameter]
