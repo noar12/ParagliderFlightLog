@@ -51,7 +51,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         {
             if (firstRender)
             {
-                module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmap.js");
+                module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmapV1_0_0.js");
                 if (module != null)
                 {
                     map = await module.InvokeAsync<IJSObjectReference>("load_map", "map", 0, 0, 2);

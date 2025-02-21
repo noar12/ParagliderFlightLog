@@ -11,6 +11,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
             _flight = flight;
         }
 
+        public string Id => _flight.Id;
         public string TakeOffDateTime => _flight.TakeOffDateTime.ToString("g");
         public string SiteName => _flight.SiteName;
         public string GliderName => _flight.GliderName;

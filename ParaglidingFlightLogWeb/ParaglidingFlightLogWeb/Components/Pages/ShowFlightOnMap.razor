@@ -6,30 +6,34 @@
 @using Plotly.Blazor.Interop
 @using Serilog
 @inject ILogger<ShowFlightOnMap> Logger
-<div class="rz-w-100" >
+<div class="rz-w-100">
     <div id="flightMap" style="@($"min-height: {_mapHeight}px;")"></div>
-    <PlotlyChart @bind-Config="_chartConfig" @bind-Layout="_chartLayout" 
+    <PlotlyChart @bind-Config="_chartConfig" @bind-Layout="_chartLayout"
                  @bind-Data="_trace"
                  ClickAction="HoverOrClickAction" HoverAction="HoverOrClickAction" AfterRender="SubscribeEvents"
                  @ref="_chart" style="@($"min-height: {_chartHeight}px;")"/>
 </div>
 
 @code {
+
     /*/// <summary>
     /// Flight to show as FlightViewModel
     /// </summary>
     [Parameter] public FlightViewModel FlightToShow { get; set; } = null!;*/
-    
-    [Parameter] public List<FlightPoint> FlightPoints { get; set; } = null!;
+    [Parameter] public string Id { get; set; } = "";
+    [Parameter] public List<FlightPoint> FlightPoints { get; set; } = [];
     [Parameter] public XcScoreViewModel? XcScore { get; set; }
     [Parameter] public DateTime TakeOffDateTime { get; set; }
     [Parameter] public TimeSpan FlightDuration { get; set; }
+
     /// <summary>
     /// Height of the component
     /// </summary>
-    [Parameter] public int Height { get; set; }
+    [Parameter]
+    public int Height { get; set; }
+
     private IJSObjectReference? _module;
-    
+
     private object? _flightMap;
     private PlotlyChart? _chart;
     private Config? _chartConfig;
@@ -37,14 +41,17 @@
     private IList<ITrace> _trace = [];
     private int _chartHeight;
     private int _mapHeight;
-    
+    private string _drawnId = "";
+    private bool _shouldRender = true;
+    protected override bool ShouldRender() => _shouldRender;
+
     [Inject] private IJSRuntime JsRuntime { get; set; } = null!;
+
     /// <summary>
     /// <inheritdoc />
     /// </summary>
     protected override async Task OnInitializedAsync()
     {
-        
     }
 
     /// <summary>
@@ -83,28 +90,39 @@
     /// <param name="firstRender"></param>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        _module ??= await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmapV1_0_0.js");
         if (firstRender)
         {
-            _module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./leafletmap.js");
-            if (_module != null)
-            {
-                _flightMap = await _module.InvokeAsync<IJSObjectReference>("load_map", "flightMap", 0, 0, 2);
-            }
-            await GenerateAltitudeChart();
+            _flightMap = await _module.InvokeAsync<IJSObjectReference>("load_map", "flightMap", 0, 0, 2);
         }
+
+        if (Id != _drawnId && _flightMap is not null)
+        {
+            await DrawFlight();
+            _drawnId = Id;
+        }
+    }
+
+    private async Task DrawFlight()
+    {
         double[][] latlngs = ViewModelHelpers.GetLatLngsArray(FlightPoints);
         
-        if (_module is not null && latlngs.Length > 0 && _trace.Any())
+        if (_module is not null && latlngs.Length > 0 )
         {
+            _shouldRender = false;// prevent plotly from triggering re-rendering while we are updating the map
+            await GenerateAltitudeChart();
+            _shouldRender = true;
+            _flightMap = await _module.InvokeAsync<IJSObjectReference>("remove_all_polyline", _flightMap);
+            _flightMap = await _module.InvokeAsync<IJSObjectReference>("remove_all_marker", _flightMap);
             //flightMap = await module.InvokeAsync<IJSObjectReference>("remove_all", flightMap); //this remove even the tile. It's a bit violent...
             _flightMap = await _module.InvokeAsync<IJSObjectReference>("add_polyline",
-                                                            _flightMap,
-                                                            latlngs);
+                _flightMap,
+                latlngs);
             if (XcScore is not null)
             {
                 _flightMap = await _module.InvokeAsync<IJSObjectReference>("add_geojson",
-                _flightMap,
-                XcScore.GeoJsonObject);
+                    _flightMap,
+                    XcScore.GeoJsonObject);
             }
         }
     }
@@ -117,8 +135,10 @@
         {
             output.Add(start + i * interval);
         }
+
         return output;
     }
+
     private async Task GenerateAltitudeChart()
     {
         _chart ??= new();
@@ -140,6 +160,7 @@
             }
         );
     }
+
     private async void HoverOrClickAction(IEnumerable<EventDataPoint> eventData)
     {
         var eventDataPoints = eventData.ToList();
@@ -151,17 +172,17 @@
                 await HighlightMapPointAtTime(dateTime);
             }
         }
+
         await InvokeAsync(StateHasChanged);
     }
-    
+
     private async Task HighlightMapPointAtTime(DateTime dateTime)
     {
-        
         if (_module is null)
         {
             return;
         }
-        
+
         var sampleTimeFromStart = dateTime - TakeOffDateTime;
         int sampleIndex = (int)sampleTimeFromStart.TotalSeconds;
         if (FlightPoints.Count <= sampleIndex)
@@ -169,18 +190,24 @@
             Logger.LogError("No sample to display at {DateTime}", dateTime);
             return;
         }
+
         var pointToMark = FlightPoints[sampleIndex];
-        
+
 
         _flightMap = await _module.InvokeAsync<IJSObjectReference>("addOrMoveMarker",
             _flightMap,
-            pointToMark.Latitude, pointToMark.Longitude, "mouseHoverFlightPoint") ;
+            pointToMark.Latitude, pointToMark.Longitude, "mouseHoverFlightPoint");
     }
 
     private async void SubscribeEvents()
     {
-        if(_chart is null) {return;}
+        if (_chart is null)
+        {
+            return;
+        }
+
         await _chart.SubscribeHoverEvent();
         await _chart.SubscribeClickEvent();
     }
+
 }

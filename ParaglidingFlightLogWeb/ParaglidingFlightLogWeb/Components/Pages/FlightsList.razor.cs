@@ -121,13 +121,6 @@ public partial class FlightsList
         ContextMenuService.Close();
     }
 
-    async Task OnShowMapClick()
-    {
-        await DialogService.OpenAsync<ShowFlightOnMap>($"Flight trace on map",
-            new Dictionary<string, object>() { { "FlightToShow", LastSelectedFlight! }, { "Height", 500 } },
-            new DialogOptions() { Width = "900px", Resizable = true, Draggable = false });
-    }
-
     enum EFlightAction
     {
         Edit,

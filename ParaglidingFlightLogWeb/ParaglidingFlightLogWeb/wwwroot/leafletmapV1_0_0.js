@@ -18,6 +18,27 @@ export function add_marker(map, lat, lon, title) {
     return map;
 }
 
+export function remove_all_polyline(map) {
+    map.eachLayer(function (layer) {
+        // Check if the layer is an instance of L.Polyline
+        if (layer instanceof L.Polyline) {
+            // Remove the polyline from the map
+            map.removeLayer(layer);
+        }
+    });
+    return map;
+}
+export function remove_all_marker(map) {
+    map.eachLayer(function (layer) {
+        // Check if the layer is an instance of L.Polyline
+        if (layer instanceof L.Marker) {
+            // Remove the marker from the map
+            map.removeLayer(layer);
+        }
+    });
+    return map;
+}
+
 export function add_polyline(map, latlngs) {
     let polyline = L.polyline(latlngs, {color: 'red'}).addTo(map);
     map.fitBounds(polyline.getBounds());
