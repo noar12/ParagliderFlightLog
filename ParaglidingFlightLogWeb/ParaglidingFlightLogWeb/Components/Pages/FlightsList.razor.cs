@@ -45,7 +45,6 @@ public partial class FlightsList
     IList<FlightViewModel> SelectedFlights = [];
     private int _flightUploadProgress;
     private bool _showFlightUploadProgress;
-
     FlightViewModel? LastSelectedFlight
     {
         get
@@ -78,7 +77,7 @@ public partial class FlightsList
     /// <param name="firstRender"></param>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (string.IsNullOrEmpty(FlightId))
+        if (!firstRender || string.IsNullOrEmpty(FlightId))
         {
             return;
         }
@@ -218,11 +217,6 @@ public partial class FlightsList
         });
     }
 
-    private void ComputeFlightScore()
-    {
-        Mvm.EnqueueFlightForScore(LastSelectedFlight);
-    }
-
     private async Task OnFlightUploadProgress(UploadProgressArgs args)
     {
         _showFlightUploadProgress = true;
@@ -285,5 +279,15 @@ public partial class FlightsList
         await DialogService.OpenAsync<ShareFlightForm>("Share Flight",
             new Dictionary<string, object>() { { "Flight", LastSelectedFlight } },
             new DialogOptions() { Resizable = true, Draggable = false });
+    }
+
+    private void OnSelectedFlightChanged(IList<FlightViewModel> flights)
+    {
+        if (flights.Count != 1)
+        {
+            return;
+        }
+        SelectedFlights = flights;
+        FlightId = flights[0].FlightID;
     }
 }
