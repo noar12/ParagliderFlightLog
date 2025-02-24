@@ -58,7 +58,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 }
             }
 
-            if (string.IsNullOrEmpty(SiteId))
+            if (!firstRender || string.IsNullOrEmpty(SiteId))
             {
                 return;
             }
