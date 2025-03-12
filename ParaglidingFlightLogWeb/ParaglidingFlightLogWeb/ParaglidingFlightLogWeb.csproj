@@ -40,6 +40,12 @@
     <Content Update="wwwroot\paragliding_24dp_5F6368_FILL0_wght400_GRAD0_opsz24.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="wwwroot\paraglidingLogBackground1024x1024.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Update="wwwroot\paraglidingLogBackground1200x630.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
