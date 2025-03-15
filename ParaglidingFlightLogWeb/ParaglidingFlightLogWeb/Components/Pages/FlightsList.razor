@@ -87,10 +87,7 @@
                 <RadzenCarousel ButtonStyle="ButtonStyle.Dark" PagerOverlay="false" Auto="false" class="rz-w-100 rz-h-auto">
                     <Items>
 
-                        <RadzenCarouselItem>
-                            <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false
-                                             Style="max-height: 500px; overflow-y:auto;"/>
-                        </RadzenCarouselItem>
+
                         @if (LastSelectedFlight.FlightPoints.Count > 0)
                         {
                             <RadzenCarouselItem>
@@ -102,6 +99,10 @@
                                                  Height="500"/>
                             </RadzenCarouselItem>
                         }
+                        <RadzenCarouselItem>
+                            <MyTextIndicator Label="Comment" Text="@LastSelectedFlight.Comment" Bold=false
+                                             Style="max-height: 500px; overflow-y:auto;"/>
+                        </RadzenCarouselItem>
                         @foreach (var photo in LastSelectedFlight.GetFlightPhotos())
                         {
                             <RadzenCarouselItem>

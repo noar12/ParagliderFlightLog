@@ -33,14 +33,7 @@
         <RadzenCarousel ButtonStyle="ButtonStyle.Dark" PagerOverlay="false" Auto="false" class="rz-w-100 rz-h-auto">
             <Items>
 
-                @if (!string.IsNullOrEmpty(Flight.Comment))
-                {
-                    <RadzenCarouselItem>
-                        <MyTextIndicator Style="max-height: 400px;" Class="rz-h-100 rz-overflow-auto"
-                                         Label="Comment"
-                                         Text="@Flight.Comment" Bold="false"/>
-                    </RadzenCarouselItem>
-                }
+
                 @if (Flight.FlightPoints.Count > 0)
                 {
                     <RadzenCarouselItem>
@@ -50,6 +43,14 @@
                                          XcScore="@Flight.XcScore"
                                          Id="@Flight.FlightID"
                                          Height="400"/>
+                    </RadzenCarouselItem>
+                }
+                @if (!string.IsNullOrEmpty(Flight.Comment))
+                {
+                    <RadzenCarouselItem>
+                        <MyTextIndicator Style="max-height: 400px;" Class="rz-h-100 rz-overflow-auto"
+                                         Label="Comment"
+                                         Text="@Flight.Comment" Bold="false"/>
                     </RadzenCarouselItem>
                 }
                 @foreach (var photo in Flight.GetFlightPhotos())

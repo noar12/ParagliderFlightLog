@@ -9,7 +9,7 @@
 <RadzenStack Orientation="Orientation.Vertical">
     <RadzenText TextStyle="TextStyle.H3">Flight data sharing</RadzenText>
     <MyNumericInput Label="Validity in days" @bind-Value="@_validity" />
-    <MyTextInput Label="Comment (shared version)" @bind-Value="@_comment" />
+    <MyTextAreaInput Rows="10" Label="Comment (shared version)" @bind-Value="@_comment" />
     <RadzenButton Text="Share" Click="@ShareFlight" />
     @if (_shareUri is not null)
     {
