@@ -140,10 +140,11 @@ namespace ParaglidingFlightLogWeb.Services
         {
             double[] output = new double[12];
             double[] MonthFlightHours = GetMonthlyFlightHours(flightYear);
-            for (int i = 0; i < output.Length; i++)
+            for (int i = 0; i < output.Length - 1; i++)
             {
-                output[i] = MonthFlightHours[..i].Sum();
+                output[i] = MonthFlightHours[..(i + 1)].Sum();
             }
+            output[^1] = MonthFlightHours.Sum();
             return output;
         }
         public string[] AvailableAnalysis
