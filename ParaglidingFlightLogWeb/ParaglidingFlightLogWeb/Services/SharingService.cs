@@ -65,4 +65,21 @@ public class SharingService
     {
         return photo.GetBase64PhotoData(_photosService);
     }
+
+    public async Task<IEnumerable<UserSharedDataViewModel>> GetUserSharedDataAsync(string userId)
+    {
+        List<SharedFlightStatistic> userSharedFlightsStat = await _db.GetUserSharedFlightStatisticsAsync(userId);
+        List<UserSharedDataViewModel> userSharedData = new();
+        foreach (SharedFlightStatistic s in userSharedFlightsStat)
+        {
+            userSharedData.Add(new()
+            {
+                SourceFlightId = s.REF_SourceFlight_ID,
+                SharedFlightId = s.REF_SharedFlight_ID,
+                ViewCounter = s.ViewCount,
+                LastViewDateTime = s.LastViewDateTime,
+            });
+        }
+        return userSharedData;
+    }
 }

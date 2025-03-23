@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using ParagliderFlightLog.Services;
 using ParaglidingFlightLogWeb.Data;
 using ParaglidingFlightLogWeb.Services;
+using ParaglidingFlightLogWeb.ViewModels;
 using System.Security.Claims;
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
@@ -16,10 +17,12 @@ public sealed partial class Settings : IDisposable
     private IDisposable? _disposable;
     private int _xcScoreQueueCount;
     private ClaimsPrincipal? _userClaim;
+    private readonly List<UserSharedDataViewModel> _sharedData = [];
     [Inject] private IConfiguration Config { get; set; } = null!;
     [Inject] private CoreService CoreService { get; set; } = null!;
     [Inject] private XcScoreManagerData XcScoreManagerData { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
+    [Inject] SharingService SharingService { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     /// <summary>
     /// <inheritdoc/>
@@ -29,6 +32,7 @@ public sealed partial class Settings : IDisposable
     {
         _adminsId = Config.GetSection("Administration:Admins").Get<List<string>>();
         _userClaim = (await AuthenticationStateTask).User;
+        string? userId = UserManager.GetUserId(_userClaim);
         if (_userClaim.Identity?.Name is null)
         {
             _isAdmin = false;
@@ -36,6 +40,10 @@ public sealed partial class Settings : IDisposable
         else
         {
             _isAdmin = _adminsId?.Contains(_userClaim.Identity.Name) ?? false;
+            if (userId is not null)
+            {
+                _sharedData.AddRange(await SharingService.GetUserSharedDataAsync(userId));
+            }
         }
 
         if (_isAdmin && _disposable is null)

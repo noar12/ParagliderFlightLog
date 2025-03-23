@@ -4,18 +4,38 @@
 <PageTitle>Settings</PageTitle>
 
 <RadzenCard Visible="_isAdmin">
-    <h2>Admin Settings</h2>
-    <h3>XcScore</h3>
+    <RadzenText TextStyle="TextStyle.H3">Admin Settings</RadzenText>
+    <RadzenText TextStyle="TextStyle.H4">XcScore</RadzenText>
     <RadzenText>Installation is @(XcScoreManagerData.ScoreEngineInstalled ? "Running" : "Not Running")</RadzenText>
     <RadzenText>Number of flight in queue: @_xcScoreQueueCount</RadzenText>
 </RadzenCard>
 <RadzenCard>
-    <h2>User Settings</h2>
-    <RadzenButton Click="OnCalculateMissingFileClick" Text="Calculate Missing Flight Score" Disabled="@(HasUserRequestEnqueued())" />
+    <RadzenText TextStyle="TextStyle.H3">User Settings</RadzenText>
+    <RadzenButton Click="OnCalculateMissingFileClick" Text="Calculate Missing Flight Score"
+                  Disabled="@(HasUserRequestEnqueued())"/>
     @if (HasUserRequestEnqueued())
     {
-        <RadzenText Text="You have some requests currently processing" />
+        <RadzenText Text="You have some requests currently processing"/>
     }
+</RadzenCard>
+<RadzenCard>
+    <RadzenText TextStyle="TextStyle.H3">Shared flight stats</RadzenText>
+    <RadzenDataGrid Data="@_sharedData">
+        <Columns>
+            <RadzenDataGridColumn Title="Link to original">
+                <Template>
+                    <RadzenLink Icon="pageview" Path="@context.LinkToOriginalFlight"/>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Title="Link to share">
+                <Template>
+                    <RadzenLink Icon="pageview" Path="@context.LinkToSharedFlight"/>
+                </Template>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn Property="ViewCounter" Title="View Counter"/>
+            <RadzenDataGridColumn Property="LastViewDateTime" Title="Last View"/>
+        </Columns>
+    </RadzenDataGrid>
 </RadzenCard>
 
 

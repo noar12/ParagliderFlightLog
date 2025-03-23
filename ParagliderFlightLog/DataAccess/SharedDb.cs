@@ -357,4 +357,15 @@ public class SharedDb
 
         return output;
     }
+
+    public async Task<List<SharedFlightStatistic>> GetUserSharedFlightStatisticsAsync(string userId)
+    {
+        string sql = """
+                     SELECT Id, REF_SharedFlight_ID, REF_SourceFlight_ID, REF_User_Id, ViewCount, LastViewDateTime
+                     FROM SharedFlightStatistics
+                     WHERE REF_User_Id=@userId;
+                     """;
+        var output = await _db.LoadDataAsync<SharedFlightStatistic, dynamic>(sql, new { userId }, LoadConnectionString());
+        return output;
+    }
 }

@@ -2,6 +2,7 @@
 @using ParaglidingFlightLogWeb.Services
 @using ParaglidingFlightLogWeb.ViewModels
 @inject SharingService SharingService
+@inject ILogger<SharedFlight> Logger
 
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 <PageTitle>Shared Flight</PageTitle>
@@ -116,6 +117,7 @@
 
         _initialized = true;
         await InvokeAsync(StateHasChanged);
+        Logger.LogInformation("Flight shared with id {SharedFlightId} has been loaded", SharedFlightId);
     }
 
     private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
