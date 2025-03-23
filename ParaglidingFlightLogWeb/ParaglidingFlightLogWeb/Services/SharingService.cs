@@ -30,18 +30,19 @@ public class SharingService
     /// Create a new flight based on <paramref name="flightVm" /> that will be accessible to other to share. Returns the URI to the share flight
     /// </summary>
     /// <param name="flightVm"></param>
+    /// <param name="userId"></param>
     /// <param name="comment"></param>
     /// <param name="validity"></param>
     /// <param name="baseUrl"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public async Task<Uri> ShareFlightAsync(FlightViewModel flightVm, string comment, TimeSpan validity, Uri baseUrl)
+    public async Task<Uri> ShareFlightAsync(FlightViewModel flightVm, string userId, string comment, TimeSpan validity, Uri baseUrl)
     {
         _logger.LogInformation("Sharing flight {FlightId} for {Validity}", flightVm.FlightID, validity);
         FlightWithData flight = flightVm.FlightWithData;
         string siteName = flightVm.TakeOffSiteName;
         string gliderName = flightVm.GliderName;
-        string id = await _db.CreateSharedFlightAsync(flight, comment, siteName, gliderName, flight.FlightPhotos, validity);
+        string id = await _db.CreateSharedFlightAsync(flight, userId, comment, siteName, gliderName, flight.FlightPhotos, validity);
         var uri = new Uri(baseUrl, $"sharedflight/{id}");
         return uri;
     }

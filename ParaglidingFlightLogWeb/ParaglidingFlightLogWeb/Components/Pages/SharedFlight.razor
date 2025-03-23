@@ -3,7 +3,7 @@
 @using ParaglidingFlightLogWeb.ViewModels
 @inject SharingService SharingService
 
-@rendermode InteractiveServer
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 <PageTitle>Shared Flight</PageTitle>
 <HeadContent>
     <meta name="description" content="@_description">

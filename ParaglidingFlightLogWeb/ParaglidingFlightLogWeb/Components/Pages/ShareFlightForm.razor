@@ -1,9 +1,11 @@
+@using ParagliderFlightLog.DataAccess
 @using ParagliderFlightLog.Models
 @using ParaglidingFlightLogWeb.Services
 @using ParaglidingFlightLogWeb.ViewModels
 
 @inject NavigationManager NavigationManager
 @inject SharingService SharingService
+@inject FlightLogDB FlightLogDB
 @inject IJSRuntime JSRuntime
 
 <RadzenStack Orientation="Orientation.Vertical">
@@ -42,10 +44,10 @@
 
     private async Task ShareFlight()
     {
-        if (Flight is null) { return; }
+        if (Flight is null || FlightLogDB.UserId is null) { return; }
         
         Uri baseUri = new (NavigationManager.BaseUri);
-        _shareUri = await SharingService.ShareFlightAsync(Flight, _comment, TimeSpan.FromDays(_validity),baseUri);
+        _shareUri = await SharingService.ShareFlightAsync(Flight, FlightLogDB.UserId, _comment, TimeSpan.FromDays(_validity),baseUri);
     }
 
     private async Task CopyTextToClipboard()
