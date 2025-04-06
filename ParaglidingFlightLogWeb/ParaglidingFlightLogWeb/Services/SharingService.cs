@@ -76,7 +76,7 @@ public class SharingService
             {
                 SourceFlightId = s.REF_SourceFlight_ID,
                 SharedFlightId = s.REF_SharedFlight_ID,
-                ViewCounter = s.ViewCount,
+                ViewCounter = (int)(s.ViewCount / 2.0), // this is because the number of view is doubled by prerendering and we need prerendering to have correct meta data on the share page
                 LastViewDateTime = s.LastViewDateTime,
             });
         }
