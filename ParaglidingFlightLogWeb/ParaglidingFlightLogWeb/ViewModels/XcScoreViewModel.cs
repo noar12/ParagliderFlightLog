@@ -2,16 +2,35 @@
 
 namespace ParaglidingFlightLogWeb.ViewModels
 {
+    /// <summary>
+    /// View Model to display the XC score
+    /// </summary>
     public class XcScoreViewModel
     {
         private readonly XcScore _score;
-
+        /// <summary>
+        /// ctor
+        /// </summary>
+        /// <param name="score"></param>
         public XcScoreViewModel(XcScore score)
         {
             _score = score;
         }
-        public double Points { get => _score.Points; }
-        public string Type { get => _score.Type; }
-        public XcScoreGeoJson GeoJsonObject { get { return _score.GeoJsonObject; } }
+        /// <summary>
+        /// Points of the optimized solution
+        /// </summary>
+        public double Points => _score.Points;
+        /// <summary>
+        /// Type of flight found as the optimized solution
+        /// </summary>
+        public string Type => _score.Type;
+        /// <summary>
+        /// The raw data about the score. To be used to display the result on a map since it is a GeoJson
+        /// </summary>
+        public XcScoreGeoJson GeoJsonObject => _score.GeoJsonObject;
+        /// <summary>
+        /// Length of the route in km
+        /// </summary>
+        public double RouteLength => _score.RouteLength;
     }
 }
