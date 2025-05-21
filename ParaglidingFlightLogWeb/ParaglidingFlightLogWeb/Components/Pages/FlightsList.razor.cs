@@ -49,7 +49,7 @@ public partial class FlightsList
     {
         get
         {
-            return SelectedFlights.Count > 0 ? SelectedFlights[SelectedFlights.Count - 1] : null;
+            return SelectedFlights.Count > 0 ? SelectedFlights[^1] : null;
         }
     }
 
@@ -289,5 +289,21 @@ public partial class FlightsList
         }
         SelectedFlights = flights;
         FlightId = flights[0].FlightID;
+    }
+
+    private async Task OnEditFlightButton(FlightViewModel flightToEdit)
+    {
+        SelectedFlights.Clear();
+        SelectedFlights.Add(flightToEdit);
+        FlightId = flightToEdit.FlightID;
+        await OnEditFlight();
+    }
+
+    private async Task OnDeleteFlightButton(FlightViewModel flightToDelete)
+    {
+        SelectedFlights.Clear();
+        SelectedFlights.Add(flightToDelete);
+        FlightId = flightToDelete.FlightID;
+        await OnRemoveFlights(SelectedFlights);
     }
 }
