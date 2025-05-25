@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ParagliderFlightLog.Models;
+using ParaglidingFlightLogWeb.Components.Pages;
 using ParaglidingFlightLogWeb.ViewModels;
 using Radzen;
 
@@ -147,31 +148,60 @@ namespace ParaglidingFlightLogWeb.Services
             output[^1] = MonthFlightHours.Sum();
             return output;
         }
-        public string[] AvailableAnalysis
+        
+
+        public XcScoreOverTheYears[] GetXcScoresOverTheYears()
         {
-            get
+            XcScoreOverTheYears[] output = new XcScoreOverTheYears[4];
+            output[0] = new XcScoreOverTheYears(){FlightCount = 4, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]};
+            output[1] = new XcScoreOverTheYears(){FlightCount = 6, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]};
+            output[2] = new XcScoreOverTheYears(){FlightCount = 10, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]};
+            output[3] = new XcScoreOverTheYears(){FlightCount = 20, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]};
+            int i = 0;
+            foreach (int year in _mainViewModel.YearsOfFlying)
             {
-                var availableAnalysis = new List<string>();
-                foreach (StatisticalFlightsAnalysis analysis in Enum.GetValues(typeof(StatisticalFlightsAnalysis)))
-                {
-                    switch (analysis)
-                    {
-                        case StatisticalFlightsAnalysis.MontlyMedian:
-                            availableAnalysis.Add("Monthly median");
-                            break;
-                        case StatisticalFlightsAnalysis.DurationDistribution:
-                            availableAnalysis.Add("Duration Distribution");
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                return [.. availableAnalysis];
-            }
+                var bestFlights = _mainViewModel.FlightListViewModel
+                    .Where(f => f.TakeOffDateTime.Year == year && f.XcScore is not null)
+                    .OrderByDescending(f => f.XcScore!.Points).ToArray();
+                var bestofFour = bestFlights.Take(4).ToArray();
+                var bestofSix = bestFlights.Take(6).ToArray();
+                var bestofTen = bestFlights.Take(10).ToArray();
+                var bestofTwenty = bestFlights.Take(20).ToArray();
+
+                output[0].XcScores[i] = new XcScoreItem(){
+                    Year = year,
+                    XcScore = bestofFour.Sum(f => f.XcScore!.Points),
+                };
+                output[1].XcScores[i] = new XcScoreItem(){
+                    Year = year,
+                    XcScore = bestofSix.Sum(f => f.XcScore!.Points),
+                };
+                output[2].XcScores[i] = new XcScoreItem(){
+                    Year = year,
+                    XcScore = bestofTen.Sum(f => f.XcScore!.Points),
+                };
+                output[3].XcScores[i] = new XcScoreItem(){
+                    Year = year,
+                    XcScore = bestofTwenty.Sum(f => f.XcScore!.Points),
+                };
+                ++i;
+            };
+            return output;
         }
     }
 
-
+    public class XcScoreOverTheYears
+    {
+        public int? FlightCount { get; init; }
+        public XcScoreItem[] XcScores { get; init; }
+        public string Name => $"{FlightCount?.ToString() ?? "all"} flights";
+    }
+    public class XcScoreItem
+    {
+        public int Year { get; set; }
+        public string YearText => Year.ToString();
+        public double XcScore { get; set; }
+    }
 
     public class HistData
     {

@@ -142,6 +142,9 @@ public partial class FlightsStatistic
                     ++i;
                 }
                 break;
+            case StatisticalFlightsAnalysis.XcoreOverTheYears:
+                XcScoresOverTheYears = FlightStatistic.GetXcScoresOverTheYears();
+                break;
             default:
                 break;
         }
@@ -176,24 +179,7 @@ public partial class FlightsStatistic
     {
         public MonthlyItem[] MonthlyItems { get; set; } = [];
     }
-    class XcScoreOverTheYears
-    {
-        public int? FlightCount { get; set; }
-        public XcScoreItem[] XcScores { get; set; } = [];
-        public string Name => $"{FlightCount?.ToString() ?? "all"} flights";
-    }
-    class XcScoreItem
-    {
-        public int Year { get; set; }
-        public string YearText => Year.ToString();
-        public double XcScore { get; set; }
-    }
-
-    private XcScoreOverTheYears[] XcScoresOverTheYears { get; set; } = [
-    new(){FlightCount = 4, XcScores = [new() { Year = 2020, XcScore = 100 }, new() { Year = 2021, XcScore = 200 }, new() { Year = 2022, XcScore = 300 }, new() { Year = 2023, XcScore = 400 }]},
-    new(){FlightCount = 10, XcScores = [new() { Year = 2020, XcScore = 150 }, new() { Year = 2021, XcScore = 250 }, new() { Year = 2022, XcScore = 350 }, new() { Year = 2023, XcScore = 450 }]},
-    new(){FlightCount = null, XcScores = [new() { Year = 2020, XcScore = 200 }, new() { Year = 2021, XcScore = 300 }, new() { Year = 2022, XcScore = 400 }, new() { Year = 2023, XcScore = 500 }]},
-    ];
+    private XcScoreOverTheYears[] XcScoresOverTheYears { get; set; } = [];
     
     DurationItem[] DurationAnalysisResult = [];
     YearMonthlyStatistic[] MonthlyMedianAnalysisResult = [];
