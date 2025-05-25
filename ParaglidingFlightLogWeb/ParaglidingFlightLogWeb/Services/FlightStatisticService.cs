@@ -190,5 +190,6 @@ namespace ParaglidingFlightLogWeb.Services
         MontlyMedian,
         MonthlyFlightDuration,
         MonthlyCumulatedFlightDuration,
+        XcoreOverTheYears,
     }
 }

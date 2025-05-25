@@ -16,7 +16,8 @@
 <RadzenRow>
 
     <RadzenFormField Text="Analyze" Variant="@variant">
-        <RadzenDropDown TValue="StatisticalFlightsAnalysis" AllowFiltering="false" Data=@Enum.GetValues(typeof(StatisticalFlightsAnalysis)) @bind-Value=AnalysisToDo
+        <RadzenDropDown TValue="StatisticalFlightsAnalysis" AllowFiltering="false"
+                        Data=@Enum.GetValues(typeof(StatisticalFlightsAnalysis)) @bind-Value=AnalysisToDo
                         Class="w-100">
             <Template>
                 @(GetAnalyseName(context))
@@ -27,29 +28,28 @@
     {
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
             <div>
-                <RadzenCheckBox Name="AllYearAnalysisCheckBox" @bind-Value="@_allYearAnalysis" />
-                <RadzenLabel Text="Analyze all year" Component="AllYearAnalysisCheckBox" class="rz-ms-2" />
+                <RadzenCheckBox Name="AllYearAnalysisCheckBox" @bind-Value="@_allYearAnalysis"/>
+                <RadzenLabel Text="Analyze all year" Component="AllYearAnalysisCheckBox" class="rz-ms-2"/>
             </div>
 
             <RadzenFormField Text="Year to analyze" Variant="@variant">
                 <RadzenDropDown AllowFiltering="false" Data=@Core.YearsOfFlying @bind-Value=@_yearToAnalyse
-                                Class="w-100" Visible="!_allYearAnalysis" />
+                                Class="w-100" Visible="!_allYearAnalysis"/>
             </RadzenFormField>
         </RadzenStack>
-        
     }
 
-    <RadzenButton Click=@(args => OnAnalyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
+    <RadzenButton Click=@(args => OnAnalyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary"/>
 
 </RadzenRow>
 <RadzenRow>
     @if (AnalysisToDo == StatisticalFlightsAnalysis.DurationDistribution)
     {
-        <MyNumericIndicator Label="Flight Count" Value="@FlightStatistic.FlightsCount" Format="F0" />
-        <MyTextIndicator Label="Flights total duration" Text="@FlightStatistic.FlightsDurationText" />
+        <MyNumericIndicator Label="Flight Count" Value="@FlightStatistic.FlightsCount" Format="F0"/>
+        <MyTextIndicator Label="Flights total duration" Text="@FlightStatistic.FlightsDurationText"/>
 
-        <MyTextIndicator Label="Flights mean duration" Text="@FlightStatistic.MeanFlightsDurationText" />
-        <MyTextIndicator Label="Flights median duration" Text="@FlightStatistic.MedianFlightDurationText" />
+        <MyTextIndicator Label="Flights mean duration" Text="@FlightStatistic.MeanFlightsDurationText"/>
+        <MyTextIndicator Label="Flights median duration" Text="@FlightStatistic.MedianFlightDurationText"/>
     }
 
 
@@ -57,26 +57,26 @@
 <RadzenRow style="overflow: auto;">
     <RadzenColumn>
         <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
-            <RadzenLegend Position="LegendPosition.Top" />
+            <RadzenLegend Position="LegendPosition.Top"/>
 
 
             @if (AnalysisToDo == StatisticalFlightsAnalysis.DurationDistribution)
             {
                 <RadzenValueAxis FormatString="{0:N2}">
-                    <RadzenAxisTitle Text="Number of Flight" />
+                    <RadzenAxisTitle Text="Number of Flight"/>
                 </RadzenValueAxis>
                 <RadzenCategoryAxis>
-                    <RadzenAxisTitle Text="Flight Duration in Hours" />
+                    <RadzenAxisTitle Text="Flight Duration in Hours"/>
                 </RadzenCategoryAxis>
                 <RadzenColumnSeries Data="@DurationAnalysisResult"
                                     Title="Flight duration repartition"
                                     CategoryProperty="BarLocation"
-                                    ValueProperty="BarValue" />
+                                    ValueProperty="BarValue"/>
             }
             @if (AnalysisToDo == StatisticalFlightsAnalysis.MontlyMedian)
             {
                 <RadzenValueAxis FormatString="{0:N2}">
-                    <RadzenAxisTitle Text="Median in Hours" />
+                    <RadzenAxisTitle Text="Median in Hours"/>
                 </RadzenValueAxis>
                 int i = 0;
                 foreach (YearMonthlyStatistic item in MonthlyMedianAnalysisResult)
@@ -84,14 +84,14 @@
                     <RadzenColumnSeries Data="@item.MonthlyItems"
                                         Title="@Core.YearsOfFlying[i].ToString()"
                                         CategoryProperty="Month"
-                                        ValueProperty="Value" />
+                                        ValueProperty="Value"/>
                     i++;
                 }
             }
             @if (AnalysisToDo == StatisticalFlightsAnalysis.MonthlyFlightDuration)
             {
                 <RadzenValueAxis FormatString="{0:N2}">
-                    <RadzenAxisTitle Text="Flight Hours" />
+                    <RadzenAxisTitle Text="Flight Hours"/>
                 </RadzenValueAxis>
                 int i = 0;
                 foreach (YearMonthlyStatistic item in MonthlyDurationAnalysisResult)
@@ -99,14 +99,14 @@
                     <RadzenColumnSeries Data="@item.MonthlyItems"
                                         Title="@Core.YearsOfFlying[i].ToString()"
                                         CategoryProperty="Month"
-                                        ValueProperty="Value" />
+                                        ValueProperty="Value"/>
                     i++;
                 }
             }
             @if (AnalysisToDo == StatisticalFlightsAnalysis.MonthlyCumulatedFlightDuration)
             {
                 <RadzenValueAxis FormatString="{0:N2}">
-                    <RadzenAxisTitle Text="Cumulated Flight Hours" />
+                    <RadzenAxisTitle Text="Cumulated Flight Hours"/>
                 </RadzenValueAxis>
                 int i = 0;
                 foreach (var item in MonthlyCumulatedDurationAnalysisResult)
@@ -118,7 +118,22 @@
 
                     </RadzenLineSeries>
                 }
-
+            }
+            @if (AnalysisToDo == StatisticalFlightsAnalysis.XcoreOverTheYears)
+            {
+                <RadzenCategoryAxis>
+                    <RadzenAxisTitle Text="Years"/>
+                </RadzenCategoryAxis>
+                <RadzenValueAxis FormatString="{0:N2}" Min="0">
+                    <RadzenAxisTitle Text="XcScore in [pts]" />
+                </RadzenValueAxis>
+                @foreach(var scoreCategory in XcScoresOverTheYears)
+                {
+                    <RadzenColumnSeries Data="@scoreCategory.XcScores"
+                                        Title="@scoreCategory.Name"
+                                        CategoryProperty="YearText"
+                                        ValueProperty="XcScore"/>
+                }
             }
         </RadzenChart>
     </RadzenColumn>

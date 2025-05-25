@@ -87,12 +87,12 @@ public partial class FlightsStatistic
                 break;
             case StatisticalFlightsAnalysis.MonthlyFlightDuration:
                 MonthlyDurationAnalysisResult = new YearMonthlyStatistic[Core.YearsOfFlying.Count];
-                foreach (int l_FlightYear in Core.YearsOfFlying)
+                foreach (int flightYear in Core.YearsOfFlying)
                 {
-                    double[] l_MonthlyDuration = FlightStatistic.GetMonthlyFlightHours(l_FlightYear);
+                    double[] monthlyDuration = FlightStatistic.GetMonthlyFlightHours(flightYear);
                     MonthlyItem[] currentYearMonthlyDuration = new MonthlyItem[l_MonthList.Length];
                     int j = 0;
-                    foreach (double monthDuration in l_MonthlyDuration)
+                    foreach (double monthDuration in monthlyDuration)
                     {
                         currentYearMonthlyDuration[j] = new MonthlyItem()
                         {
@@ -106,7 +106,7 @@ public partial class FlightsStatistic
                     {
                         MonthlyItems = currentYearMonthlyDuration,
                     };
-                    l_YearsText[i] = l_FlightYear.ToString();
+                    l_YearsText[i] = flightYear.ToString();
                     ++i;
                 }
 
@@ -155,7 +155,8 @@ public partial class FlightsStatistic
             StatisticalFlightsAnalysis.DurationDistribution => "Duration Distribution",
             StatisticalFlightsAnalysis.MonthlyFlightDuration => "Monthly flight duration",
             StatisticalFlightsAnalysis.MonthlyCumulatedFlightDuration => "Monthly cumulated flight duration",
-            _ => "",
+            StatisticalFlightsAnalysis.XcoreOverTheYears => "Xc score over the years",
+            _ => "Unknown analysis",
         };
     }
 
@@ -175,7 +176,25 @@ public partial class FlightsStatistic
     {
         public MonthlyItem[] MonthlyItems { get; set; } = [];
     }
+    class XcScoreOverTheYears
+    {
+        public int? FlightCount { get; set; }
+        public XcScoreItem[] XcScores { get; set; } = [];
+        public string Name => $"{FlightCount?.ToString() ?? "all"} flights";
+    }
+    class XcScoreItem
+    {
+        public int Year { get; set; }
+        public string YearText => Year.ToString();
+        public double XcScore { get; set; }
+    }
 
+    private XcScoreOverTheYears[] XcScoresOverTheYears { get; set; } = [
+    new(){FlightCount = 4, XcScores = [new() { Year = 2020, XcScore = 100 }, new() { Year = 2021, XcScore = 200 }, new() { Year = 2022, XcScore = 300 }, new() { Year = 2023, XcScore = 400 }]},
+    new(){FlightCount = 10, XcScores = [new() { Year = 2020, XcScore = 150 }, new() { Year = 2021, XcScore = 250 }, new() { Year = 2022, XcScore = 350 }, new() { Year = 2023, XcScore = 450 }]},
+    new(){FlightCount = null, XcScores = [new() { Year = 2020, XcScore = 200 }, new() { Year = 2021, XcScore = 300 }, new() { Year = 2022, XcScore = 400 }, new() { Year = 2023, XcScore = 500 }]},
+    ];
+    
     DurationItem[] DurationAnalysisResult = [];
     YearMonthlyStatistic[] MonthlyMedianAnalysisResult = [];
     YearMonthlyStatistic[] MonthlyDurationAnalysisResult = [];
