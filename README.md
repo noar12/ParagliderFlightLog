@@ -81,7 +81,7 @@ By doing so the IGC file is parsed to extract the flight points coordinates, the
 
 If an installation of `igc.xc.score` (https://github.com/mmomtchev/igc-xc-score) is available the score of the flight will be add.
 
-By clicking on `SHOW FLIGHT ON MAP` you can open a dialog with the flight represented on a map using open street map tile and leaflet.
+When you click on a flight, its information are displayed on the right (or bellow the grid if you are on a small screen). From this information card you can add photos and create a sharable copy of the flight
 
 By right clicking on a flight you can remove it or change its details.
 
@@ -105,8 +105,7 @@ Using the left navigation menu you can access some statistic about your flights.
 * Median of the flight duration over each month (every year on the same graph using a color by year)
 * Average of the flight duration over each month (every year on the same graph using a color by year)
 * Cumulated flight duration over each month (every year on the same graph using a color by year)
+* Score for each year on 4 ,6, 10 and 20 flights
 
 ## Upcoming changes
-* Add more automatic installation process
-* Add Site and glider statistics
-* Add offline capabilities
+* See Feature request in Issue or add yours
