@@ -42,7 +42,7 @@
                                       Title="Site" Width="200px"/>
                 <RadzenDataGridColumn MinWidth="150px" TItem="FlightViewModel" Property="FlightDuration"
                                       Title="Duration" Width="150px"/>
-                <RadzenDataGridColumn  Title="Action" MinWidth="150px">
+                <RadzenDataGridColumn  Title="Action" Width="150px">
                     <Template>
                         <RadzenButton Icon="edit" Click="@( _ => OnEditFlightButton(context))" />
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Click="@( _ => OnDeleteFlightButton(context))" />
