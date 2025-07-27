@@ -20,7 +20,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         private DateTime _endDate = DateTime.Today;
 
         /// <summary>
-        /// Site Id reflecting what site is currently selected or used to access a site directly at page loading
+        /// Site ID reflecting what site is currently selected or used to access a site directly at page loading
         /// </summary>
         [Parameter]
         public string SiteId { get; set; } = "";
@@ -34,6 +34,9 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
         [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
         private RadzenDataGrid<SiteViewModel> _dataGrid = new();
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
         protected override async Task OnInitializedAsync()
         {
             var userClaim = (await AuthenticationStateTask).User;
@@ -46,7 +49,9 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 Logger.LogInformation("Initialized for {User}", currentUser.UserName);
             }
         }
-
+        /// <summary>
+        /// <inheritdoc />
+        /// </summary>
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (firstRender)
@@ -72,17 +77,11 @@ namespace ParaglidingFlightLogWeb.Components.Pages
 
         IList<SiteViewModel> SelectedSites = [];
 
-        SiteViewModel? LastSelectedSite
-        {
-            get
-            {
-                return SelectedSites.Count > 0 ? SelectedSites[SelectedSites.Count - 1] : null;
-            }
-        }
+        SiteViewModel? LastSelectedSite => SelectedSites.Count > 0 ? SelectedSites[^1] : null;
 
         void ShowContextMenuWithItems(MouseEventArgs args)
         {
-            if (SelectedSites is not null && SelectedSites.Count == 1)
+            if (SelectedSites.Count == 1)
             {
                 ContextMenuService.Open(args,
                     [new() { Text = "Edit site", Value = ESiteAction.Edit }],
@@ -131,14 +130,17 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         private async Task OnShowSiteTimeRange()
         {
             List<SiteViewModel> siteToShow = Core.SiteUsedInTimeRange(_startDate, _endDate);
-            foreach (var site in siteToShow.Where(site => module is not null))
+            if (module is not null)
             {
-                map = await module!.InvokeAsync<IJSObjectReference>("add_marker",
-                    map,
-                    site.Latitude,
-                    site.Longitude,
-                    site.Name
-                );
+                foreach (var site in siteToShow)
+                {
+                    map = await module.InvokeAsync<IJSObjectReference>("add_marker",
+                        map,
+                        site.Latitude,
+                        site.Longitude,
+                        site.Name
+                    );
+                }
             }
         }
 
@@ -154,7 +156,16 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                 new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = false });
             StateHasChanged();
         }
-
+        private async Task OnEditSiteButton(SiteViewModel siteToEdit)
+        {
+            SelectedSites.Clear();
+            SelectedSites.Add(siteToEdit);
+            SiteId = siteToEdit.Site_ID;
+            await OnEditSite();
+        }
+        /// <summary>
+        /// Dispose
+        /// </summary>
         public async ValueTask DisposeAsync()
         {
             if (module != null)
@@ -170,6 +181,18 @@ namespace ParaglidingFlightLogWeb.Components.Pages
                     Logger.LogError("{Message}", e.Message);
                 }
             }
+        }
+
+        private async Task OnSelectedSiteChanged(IList<SiteViewModel> newSite)
+        {
+            if (newSite.Count != 1)
+            {
+                return;
+            }
+
+            await UpdateSiteDetails(newSite);
+            SelectedSites = newSite;
+            SiteId = newSite[0].Site_ID;
         }
     }
 }
