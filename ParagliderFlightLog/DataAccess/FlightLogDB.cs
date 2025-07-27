@@ -375,19 +375,32 @@ public class FlightLogDB
                                        s.SiteRadius);
         if (output == null)
         {
-            List<Site> unknownSiteNames = GetUnknownSites();
-            int nextUnknownSite = unknownSiteNames.Count;
             output = new Site()
             {
                 Altitude = takeOffPoint.Altitude,
                 Latitude = takeOffPoint.Latitude,
                 Longitude = takeOffPoint.Longitude,
-                Name = $"Unknown site {nextUnknownSite}"
+                Name = GetUnknownSiteNextName()
             };
             WriteSitesInDB(new List<Site> { output });
         }
 
         return output;
+    }
+
+    private string GetUnknownSiteNextName()
+    {
+        HashSet<string> unknownSiteNames = GetUnknownSites()
+            .Select(x => x.Name)
+            .ToHashSet();
+
+        int nextUnknownSite = 0;
+        while (unknownSiteNames.Contains($"Unknown site {nextUnknownSite}"))
+        {
+            nextUnknownSite++;
+        }
+
+        return $"Unknown site {nextUnknownSite}";
     }
 
     private List<Site> GetUnknownSites()
