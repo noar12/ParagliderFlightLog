@@ -866,4 +866,30 @@ public class FlightLogDB
                      """;
         _db.SaveData(sql, new{ flightPhoto.Photo_ID, flightPhoto.REF_Flight_ID}, LoadConnectionString());
     }
+    /// <summary>
+    /// Add a new glider to the db. The glider is created with default values.
+    /// </summary>
+    public async Task<Glider> AddGliderAsync()
+    {
+        string sql = """
+                     INSERT INTO Gliders
+                     (Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name)
+                     VALUES (@Glider_ID, @Manufacturer, @Model, @BuildYear, @LastCheckDateTime, @HomologationCategory, @IGC_Name);
+                     """;
+        var glider = new Glider();
+        await _db.SaveDataAsync(sql, glider, LoadConnectionString());
+        return glider;
+    }
+    /// <summary>
+    /// Delete the <paramref name="glider"/> from the db.
+    /// </summary>
+    /// <param name="glider"></param>
+    public async Task DeleteGliderAsync(Glider glider)
+    {
+        string sql = """
+                     DELETE FROM Gliders
+                     WHERE Glider_ID = @Glider_ID;
+                     """;
+        await _db.SaveDataAsync(sql, new { glider.Glider_ID }, LoadConnectionString());
+    }
 }

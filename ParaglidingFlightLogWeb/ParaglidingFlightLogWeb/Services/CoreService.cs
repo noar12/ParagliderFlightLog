@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ParaglidingFlightLogWeb.ViewModels;
+﻿using ParaglidingFlightLogWeb.ViewModels;
 using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
-using Microsoft.Identity.Client;
 using ParagliderFlightLog.Services;
 
 namespace ParaglidingFlightLogWeb.Services;
 
 /// <summary>
-/// Provide Core functionnality of the app
+/// Provide Core functionality of the app
 /// </summary>
 public class CoreService
 {
@@ -27,15 +19,15 @@ public class CoreService
     /// <summary>
     /// ctor
     /// </summary>
-    /// <param name="flightLogDB"></param>
+    /// <param name="flightLogDb"></param>
     /// <param name="logger"></param>
     /// <param name="logFlyDB"></param>
     /// <param name="xcScoreManagerData"></param>
     /// <param name="photosService"></param>
-    public CoreService(FlightLogDB flightLogDB, ILogger<CoreService> logger, LogFlyDB logFlyDB,
+    public CoreService(FlightLogDB flightLogDb, ILogger<CoreService> logger, LogFlyDB logFlyDB,
         XcScoreManagerData xcScoreManagerData, PhotosService photosService)
     {
-        _flightLog = flightLogDB;
+        _flightLog = flightLogDb;
         _logger = logger;
         _logFlyDB = logFlyDB;
         _xcScoreManagerData = xcScoreManagerData;
@@ -72,19 +64,19 @@ public class CoreService
     /// <param name="glider"></param>
     public void EditGlider(GliderViewModel glider)
     {
-        if (glider != null)
-        {
-            _flightLog.UpdateGlider(glider.Glider);
-        }
+        _flightLog.UpdateGlider(glider.Glider);
     }
 
     /// <summary>
-    /// Not implemented. Will call the db to add a glider
+    /// Call the db to add a glider
     /// </summary>
-    /// <exception cref="NotImplementedException"></exception>
-    public void AddGlider()
+    public async Task<GliderViewModel> AddGliderAsync()
     {
-        throw new NotImplementedException();
+        var glider = await _flightLog.AddGliderAsync();
+        var gliderVm = new GliderViewModel(glider, _flightLog);
+        GliderListViewModel.Add(gliderVm);
+        _logger.LogInformation("Glider {GliderName} added", gliderVm.FullName);
+        return gliderVm;
     }
 
     /// <summary>
@@ -174,6 +166,7 @@ public class CoreService
         if (lastSelectedFlight?.FlightWithData is null) return;
         _xcScoreManagerData.QueueFlightForScoring(lastSelectedFlight.FlightWithData, _flightLog);
     }
+
     /// <summary>
     /// Enqueue all the user flight without a score to the xcscore calculation queue
     /// </summary>
@@ -182,10 +175,10 @@ public class CoreService
         if (!_xcScoreManagerData.ScoreEngineInstalled) return;
         foreach (var flight in FlightListViewModel.Where(x => x.XcScore is null).Select(f => f.FlightWithData))
         {
-            if (flight is null) continue;
             _xcScoreManagerData.QueueFlightForScoring(flight, _flightLog);
         }
     }
+
     /// <summary>
     /// Get a flight to remember. 
     /// </summary>
@@ -265,7 +258,7 @@ public class CoreService
     /// All the glider
     /// </summary>
     public List<GliderViewModel> GliderListViewModel { get; private set; } = [];
-    
+
     /// <summary>
     /// Save photo to file disk and meta data to db
     /// </summary>
@@ -278,14 +271,14 @@ public class CoreService
             _logger.LogWarning("FlightLogDb was not initialized");
             return;
         }
+
         FlightPhoto photo = new FlightPhoto()
         {
-            REF_Flight_ID = lastSelectedFlight.FlightID,
-            REF_User_Id = _flightLog.UserId,
-            PhotoStream = stream,
+            REF_Flight_ID = lastSelectedFlight.FlightID, REF_User_Id = _flightLog.UserId, PhotoStream = stream,
         };
         await _photosService.SaveFlightPhoto(photo, _flightLog);
     }
+
     /// <summary>
     /// Return the base 64 encoded string of the image
     /// </summary>
@@ -294,5 +287,12 @@ public class CoreService
     public string GetBase64StringPhotoData(FlightPhotoViewModel photo)
     {
         return photo.GetBase64PhotoData(_photosService);
+    }
+
+    public async Task DeleteGliderAsync(GliderViewModel lastSelectedGlider)
+    {
+        await _flightLog.DeleteGliderAsync(lastSelectedGlider.Glider);
+        GliderListViewModel.Remove(lastSelectedGlider);
+        _logger.LogInformation("Glider {GliderName} deleted", lastSelectedGlider.FullName);
     }
 }
