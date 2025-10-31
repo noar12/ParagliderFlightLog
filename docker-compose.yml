@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  paraglider-flightlog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: paraglider-flightlog
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    volumes:
+      # Mount volume for database files
+      - flightlog-data:/app/data/db
+      # Mount volume for user photos
+      - flightlog-photos:/app/data/photos
+      # Mount volume for score temporary files
+      - flightlog-score:/app/data/score
+      # Mount volume for logs
+      - flightlog-logs:/var/log/ParagliderFlightLog
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+    restart: unless-stopped
+    networks:
+      - flightlog-network
+
+volumes:
+  flightlog-data:
+    driver: local
+  flightlog-photos:
+    driver: local
+  flightlog-score:
+    driver: local
+  flightlog-logs:
+    driver: local
+
+networks:
+  flightlog-network:
+    driver: bridge
