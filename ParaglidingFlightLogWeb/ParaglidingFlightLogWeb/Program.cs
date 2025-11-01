@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ParagliderFlightLog.DataAccess;
@@ -14,7 +15,6 @@ using System.Globalization;
 
 try
 {
-    
     var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSerilog();
@@ -22,6 +22,10 @@ try
     builder.Services.AddRazorComponents()
         .AddInteractiveServerComponents()
         .AddInteractiveWebAssemblyComponents();
+
+    // Configure Data Protection to use persistent storage in the existing volume
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo("/app/data/db/DataProtection-Keys"));
 
     builder.Services.AddCascadingAuthenticationState();
     builder.Services.AddScoped<IdentityUserAccessor>();
@@ -115,4 +119,3 @@ finally
 {
     await Log.CloseAndFlushAsync();
 }
-
