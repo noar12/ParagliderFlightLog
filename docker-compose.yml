@@ -7,8 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: paraglider-flightlog
     ports:
-      - "5000:8080"
-      - "5001:8081"
+      - "5001:8080"
     volumes:
       # Mount volume for database files
       - flightlog-data:/app/data/db
