@@ -2,9 +2,8 @@ version: '3.8'
 
 services:
   paraglider-flightlog:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/noar12/paragliderflightlog:sha-f468ac8
+
     container_name: paraglider-flightlog
     ports:
       - "5001:8080"
@@ -26,13 +25,18 @@ services:
 
 volumes:
   flightlog-data:
+    name: flightlog-data
     driver: local
   flightlog-photos:
+    name: flightlog-photos
     driver: local
   flightlog-score:
+    name: flightlog-score
     driver: local
   flightlog-logs:
+    name: flightlog-logs
     driver: local
+
 
 networks:
   flightlog-network:
