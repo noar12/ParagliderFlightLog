@@ -46,51 +46,38 @@ fi
 echo ""
 echo "Step 1: Creating Docker volumes..."
 docker volume create flightlog-data
-docker volume create flightlog-photos
 docker volume create flightlog-score
 docker volume create flightlog-logs
 
 echo "? Volumes created"
 echo ""
 
-echo "Step 2: Copying database files..."
+echo "Step 2: Copying database files and photos..."
 docker run --rm \
     -v flightlog-data:/data \
     -v "$SOURCE_PATH":/source:ro \
     alpine sh -c "cp -rv /source/*.db /data/ 2>/dev/null || echo 'No .db files in root'; \
                   if [ -d /source ]; then \
                       find /source -name '*.db' -type f -exec sh -c 'mkdir -p /data/\$(dirname \${1#/source/}) && cp -v \$1 /data/\${1#/source/}' _ {} \;; \
+                      find /source -type d -name 'FlightPhotos' -exec sh -c 'mkdir -p /data/\$(dirname \${1#/source/}) && cp -rv \$1 /data/\$(dirname \${1#/source/})/' _ {} \;; \
                   fi"
 
-echo "? Database files copied"
+echo "? Database files and photos copied"
 echo ""
 
-echo "Step 3: Copying photo files (if any)..."
-if [ -d "$SOURCE_PATH" ]; then
-    docker run --rm \
-        -v flightlog-photos:/photos \
-        -v "$SOURCE_PATH":/source:ro \
-        alpine sh -c "find /source -type d -name 'FlightPhotos' -exec cp -rv {} /photos/ \; 2>/dev/null || echo 'No FlightPhotos directories found'"
-    echo "? Photo files copied"
-else
-    echo "??  No photos directory found, skipping..."
-fi
-echo ""
-
-echo "Step 4: Setting correct permissions..."
+echo "Step 3: Setting correct permissions..."
 docker run --rm -v flightlog-data:/data alpine chown -R 1000:1000 /data
-docker run --rm -v flightlog-photos:/photos alpine chown -R 1000:1000 /photos
 docker run --rm -v flightlog-score:/score alpine chown -R 1000:1000 /score
 docker run --rm -v flightlog-logs:/logs alpine chown -R 1000:1000 /logs
 echo "? Permissions set"
 echo ""
 
-echo "Step 5: Verifying migration..."
+echo "Step 4: Verifying migration..."
 echo ""
 echo "Database volume contents:"
 docker run --rm -v flightlog-data:/data alpine ls -lha /data
-echo ""
 
+echo ""
 echo "================================================"
 echo "? Migration completed successfully!"
 echo "================================================"
