@@ -2,7 +2,7 @@
 
 Paraglider Flight Log allows you to keep track of the flights of several paraglider pilots along with the flying site and the gear that each pilot used. A pilot can use this application to easily log, comment, and analyze their flights without relying on remote services. It computes several statistics and can optionally work together with the application igc-xc-score (https://github.com/mmomtchev/igc-xc-score) from mmomtchev (https://github.com/mmomtchev) that can be installed separately.
 
-![A flight drawn on a map with its turnpoints](Images/FlightListWithMapScreenShot.png)
+![A flight drawn on a map with its turnpoints](Images/WelcomePage.png)
 
 ## Technologies used
 
@@ -121,7 +121,7 @@ You can click on `Log In` or use the left navigation menu to register and log in
 
 Once logged you are welcomed with a Dashboard
 
-![Welcome Dashboard](Images/WelcomeDashboard.png)
+![Welcome Dashboard](Images/WelcomePage.png)
 
 On the right part you will find a randomly chosen flight from your collection. The flight is picked from the subset of the flights done on the same day of other years or from the flights that have been filled with comments.
 On the left part you have several other information:
