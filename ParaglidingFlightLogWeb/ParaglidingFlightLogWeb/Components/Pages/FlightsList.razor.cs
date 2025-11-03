@@ -177,9 +177,14 @@ public partial class FlightsList
                     NotifyUser($"Individual file has to be smaller than {MAX_FILE_SIZE / 1024} kB");
                     return;
                 }
-
-                var trustedFileNameForFileStorage = Path.GetRandomFileName();
-                var path = Path.Combine(Environment.ContentRootPath, "tmp", trustedFileNameForFileStorage);
+                
+                string tmpDirectory = Path.Combine(Environment.ContentRootPath, "tmp");
+                if (!Directory.Exists(tmpDirectory))
+                {
+                    _ = Directory.CreateDirectory(tmpDirectory);
+                }
+                string trustedFileNameForFileStorage = Path.GetRandomFileName();
+                string path = Path.Combine(tmpDirectory, trustedFileNameForFileStorage);
                 await using FileStream fs = new(path, FileMode.Create);
                 await file.OpenReadStream(MAX_FILE_SIZE).CopyToAsync(fs);
                 igcFilePaths.Add(fs.Name);
