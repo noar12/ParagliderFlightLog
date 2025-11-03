@@ -5,10 +5,7 @@
 
  on:
    push:
-     branches: [ dokerization ]
      tags: [ 'v*.*.*' ]
-   pull_request:
-     branches: [ main ]
 
  env:
    REGISTRY: ghcr.io
