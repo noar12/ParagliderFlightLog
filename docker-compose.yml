@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   paraglider-flightlog:
-    image: ghcr.io/noar12/paragliderflightlog:sha-f468ac8
+    image: ghcr.io/noar12/paragliderflightlog:latest
 
     container_name: paraglider-flightlog
     ports:
