@@ -14,6 +14,7 @@ Paraglider Flight Log allows you to keep track of the flights of several paragli
 * MS Identity
 * Leaflet
 * Javascript
+* Docker 
 
 ## Installation
 
