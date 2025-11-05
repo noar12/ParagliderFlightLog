@@ -23,8 +23,8 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _running = true;
-        logger.LogInformation("Starting XcScore manager. Calculator Cmd: {CalculatorCmd}, OutputDirectory: {OutputDirectory}",
-            GetCalculatorCmd(), GetTmpFileDirectory());
+        logger.LogInformation("Starting XcScore manager. OutputDirectory: {OutputDirectory}",
+             GetTmpFileDirectory());
         while (!stoppingToken.IsCancellationRequested && _running)
         {
             var request = xcScoreManagerData.GetNextProcessRequest();
@@ -39,8 +39,8 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                     await File.WriteAllTextAsync(flightPath, request.Flight.IgcFileContent, stoppingToken);
                     // execute the external calculator on the file and output the result in another file
                     var result = await Cli
-                        .Wrap($"{GetCalculatorCmd()}")
-                        .WithArguments($"{GetCjsPath()} {flightPath} out={scorePath} scoring=XContest")
+                        .Wrap("igc-xc-score")
+                        .WithArguments($"{flightPath} out={scorePath} scoring=XContest")
                         .WithValidation(CommandResultValidation.None)
                         .ExecuteBufferedAsync(stoppingToken);
                     logger.LogInformation("Flight score result : {Standard}", result.StandardOutput);
@@ -79,8 +79,7 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                     if (!_running || !xcScoreManagerData.ScoreEngineInstalled)
                     {
                         var result = await Cli
-                            .Wrap($"{GetCalculatorCmd()}")
-                            .WithArguments($"{GetCjsPath()}")
+                            .Wrap("igc-xc-score")
                             .WithValidation(CommandResultValidation.None)
                             .ExecuteBufferedAsync(stoppingToken);
                         bool isReady = result.StandardOutput.StartsWith("igc-xc-score");
@@ -102,17 +101,6 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                 }
             }
         }
-    }
-
-
-    private string GetCalculatorCmd()
-    {
-        string output = config.GetSection("XcScore")["CalculatorCmd"] ?? "";
-        return output;
-    }
-    private string GetCjsPath(){
-        string output = config.GetSection("XcScore")["CjsPath"] ?? "";
-        return output;
     }
     private string GetTmpFileDirectory()
     {

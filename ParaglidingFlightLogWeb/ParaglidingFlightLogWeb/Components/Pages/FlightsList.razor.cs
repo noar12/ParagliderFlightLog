@@ -20,7 +20,7 @@ public partial class FlightsList
     private const long MAX_FILE_SIZE = 2 * 1024 * 1024;
     private const string ALLOWED_FILE_EXTENSION = ".igc";
     private const int MAX_PHOTO_COUNT = 5;
-    private const int MAX_PHOTO_SIZE = 7*1024*1024;
+    private const int MAX_PHOTO_SIZE = 7 * 1024 * 1024;
     private const string PHOTO_EXTENSION = ".jpg";
 
     /// <summary>
@@ -68,7 +68,7 @@ public partial class FlightsList
             await Mvm.Init(userId);
             Logger.LogInformation("Initialized for {User}", currentUser.UserName);
         }
-        
+
     }
 
     /// <summary>
@@ -177,9 +177,14 @@ public partial class FlightsList
                     NotifyUser($"Individual file has to be smaller than {MAX_FILE_SIZE / 1024} kB");
                     return;
                 }
-
-                var trustedFileNameForFileStorage = Path.GetRandomFileName();
-                var path = Path.Combine(Environment.ContentRootPath, "tmp", trustedFileNameForFileStorage);
+                
+                string tmpDirectory = Path.Combine(Environment.ContentRootPath, "tmp");
+                if (!Directory.Exists(tmpDirectory))
+                {
+                    _ = Directory.CreateDirectory(tmpDirectory);
+                }
+                string trustedFileNameForFileStorage = Path.GetRandomFileName();
+                string path = Path.Combine(tmpDirectory, trustedFileNameForFileStorage);
                 await using FileStream fs = new(path, FileMode.Create);
                 await file.OpenReadStream(MAX_FILE_SIZE).CopyToAsync(fs);
                 igcFilePaths.Add(fs.Name);
@@ -213,7 +218,9 @@ public partial class FlightsList
     {
         NotificationService.Notify(new NotificationMessage
         {
-            Severity = severity, Duration = 4000, Summary = message,
+            Severity = severity,
+            Duration = 4000,
+            Summary = message,
         });
     }
 
@@ -245,7 +252,7 @@ public partial class FlightsList
             {
                 if (file.Size > MAX_PHOTO_SIZE)
                 {
-                    NotifyUser($"Individual file has to be smaller than {MAX_PHOTO_SIZE/ 1024} kB");
+                    NotifyUser($"Individual file has to be smaller than {MAX_PHOTO_SIZE / 1024} kB");
                     return;
                 }
 
@@ -266,7 +273,7 @@ public partial class FlightsList
     {
         throw new NotImplementedException();
     }
-    
+
 
     private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
     {

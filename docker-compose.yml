@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  paraglider-flightlog:
+    image: ghcr.io/noar12/paragliderflightlog:latest
+
+    container_name: paraglider-flightlog
+    ports:
+      - "5001:8080"
+    volumes:
+      # Mount volume for database files
+      - flightlog-data:/app/data/db
+      # Mount volume for user photos
+      - flightlog-photos:/app/data/photos
+      # Mount volume for score temporary files
+      - flightlog-score:/app/data/score
+      # Mount volume for logs
+      - flightlog-logs:/var/log/ParagliderFlightLog
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+    restart: unless-stopped
+    networks:
+      - flightlog-network
+
+volumes:
+  flightlog-data:
+    name: flightlog-data
+    driver: local
+  flightlog-photos:
+    name: flightlog-photos
+    driver: local
+  flightlog-score:
+    name: flightlog-score
+    driver: local
+  flightlog-logs:
+    name: flightlog-logs
+    driver: local
+
+
+networks:
+  flightlog-network:
+    driver: bridge

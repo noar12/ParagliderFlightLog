@@ -1,0 +1,62 @@
+# Docker ignore file for ParagliderFlightLog
+# Exclude files that shouldn't be copied to Docker build context
+
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Docker files
+docker-compose*.yml
+Dockerfile*
+.dockerignore
+
+# Development data
+dev-data/
+*.db
+*.db-shm
+*.db-wal
+
+# Build outputs
+**/bin/
+**/obj/
+**/out/
+**/publish/
+
+# User-specific files
+*.user
+*.userosscache
+*.suo
+*.userprefs
+
+# Visual Studio
+.vs/
+*.sln.DotSettings.user
+
+# Rider
+.idea/
+
+# Test results
+TestResults/
+*.trx
+
+# Logs
+**/logs/
+*.log
+
+# NuGet
+packages/
+*.nupkg
+
+# Documentation and images (optional - uncomment if you want to exclude)
+# Images/
+# README.md
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment specific settings (keep templates only)
+**/appsettings.Development.json
+**/appsettings.*.json
+!**/appsettings.json
