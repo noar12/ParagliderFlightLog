@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   paraglider-flightlog:
     image: ghcr.io/noar12/paragliderflightlog:latest
