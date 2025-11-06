@@ -372,3 +372,4 @@ FodyWeavers.xsd
 /ParaglidingFlightLogWeb/ParaglidingFlightLogWeb/appsettings.Production.json
 /Data
 /.idea
+/dev-data
