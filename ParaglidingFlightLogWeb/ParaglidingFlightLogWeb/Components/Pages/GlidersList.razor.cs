@@ -37,37 +37,13 @@ public partial class GlidersList
         }
     }
 
-    private void ShowContextMenuWithItems(MouseEventArgs args)
+    private async Task OnEditGlider(GliderViewModel? glider)
     {
-        ContextMenuService.Open(args, [new() { Text = "Edit glider", Value = EGliderAction.Edit },], OnMenuItemClick);
-    }
-
-    private void OnMenuItemClick(MenuItemEventArgs args)
-    {
-        if (args.Value is EGliderAction action)
-        {
-            switch (action)
-            {
-                case EGliderAction.Edit:
-                    _ = OnEditGlider();
-                    break;
-            }
-        }
-
-        ContextMenuService.Close();
-    }
-
-    private enum EGliderAction
-    {
-        Edit,
-    }
-
-    private async Task OnEditGlider()
-    {
+        if (glider == null) return;
         await DialogService.OpenAsync<EditGlider>($"Edit glider",
-            new Dictionary<string, object>() { { "GliderToEdit", LastSelectedGlider! } },
+            new Dictionary<string, object>() { { "GliderToEdit", glider } },
             new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = false });
-        Core.EditGlider(LastSelectedGlider!);
+        Core.EditGlider(glider);
         await InvokeAsync(StateHasChanged);
     }
 

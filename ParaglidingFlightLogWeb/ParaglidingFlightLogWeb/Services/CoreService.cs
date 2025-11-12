@@ -288,11 +288,28 @@ public class CoreService
     {
         return photo.GetBase64PhotoData(_photosService);
     }
-
+    /// <summary>
+    /// Call the db service to delete the glider
+    /// </summary>
+    /// <param name="lastSelectedGlider"></param>
+    /// <returns></returns>
     public async Task DeleteGliderAsync(GliderViewModel lastSelectedGlider)
     {
         await _flightLog.DeleteGliderAsync(lastSelectedGlider.Glider);
         GliderListViewModel.Remove(lastSelectedGlider);
         _logger.LogInformation("Glider {GliderName} deleted", lastSelectedGlider.FullName);
+    }
+    /// <summary>
+    /// Deletes the specified site and removes it from the site list.
+    /// </summary>
+    /// <remarks>This method performs the deletion asynchronously and logs the operation.  Ensure that the
+    /// provided <paramref name="siteViewModel"/> is valid and exists in the site list.</remarks>
+    /// <param name="siteViewModel">The view model representing the site to be deleted.  This parameter cannot be <see langword="null"/>.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public async Task DeleteSiteAsync(SiteViewModel siteViewModel)
+    {
+        await _flightLog.DeleteSiteAsync(siteViewModel.Site);
+        SiteListViewModel.Remove(siteViewModel);
+        _logger.LogInformation("Site {SiteName} deleted", siteViewModel.Name);
     }
 }
