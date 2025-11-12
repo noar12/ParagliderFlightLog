@@ -15,8 +15,7 @@
         <RadzenDataGrid @ref="_grid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
                         AllowPaging="true" PageSize="20"
                         AllowSorting="true" Data="@Core.GliderListViewModel" TItem="GliderViewModel"
-                        SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedGliders
-                        ContextMenu=@(args => ShowContextMenuWithItems(args))>
+                        SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedGliders>
             <Columns>
                 <RadzenDataGridColumn TItem="GliderViewModel" Property="FullName" Title="Glider name"/>
                 <RadzenDataGridColumn TItem="GliderViewModel" Property="BuildYear" Title="Build year"/>
@@ -24,6 +23,7 @@
                                       FormatString="{0:d}"/>
                 <RadzenDataGridColumn Title="Actions">
                     <Template>
+                        <RadzenButton Click="() => OnEditGlider(context)" Icon="edit" />
                         <RadzenButton Click="() => OnDeleteGlider(context)" Icon="delete" ButtonStyle="ButtonStyle.Danger"/>
                     </Template>
                 </RadzenDataGridColumn>
