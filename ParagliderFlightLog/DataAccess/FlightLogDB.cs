@@ -892,4 +892,20 @@ public class FlightLogDB
                      """;
         await _db.SaveDataAsync(sql, new { glider.Glider_ID }, LoadConnectionString());
     }
+    /// <summary>
+    /// Deletes the specified site from the database.
+    /// </summary>
+    /// <remarks>This method removes the site identified by the <see cref="Site.Site_ID"/> property from the
+    /// database.  Ensure that the provided site exists in the database before calling this method to avoid unintended
+    /// behavior.</remarks>
+    /// <param name="site">The site to delete. The <see cref="Site.Site_ID"/> property must be set to identify the site to remove.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public async Task DeleteSiteAsync(Site site)
+    {
+        string sql = """
+                     DELETE FROM Sites
+                     WHERE Site_ID = @Site_ID;
+                     """;
+        await _db.SaveDataAsync(sql, new { site.Site_ID }, LoadConnectionString());
+    }
 }

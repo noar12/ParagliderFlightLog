@@ -28,6 +28,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
         [Inject] CoreService Core { get; set; } = null!;
         [Inject] ContextMenuService ContextMenuService { get; set; } = null!;
         [Inject] DialogService DialogService { get; set; } = null!;
+        [Inject] private NotificationService NotifServ { get; set; } = null!;
         [Inject] IJSRuntime JsRuntime { get; set; } = null!;
         [Inject] ILogger<SitesList> Logger { get; set; } = null!;
 
@@ -162,6 +163,23 @@ namespace ParaglidingFlightLogWeb.Components.Pages
             SelectedSites.Add(siteToEdit);
             SiteId = siteToEdit.Site_ID;
             await OnEditSite();
+        }
+        private async Task OnDeleteSiteButton(SiteViewModel siteToDelete)
+        {
+            if (Core.FlightListViewModel.Any(x => x.Flight.REF_TakeOffSite_ID == siteToDelete.Site_ID))
+            {
+                NotifServ.Notify(NotificationSeverity.Error, "Cannot delete site",
+    "This site is used in one or more flights. Please remove it from the flights before deleting it.",
+    5000);
+                return;
+            }
+            SelectedSites.Remove(siteToDelete);
+            await Core.DeleteSiteAsync(siteToDelete);
+            if (_dataGrid is not null)
+            {
+                await _dataGrid.Reload();
+            }
+            await InvokeAsync(StateHasChanged);
         }
         /// <summary>
         /// Dispose
