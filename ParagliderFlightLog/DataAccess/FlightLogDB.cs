@@ -73,7 +73,55 @@ public class FlightLogDB
             {
                 MigrateFromv1_2_0();
             }
+            else if (dbInfo is { VersionMajor: 1, VersionMinor: 3, VersionFix: 0 })
+            {
+                MigrateFromv1_3_0();
+            }
+            else if (dbInfo is { VersionMajor: 1, VersionMinor: 4, VersionFix: 0 })
+            {
+                _logger.LogInformation("Database is up to date.");
+            }
+            else
+            {
+                _logger.LogError("Database version {VersionMajor}.{VersionMinor}.{VersionFix} is not supported.",
+                    dbInfo.VersionMajor, dbInfo.VersionMinor, dbInfo.VersionFix);
+            }
         }
+    }
+
+    private void MigrateFromv1_3_0()
+    {
+        _logger.LogInformation("Migrating db from v1.3.0");
+        const string sqlAddForeignKeyInFlights = """
+                                            PRAGMA foreign_keys=off;
+                                            CREATE TABLE "Flights_new" (
+                                                "Flight_ID" TEXT NOT NULL UNIQUE,
+                                                "Comment"   TEXT,
+                                                "REF_TakeOffSite_ID"    TEXT NOT NULL,
+                                                "REF_Glider_ID" TEXT NOT NULL,
+                                                "FlightDuration_s"    INTEGER,
+                                                "TakeOffDateTime"    TEXT,
+                                                "IgcFileContent"    TEXT,
+                                                "GeoJsonScore"   TEXT,
+                                                PRIMARY KEY("Flight_ID"),
+                                                FOREIGN KEY("REF_TakeOffSite_ID") REFERENCES "Sites"("Site_ID"),
+                                                FOREIGN KEY("REF_Glider_ID") REFERENCES "Gliders"("Glider_ID"));
+                                            INSERT INTO Flights_new (Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime, IgcFileContent, GeoJsonScore)
+                                            SELECT Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime, IgcFileContent, GeoJsonScore
+                                            FROM Flights;
+                                            DROP TABLE Flights;
+                                            ALTER TABLE Flights_new RENAME TO Flights;
+                                            PRAGMA foreign_keys=on;
+                                            UPDATE DbInformations SET VersionMinor = 4;
+                                            VACUUM;
+                                            """;
+        const string sqlAddFlightObjectiveColumn = """
+                                            ALTER TABLE Flights ADD COLUMN FlightObjective TEXT;
+                                            UPDATE DbInformations SET VersionMinor = 4;
+                                            """;
+        _db.SaveData(sqlAddForeignKeyInFlights, new { }, LoadConnectionString());
+        _db.SaveData(sqlAddFlightObjectiveColumn, new { }, LoadConnectionString());
+        _logger.LogInformation("Migrated db from v1.3.0 to v1.4.0");
     }
 
     private void MigrateFromv1_2_0()
