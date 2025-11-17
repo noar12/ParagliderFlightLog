@@ -312,4 +312,13 @@ public class CoreService
         SiteListViewModel.Remove(siteViewModel);
         _logger.LogInformation("Site {SiteName} deleted", siteViewModel.Name);
     }
+    /// <summary>
+    /// Retrieves the names of all available flight objectives.
+    /// </summary>
+    /// <returns>An array of strings containing the names of all flight objectives defined in the <see cref="EFlightObjective"/>
+    /// enumeration.</returns>
+    public static string[] GetObjectiveList()
+    {
+        return Enum.GetNames<EFlightObjective>().ToArray();
+    }
 }

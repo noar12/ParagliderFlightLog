@@ -116,7 +116,7 @@ public class FlightLogDB
                                             VACUUM;
                                             """;
         const string sqlAddFlightObjectiveColumn = """
-                                            ALTER TABLE Flights ADD COLUMN FlightObjective TEXT;
+                                            ALTER TABLE Flights ADD COLUMN Objective TEXT;
                                             UPDATE DbInformations SET VersionMinor = 4;
                                             """;
         _db.SaveData(sqlAddForeignKeyInFlights, new { }, LoadConnectionString());
@@ -608,6 +608,36 @@ public class FlightLogDB
         string sqlStatement = "UPDATE Flights SET REF_TakeOffSite_ID = @Site_ID WHERE Flight_ID = @Flight_ID;";
         _db.SaveData(sqlStatement, new { site.Site_ID, flight.Flight_ID }, LoadConnectionString());
     }
+    /// <summary>
+    /// Get the flight objective for the specified <paramref name="flight"/>.
+    /// </summary>
+    /// <param name="flight"></param>
+    /// <returns></returns>
+    public EFlightObjective GetFlightObjective(Flight flight)
+    {
+        string sqlStatement = "SELECT Objective FROM Flights WHERE Flight_ID = @Id;";
+        string? objectiveStr = _db.LoadData<string, dynamic>(sqlStatement, new { Id = flight.Flight_ID },
+            LoadConnectionString()).FirstOrDefault();
+        if (objectiveStr is not null && Enum.TryParse<EFlightObjective>(objectiveStr, out var objective))
+        {
+            return objective;
+        }
+        else
+        {
+            return EFlightObjective.Undefined;
+        }
+    }
+
+    /// <summary>
+    /// Update the flight objective for the specified <paramref name="flight"/> with the provided <paramref name="objective"/>.
+    /// </summary>
+    /// <param name="flight"></param>
+    /// <param name="objective"></param>
+    public void UpdateFlightObjective(Flight flight, EFlightObjective objective)
+    {
+        string sqlStatement = "UPDATE Flights SET Objective = @Objective WHERE Flight_ID = @Flight_ID;";
+        _db.SaveData(sqlStatement, new { Objective = objective, flight.Flight_ID }, LoadConnectionString());
+    }
 
     /// <summary>
     /// Retrieve all flight from the Db. Those flight does not contains the IGC data to lighten the ram usage a bit
@@ -617,7 +647,7 @@ public class FlightLogDB
     {
         var sw = Stopwatch.StartNew();
         string sqlStatement =
-            "SELECT Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime FROM Flights;";
+            "SELECT Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, FlightDuration_s, TakeOffDateTime, Objective FROM Flights;";
         var output = await _db.LoadDataAsync<Flight, dynamic>(sqlStatement, new { }, LoadConnectionString());
         foreach (var flight in output)
         {
@@ -735,6 +765,7 @@ public class FlightLogDB
                                     REF_Glider_ID = @REF_Glider_ID,
                                     FlightDuration_s = @FlightDuration_s,
                                     TakeOffDateTime = @TakeOffDateTime,
+                                    Objective = @Objective,
                                     GeoJsonScore = @GeoJsonText
                                     WHERE Flight_ID = @Flight_ID;";
         string sqlStatementNoScore = @"UPDATE Flights SET
@@ -742,7 +773,8 @@ public class FlightLogDB
                                     REF_TakeOffSite_ID = @REF_TakeOffSite_ID,
                                     REF_Glider_ID = @REF_Glider_ID,
                                     FlightDuration_s = @FlightDuration_s,
-                                    TakeOffDateTime = @TakeOffDateTime
+                                    TakeOffDateTime = @TakeOffDateTime,
+                                    Objective = @Objective,
                                     WHERE Flight_ID = @Flight_ID;";
         if (flight.XcScore is not null)
         {
@@ -755,6 +787,7 @@ public class FlightLogDB
                     flight.REF_Glider_ID,
                     flight.FlightDuration_s,
                     flight.TakeOffDateTime,
+                    flight.Objective,
                     flight.XcScore.GeoJsonText
                 },
                 LoadConnectionString());
@@ -770,6 +803,7 @@ public class FlightLogDB
                     flight.REF_Glider_ID,
                     flight.FlightDuration_s,
                     flight.TakeOffDateTime,
+                    flight.Objective
                 },
                 LoadConnectionString());
         }
