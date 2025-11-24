@@ -43,7 +43,7 @@ public class CoreService
     public async Task Init(string userId)
     {
         _flightLog.Init(userId);
-        FlightListViewModel = (await _flightLog.GetAllFlights()).Select(f => f.ToVM(_flightLog)).ToList();
+        FlightListViewModel = (await _flightLog.GetAllFlightsAsync()).Select(f => f.ToVM(_flightLog)).ToList();
         SiteListViewModel = (await _flightLog.GetAllSites()).Select(s => s.ToVM(_flightLog)).ToList();
         GliderListViewModel = (await _flightLog.GetAllGliders()).Select(g => g.ToVM(_flightLog)).ToList();
     }
@@ -320,5 +320,10 @@ public class CoreService
     public static string[] GetObjectiveList()
     {
         return Enum.GetNames<EFlightObjective>().ToArray();
+    }
+
+    public async Task ApplyFlightObjectivesToUndefinedFlightsAsync(double xcDistanceLimitKm, TimeSpan localDurationLimitMin)
+    {
+        await _flightLog.ApplyFlightObjectivesToUndefinedFlightsAsync(xcDistanceLimitKm, localDurationLimitMin);
     }
 }

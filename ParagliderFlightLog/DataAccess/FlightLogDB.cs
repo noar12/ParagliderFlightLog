@@ -643,7 +643,7 @@ public class FlightLogDB
     /// Retrieve all flight from the Db. Those flight does not contains the IGC data to lighten the ram usage a bit
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Flight>> GetAllFlights()
+    public async Task<List<Flight>> GetAllFlightsAsync()
     {
         var sw = Stopwatch.StartNew();
         string sqlStatement =
@@ -757,7 +757,7 @@ public class FlightLogDB
     /// Update the respective db record with <paramref name="flight"/> details
     /// </summary>
     /// <param name="flight"></param>
-    public void UpdateFlight(Flight flight)
+    public async Task UpdateFlightAsync(Flight flight)
     {
         string sqlStatement = @"UPDATE Flights SET 
                                     Comment = @Comment,
@@ -778,7 +778,7 @@ public class FlightLogDB
                                     WHERE Flight_ID = @Flight_ID;";
         if (flight.XcScore is not null)
         {
-            _db.SaveData(sqlStatement,
+            await _db.SaveDataAsync(sqlStatement,
                 new
                 {
                     flight.Flight_ID,
@@ -794,7 +794,7 @@ public class FlightLogDB
         }
         else
         {
-            _db.SaveData(sqlStatementNoScore,
+            await _db.SaveDataAsync(sqlStatementNoScore,
                 new
                 {
                     flight.Flight_ID,
@@ -989,5 +989,26 @@ public class FlightLogDB
                      WHERE Site_ID = @Site_ID;
                      """;
         await _db.SaveDataAsync(sql, new { site.Site_ID }, LoadConnectionString());
+    }
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="xcDistanceLimitKm"></param>
+    /// <param name="localDurationLimitMin"></param>
+    public async Task ApplyFlightObjectivesToUndefinedFlightsAsync(double xcDistanceLimitKm, TimeSpan localDurationLimitMin)
+    {
+        var flights = await GetAllFlightsAsync();
+        foreach (var f in flights.Where(x => x.Objective == EFlightObjective.Undefined))
+        {
+            if (f.XcScore is not null && f.XcScore.RouteLength >= xcDistanceLimitKm)
+            {
+                f.Objective = EFlightObjective.XC;
+            }
+            else if (f.FlightDuration.TotalMinutes >= localDurationLimitMin.TotalMinutes)
+            {
+                f.Objective = EFlightObjective.Local;
+            }
+            await UpdateFlightAsync(f);
+        }
     }
 }

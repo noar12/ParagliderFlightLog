@@ -57,7 +57,7 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
                     if (xcScore != null)
                     {
                         request.Flight.XcScore = xcScore;
-                        request.Db.UpdateFlight(request.Flight.ToFlight());
+                        request.Db.UpdateFlightAsync(request.Flight.ToFlight());
                     }
                 }
                 catch (TaskCanceledException cancelEx)
