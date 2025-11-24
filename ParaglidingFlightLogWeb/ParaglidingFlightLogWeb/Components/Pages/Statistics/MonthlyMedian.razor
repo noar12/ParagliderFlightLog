@@ -1,0 +1,27 @@
+@page "/Statistics/MonthlyMedian"
+@inherits StatisticPageBase
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+<RadzenRow style="overflow: auto;">
+    <RadzenColumn>
+        <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
+            <RadzenLegend Position="LegendPosition.Top"/>
+            @if (_analyzed)
+            {
+                <RadzenValueAxis FormatString="{0:N2}">
+                    <RadzenAxisTitle Text="Median in Hours"/>
+                </RadzenValueAxis>
+                int i = 0;
+                foreach (YearMonthlyStatistic item in _monthlyMedianAnalysisResult)
+                {
+                    <RadzenColumnSeries Data="@item.MonthlyItems"
+                                        Title="@Core.YearsOfFlying[i].ToString()"
+                                        CategoryProperty="Month"
+                                        ValueProperty="Value"/>
+                    i++;
+                }
+            }
+        </RadzenChart>
+    </RadzenColumn>
+</RadzenRow>

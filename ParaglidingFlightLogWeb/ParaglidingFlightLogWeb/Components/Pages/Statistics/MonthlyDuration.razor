@@ -1,0 +1,28 @@
+@page "/Statistics/MonthlyDuration"
+@inherits StatisticPageBase
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+<RadzenRow style="overflow: auto;">
+    <RadzenColumn>
+        <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
+
+            @if (_analyzed)
+            {
+                <RadzenLegend Position="LegendPosition.Top"/>
+                <RadzenValueAxis FormatString="{0:N2}">
+                    <RadzenAxisTitle Text="Flight Hours"/>
+                </RadzenValueAxis>
+                int i = 0;
+                foreach (YearMonthlyStatistic item in _monthlyDurationAnalysisResult)
+                {
+                    <RadzenColumnSeries Data="@item.MonthlyItems"
+                                        Title="@Core.YearsOfFlying[i].ToString()"
+                                        CategoryProperty="Month"
+                                        ValueProperty="Value"/>
+                    i++;
+                }
+            }
+        </RadzenChart>
+    </RadzenColumn>
+</RadzenRow>

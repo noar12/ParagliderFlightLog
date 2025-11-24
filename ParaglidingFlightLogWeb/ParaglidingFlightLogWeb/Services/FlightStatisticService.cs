@@ -70,7 +70,24 @@ namespace ParaglidingFlightLogWeb.Services
             _mainViewModel = mvm;
         }
 
-
+        /// <summary>
+        /// List of month names
+        /// </summary>
+        public string[] MonthList { get; } =
+        [
+            "January",
+            "February",
+            "March",
+            "April",
+            "Mai",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ];
 
         static private (double[] counts, double[] binEdges) ComputeHistData(double[] sample, int groupCount)
         {

@@ -1,0 +1,52 @@
+@page "/Statistics/DurationDistributions"
+@inherits StatisticPageBase
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+<PageTitle>Flights Duration Distribution</PageTitle>
+<RadzenRow>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+        <div>
+            <RadzenCheckBox Name="AllYearAnalysisCheckBox" @bind-Value="@_allYearAnalysis"/>
+            <RadzenLabel Text="Analyze all year" Component="AllYearAnalysisCheckBox" class="rz-ms-2"/>
+        </div>
+
+        <RadzenFormField Text="Year to analyze" Variant="Variant.Outlined">
+            <RadzenDropDown AllowFiltering="false" Data=@Core.YearsOfFlying @bind-Value=@_yearToAnalyse
+                            Class="w-100" Visible="!_allYearAnalysis"/>
+        </RadzenFormField>
+    </RadzenStack>
+
+
+    <RadzenButton Click=@(_ => Analyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary"/>
+
+</RadzenRow>
+<RadzenRow>
+
+    <MyNumericIndicator Label="Flight Count" Value="@FlightStatistic.FlightsCount" Format="F0"/>
+    <MyTextIndicator Label="Flights total duration" Text="@FlightStatistic.FlightsDurationText"/>
+
+    <MyTextIndicator Label="Flights mean duration" Text="@FlightStatistic.MeanFlightsDurationText"/>
+    <MyTextIndicator Label="Flights median duration" Text="@FlightStatistic.MedianFlightDurationText"/>
+</RadzenRow>
+
+<RadzenRow style="overflow: auto;">
+    <RadzenColumn>
+        <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
+            <RadzenLegend Position="LegendPosition.Top"/>
+
+
+            <RadzenValueAxis FormatString="{0:N2}">
+                <RadzenAxisTitle Text="Number of Flight"/>
+            </RadzenValueAxis>
+            <RadzenCategoryAxis>
+                <RadzenAxisTitle Text="Flight Duration in Hours"/>
+            </RadzenCategoryAxis>
+            <RadzenColumnSeries Data="@DurationAnalysisResult"
+                                Title="Flight duration repartition"
+                                CategoryProperty="BarLocation"
+                                ValueProperty="BarValue"/>
+
+        </RadzenChart>
+    </RadzenColumn>
+</RadzenRow>

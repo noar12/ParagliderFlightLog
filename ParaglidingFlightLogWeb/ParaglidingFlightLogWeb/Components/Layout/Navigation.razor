@@ -3,7 +3,7 @@
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="3">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
-                <RadzenSidebarToggle Click="@(() => sidebarExpanded = !sidebarExpanded)" />
+                <RadzenSidebarToggle Click="@(() => _sidebarExpanded = !_sidebarExpanded)" />
                 <RadzenLink Path="/" Text="Go to index page">
                     <RadzenButton Text="Paraglider Flight Log" ButtonStyle="ButtonStyle.Light" Variant="Variant.Text" />
                 </RadzenLink>
@@ -32,13 +32,19 @@
     </RadzenRow>
 </RadzenHeader>
 
-<RadzenSidebar Responsive="false" @bind-Expanded="@sidebarExpanded" style="position: absolute">
-    <RadzenPanelMenu Click="@(()=> sidebarExpanded = false)">
+<RadzenSidebar Responsive="false" @bind-Expanded="@_sidebarExpanded" style="position: absolute">
+    <RadzenPanelMenu Click="@((x)=> _sidebarExpanded = string.IsNullOrEmpty(x.Path))">
         <AuthorizeView>
             <Authorized>
                 <RadzenPanelMenuItem Text="Flights List" Icon="menu_book" Path="FlightsList"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Sites List" Icon="place" Path="SitesList"></RadzenPanelMenuItem>
-                <RadzenPanelMenuItem Text="Flights Statistic" Icon="bar_chart" Path="FlightsStatistic"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Flights Statistic" Icon="analytics">
+                    <RadzenPanelMenuItem Text="Duration Distribution" Icon="avg_time" Path="Statistics/DurationDistributions" />
+                    <RadzenPanelMenuItem Text="Cumulated Duration" Icon="ssid_chart" Path="Statistics/MonthlyCumulatedDuration" />
+                    <RadzenPanelMenuItem Text="Monthly Duration" Icon="bar_chart_4_bars" Path="Statistics/MonthlyDuration" />
+                    <RadzenPanelMenuItem Text="Monthly Median" Icon="bar_chart" Path="Statistics/MonthlyMedian" />
+                    <RadzenPanelMenuItem Text="Xc Score" Icon="sports_score" Path="Statistics/XcScoreOverTheYears" />
+                </RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Glider" Icon="paragliding" Path="Gliderslist"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Import from LogFly" Icon="input" Path="ImportLogFlyDb"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Settings" Icon="settings" Path="Settings"></RadzenPanelMenuItem>
@@ -55,5 +61,5 @@
     </RadzenPanelMenu>
 </RadzenSidebar>
 @code {
-    bool sidebarExpanded = false;
+    bool _sidebarExpanded = false;
 }
