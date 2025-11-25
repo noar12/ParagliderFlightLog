@@ -4,29 +4,36 @@
 {
     <RadzenRow>
         <RadzenColumn>
-            <MyTextIndicator Label="Flight date" Text="@Flight.TakeOffDateTime.ToString("d")"/>
+            <MyTextIndicator Label="Flight date" Text="@Flight.TakeOffDateTime.ToString("d")" />
         </RadzenColumn>
         <RadzenColumn>
-            <MyTextIndicator Label="Site" Text="@Flight.TakeOffSiteName"/>
+            <MyTextIndicator Label="Site" Text="@Flight.TakeOffSiteName" />
         </RadzenColumn>
         <RadzenColumn>
-            <MyTextIndicator Label="Glider" Text="@Flight.GliderName"/>
+            <MyTextIndicator Label="Glider" Text="@Flight.GliderName" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow>
         <RadzenColumn>
-            <MyPhysicalValueIndicator Label="Max Height" Value="@Flight.MaxAltitude" UnitSymbol="m" Format="F0"/>
-            <MyPhysicalValueIndicator Label="Trace Length" Value="@Flight.TraceLength" UnitSymbol="km" Format="F2"/>
-            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@Flight.MaxClimb" UnitSymbol="m/s" Format="F1"/>
-            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@Flight.MaxSink" UnitSymbol="m/s" Format="F1"/>
+            <MyPhysicalValueIndicator Label="Max Height" Value="@Flight.MaxAltitude" UnitSymbol="m" Format="F0" />
+            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@Flight.MaxClimb" UnitSymbol="m/s" Format="F1" />
+            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@Flight.MaxSink" UnitSymbol="m/s" Format="F1" />
         </RadzenColumn>
+
+        @if (Flight.XcScore is not null)
+        {
+            <RadzenColumn>
+                <MyNumericIndicator Label="Score" Value="@Flight.XcScore.Points" />
+                <MyTextIndicator Label="Type of flight" Text="@Flight.XcScore.Type" />
+
+            </RadzenColumn>
+            <RadzenColumn>
+                <MyPhysicalValueIndicator Label="Route length" UnitSymbol="km" Value="@Flight.XcScore.RouteLength" />
+                <MyPhysicalValueIndicator Label="Average Speed" UnitSymbol="km/h" Value="@Flight.XcScore.AverageSpeed_kmh" />
+
+            </RadzenColumn>
+        }
         <RadzenColumn>
-            @if (Flight.XcScore is not null)
-            {
-                <MyNumericIndicator Label="Score" Value="@Flight.XcScore.Points"/>
-                <MyTextIndicator Label="Type of flight" Text="@Flight.XcScore.Type"/>
-                <MyPhysicalValueIndicator Label="Route length" UnitSymbol="km" Value="@Flight.XcScore.RouteLength"/>
-            }
             <MyTextIndicator Label="Objective" Text="@Flight.Objective" />
         </RadzenColumn>
     </RadzenRow>
@@ -44,7 +51,7 @@
                                          FlightDuration="@Flight.FlightDuration"
                                          XcScore="@Flight.XcScore"
                                          Id="@Flight.FlightID"
-                                         Height="400"/>
+                                         Height="400" />
                     </RadzenCarouselItem>
                 }
                 @if (!string.IsNullOrEmpty(Flight.Comment))
@@ -52,17 +59,15 @@
                     <RadzenCarouselItem>
                         <MyTextIndicator Style="max-height: 400px;" Class="rz-h-100 rz-overflow-auto"
                                          Label="Comment"
-                                         Text="@Flight.Comment" Bold="false"/>
+                                         Text="@Flight.Comment" Bold="false" />
                     </RadzenCarouselItem>
                 }
                 @foreach (var photo in Flight.GetFlightPhotos())
                 {
                     <RadzenCarouselItem>
-                        <RadzenImage
-                            Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
-                            AlternateText="A photo of flight uploaded by the user"
-                            Style="max-height: 400px; overflow-y:auto;"
-                        />
+                        <RadzenImage Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
+                                     AlternateText="A photo of flight uploaded by the user"
+                                     Style="max-height: 400px; overflow-y:auto;" />
                     </RadzenCarouselItem>
                 }
 

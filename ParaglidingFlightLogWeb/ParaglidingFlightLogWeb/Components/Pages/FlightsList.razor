@@ -80,23 +80,22 @@
                 </RadzenRow>
                 <RadzenRow>
                     <RadzenColumn>
-                        <MyPhysicalValueIndicator Label="Trace Length" Value="@LastSelectedFlight.TraceLength"
-                                                  UnitSymbol="km" Format="F2" />
                         <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@LastSelectedFlight.MaxClimb"
                                                   UnitSymbol="m/s" Format="F1" />
                         <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@LastSelectedFlight.MaxSink"
                                                   UnitSymbol="m/s" Format="F1" />
                     </RadzenColumn>
-                    <RadzenColumn>
-
-                        @if (LastSelectedFlight.XcScore is not null)
-                        {
+                    @if (LastSelectedFlight.XcScore is not null)
+                    {
+                        <RadzenColumn>
                             <MyNumericIndicator Label="Score" Value="@LastSelectedFlight.XcScore.Points" />
                             <MyTextIndicator Label="Type of flight" Text="@LastSelectedFlight.XcScore.Type" />
+                        </RadzenColumn>
+                        <RadzenColumn>
                             <MyPhysicalValueIndicator Label="Route length" UnitSymbol="km" Value="@LastSelectedFlight.XcScore.RouteLength" />
-                        }
-                    </RadzenColumn>
-
+                            <MyPhysicalValueIndicator Label="Average speed" UnitSymbol="km/h" Value="@LastSelectedFlight.XcScore.AverageSpeed_kmh" />
+                        </RadzenColumn>
+                    }
                     <RadzenColumn>
                         <MyTextIndicator Label="Objective" Text="@LastSelectedFlight.Objective" />
                     </RadzenColumn>
