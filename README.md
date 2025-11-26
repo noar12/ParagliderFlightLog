@@ -165,6 +165,7 @@ Using the left navigation menu you can access some statistics about your flights
 * Average of the flight duration over each month (every year on the same graph using a color by year)
 * Cumulated flight duration over each month (every year on the same graph using a color by year)
 * Score for each year on 4, 6, 10 and 20 flights
+* Some statistics grouped by objective
 
 ## Upcoming changes
 * See Feature request in Issue or add yours
