@@ -24,8 +24,9 @@ try
         .AddInteractiveWebAssemblyComponents();
 
     // Configure Data Protection to use persistent storage in the existing volume
+    string keyPath = builder.Configuration.GetValue<string>("DataProtectionKeyPath") ?? "/app/data/db/DataProtection-Keys";
     builder.Services.AddDataProtection()
-        .PersistKeysToFileSystem(new DirectoryInfo("/app/data/db/DataProtection-Keys"));
+        .PersistKeysToFileSystem(new DirectoryInfo(keyPath));
 
     builder.Services.AddCascadingAuthenticationState();
     builder.Services.AddScoped<IdentityUserAccessor>();

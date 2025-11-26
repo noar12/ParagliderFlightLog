@@ -9,8 +9,8 @@ namespace ParagliderFlightLog.DataAccess
     /// <summary>
     /// Wrap the usage of Dapper to access a SQLite database
     /// </summary>
-	public class SqliteDataAccess
-	{
+    public class SqliteDataAccess
+    {
         private readonly ILogger<SqliteDataAccess> _logger;
 #pragma warning disable CA1822 // Mark members as static: don't want this to be static
         /// <summary>
@@ -21,15 +21,17 @@ namespace ParagliderFlightLog.DataAccess
         {
             _logger = logger;
         }
+
         /// <summary>
         /// Return true if a db file corresponding to the <param name="connectionString"></param> exists
         /// </summary>
         /// <param name="connectionString"></param>
         /// <returns></returns>
         public static bool DbExists(string connectionString)
-		{
-			return File.Exists(GetDbPathFromConnectionString(connectionString));
-		}
+        {
+            return File.Exists(GetDbPathFromConnectionString(connectionString));
+        }
+
         /// <summary>
         /// return the path of the connection string
         /// </summary>
@@ -42,6 +44,7 @@ namespace ParagliderFlightLog.DataAccess
             Match match = rgx.Match(connectionString);
             return match.Value;
         }
+
         /// <summary>
         /// Load data from a SQLite database
         /// </summary>
@@ -51,13 +54,17 @@ namespace ParagliderFlightLog.DataAccess
         /// <typeparam name="T"></typeparam>
         /// <typeparam name="U"></typeparam>
         /// <returns></returns>
-		public List<T> LoadData<T, U>(string sqlStatement, U parameters, string connectionString)
-		{
+        public List<T> LoadData<T, U>(string sqlStatement, U parameters, string connectionString)
+        {
             // T is the model of the data we want to load
-            using IDbConnection connection = new SqliteConnection(connectionString);// this will always close the connection when exiting the scope
+            using IDbConnection
+                connection =
+                    new SqliteConnection(
+                        connectionString); // this will always close the connection when exiting the scope
             List<T> rows = connection.Query<T>(sqlStatement, parameters).ToList();
             return rows;
         }
+
         /// <summary>
         /// Load data from a SQLite database asynchronously
         /// </summary>
@@ -72,7 +79,10 @@ namespace ParagliderFlightLog.DataAccess
             try
             {
                 // T is the model of the data we want to load
-                using IDbConnection connection = new SqliteConnection(connectionString);// this will always close the connection when exiting the scope
+                using IDbConnection
+                    connection =
+                        new SqliteConnection(
+                            connectionString); // this will always close the connection when exiting the scope
                 List<T> rows = (await connection.QueryAsync<T>(sqlStatement, parameters)).ToList();
                 return rows;
             }
@@ -81,8 +91,8 @@ namespace ParagliderFlightLog.DataAccess
                 _logger.LogError(e, "The statement: {sqlStatement}, {parameter}", sqlStatement, parameters);
                 return [];
             }
-
         }
+
         /// <summary>
         /// Save data in a SQLite database
         /// </summary>
@@ -91,18 +101,18 @@ namespace ParagliderFlightLog.DataAccess
         /// <param name="connectionString"></param>
         /// <typeparam name="T"></typeparam>
         public void SaveData<T>(string sqlStatement, T parameters, string connectionString)
-		{
-            
-			try
-			{
+        {
+            try
+            {
                 using IDbConnection connection = new SqliteConnection(connectionString);
                 connection.Execute(sqlStatement, parameters);
             }
-			catch (Exception ex)
-			{
+            catch (Exception ex)
+            {
                 _logger.LogError(ex, "The statement: {sqlStatement}, {parameter}", sqlStatement, parameters);
-			}
+            }
         }
+
         /// <summary>
         /// Save data in a SQLite database asynchronously
         /// </summary>
@@ -122,6 +132,30 @@ namespace ParagliderFlightLog.DataAccess
                 _logger.LogError(ex, "The statement: {sqlStatement}, {parameter}", sqlStatement, parameters);
             }
         }
+        /// <summary>
+        /// Save data in a SQLite database within a transaction
+        /// </summary>
+        /// <param name="sqlStatement"></param>
+        /// <param name="parameters"></param>
+        /// <param name="connectionString"></param>
+        /// <typeparam name="T"></typeparam>
+        public void SaveDataTransaction<T>(string sqlStatement, T parameters, string connectionString)
+        {
+            try
+            {
+                using IDbConnection connection = new SqliteConnection(connectionString);
+                connection.Open();
+                using var transaction = connection.BeginTransaction();
+
+                connection.Execute(sqlStatement, parameters, transaction: transaction);
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "The statement: {sqlStatement}, {parameters}", sqlStatement, parameters);
+            }
+        }
 #pragma warning restore CA1822 // Mark members as static
-	}
+    }
 }

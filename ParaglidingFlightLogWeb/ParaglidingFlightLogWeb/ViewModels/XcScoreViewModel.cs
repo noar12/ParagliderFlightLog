@@ -32,5 +32,9 @@ namespace ParaglidingFlightLogWeb.ViewModels
         /// Length of the route in km
         /// </summary>
         public double RouteLength => _score.RouteLength;
+        /// <summary>
+        /// Gets the average speed in kilometers per hour.
+        /// </summary>
+        public double AverageSpeed_kmh => _score.AverageSpeedKmh;
     }
 }

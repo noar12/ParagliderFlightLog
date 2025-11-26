@@ -18,6 +18,8 @@ public sealed partial class Settings : IDisposable
     private int _xcScoreQueueCount;
     private ClaimsPrincipal? _userClaim;
     private readonly List<UserSharedDataViewModel> _sharedData = [];
+    private double _xcDistanceLimitKm = 20.0;
+    private TimeSpan _localDurationLimitMin = TimeSpan.FromMinutes(20);
     [Inject] private IConfiguration Config { get; set; } = null!;
     [Inject] private CoreService CoreService { get; set; } = null!;
     [Inject] private XcScoreManagerData XcScoreManagerData { get; set; } = null!;
@@ -78,5 +80,10 @@ public sealed partial class Settings : IDisposable
     {
         CoreService.EnqueueAllUserFlightForScore();
         StateHasChanged();
+    }
+
+    private async Task OnFlightObjectiveClick()
+    {
+        await CoreService.ApplyFlightObjectivesToUndefinedFlightsAsync(_xcDistanceLimitKm, _localDurationLimitMin);
     }
 }

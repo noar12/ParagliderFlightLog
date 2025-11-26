@@ -4,20 +4,24 @@
 @inject ILogger<EditFlight> Logger
 
 <RadzenFormField Text="Glider" Variant="Variant.Outlined">
-            <RadzenDropDown AllowFiltering="true"
-                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                            Data=@ViewModel.GliderListViewModel
-            @bind-Value=@FlightToEdit.Glider Class="w-100" />
-        </RadzenFormField>
-        <RadzenFormField Text="Site" Variant="Variant.Outlined">
-            <RadzenDropDown AllowFiltering="true"
-                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                            Data=@ViewModel.SiteListViewModel
-            @bind-Value=@FlightToEdit.TakeOffSite Class="w-100" />
-        </RadzenFormField>
+    <RadzenDropDown AllowFiltering="true"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    Data=@ViewModel.GliderListViewModel
+                    @bind-Value=@FlightToEdit.Glider Class="w-100" />
+</RadzenFormField>
+<RadzenFormField Text="Site" Variant="Variant.Outlined">
+    <RadzenDropDown AllowFiltering="true"
+                    FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                    Data=@ViewModel.SiteListViewModel
+                    @bind-Value=@FlightToEdit.TakeOffSite Class="w-100" />
+    
+</RadzenFormField>
+<RadzenFormField Text="Objective" Variant="Variant.Outlined">
+    <RadzenDropDown Data="@CoreService.GetObjectiveList()" @bind-Value=@FlightToEdit.Objective Class="w-100" />
+</RadzenFormField>
 
 
-    <RadzenTextArea Placeholder="Comment" @bind-Value=FlightToEdit.Comment Class="w-100" Rows="10" />
+<RadzenTextArea Placeholder="Comment" @bind-Value=FlightToEdit.Comment Class="w-100" Rows="10" />
 
 
 

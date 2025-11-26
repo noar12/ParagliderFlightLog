@@ -1,0 +1,29 @@
+@page "/Statistics/MonthlyCumulatedDuration"
+@inherits StatisticPageBase
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+<PageTitle>Flights Monthly Cumulated Duration</PageTitle>
+<RadzenRow style="overflow: auto;">
+    <RadzenColumn>
+        <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
+            <RadzenLegend Position="LegendPosition.Top"/>
+            <RadzenValueAxis FormatString="{0:N2}">
+                <RadzenAxisTitle Text="Cumulated Flight Hours"/>
+            </RadzenValueAxis>
+            @if (_analyzed)
+            {
+                int i = 0;
+                foreach (var item in MonthlyCumulatedDurationAnalysisResult)
+                {
+                    <RadzenLineSeries Data="@item.MonthlyItems"
+                                      Title="@Core.YearsOfFlying[i++].ToString()"
+                                      CategoryProperty="Month"
+                                      ValueProperty="Value">
+
+                    </RadzenLineSeries>
+                }
+            }
+        </RadzenChart>
+    </RadzenColumn>
+</RadzenRow>

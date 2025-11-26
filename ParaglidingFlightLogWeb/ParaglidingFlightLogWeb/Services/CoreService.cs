@@ -1,7 +1,7 @@
-﻿using ParaglidingFlightLogWeb.ViewModels;
-using ParagliderFlightLog.DataAccess;
+﻿using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
 using ParagliderFlightLog.Services;
+using ParaglidingFlightLogWeb.ViewModels;
 
 namespace ParaglidingFlightLogWeb.Services;
 
@@ -43,7 +43,7 @@ public class CoreService
     public async Task Init(string userId)
     {
         _flightLog.Init(userId);
-        FlightListViewModel = (await _flightLog.GetAllFlights()).Select(f => f.ToVM(_flightLog)).ToList();
+        FlightListViewModel = (await _flightLog.GetAllFlightsAsync()).Select(f => f.ToVM(_flightLog)).ToList();
         SiteListViewModel = (await _flightLog.GetAllSites()).Select(s => s.ToVM(_flightLog)).ToList();
         GliderListViewModel = (await _flightLog.GetAllGliders()).Select(g => g.ToVM(_flightLog)).ToList();
     }
@@ -311,5 +311,27 @@ public class CoreService
         await _flightLog.DeleteSiteAsync(siteViewModel.Site);
         SiteListViewModel.Remove(siteViewModel);
         _logger.LogInformation("Site {SiteName} deleted", siteViewModel.Name);
+    }
+    /// <summary>
+    /// Retrieves the names of all available flight objectives.
+    /// </summary>
+    /// <returns>An array of strings containing the names of all flight objectives defined in the <see cref="EFlightObjective"/>
+    /// enumeration.</returns>
+    public static string[] GetObjectiveList()
+    {
+        return Enum.GetNames<EFlightObjective>().ToArray();
+    }
+
+    public async Task ApplyFlightObjectivesToUndefinedFlightsAsync(double xcDistanceLimitKm, TimeSpan localDurationLimitMin)
+    {
+        await _flightLog.ApplyFlightObjectivesToUndefinedFlightsAsync(xcDistanceLimitKm, localDurationLimitMin);
+    }
+    /// <summary>
+    /// List the available flight objectives as a string array.
+    /// </summary>
+    /// <returns></returns>
+    public string[] GetAvailableFlightObjectives()
+    {
+        return Enum.GetNames<EFlightObjective>();
     }
 }

@@ -36,6 +36,18 @@
             <RadzenDataGridColumn Property="LastViewDateTime" Title="Last View"/>
         </Columns>
     </RadzenDataGrid>
+    <RadzenCard>
+        <RadzenText TextStyle="TextStyle.H3">Flight objective</RadzenText>
+
+        <RadzenStack Orientation="Orientation.Horizontal" Wrap="FlexWrap.Wrap">
+            <MyNumericInput Label="XC Minimal Distance" @bind-Value="_xcDistanceLimitKm"/>
+            <MyNumericInput Label="Local Minimal Duration (minutes)" Value="_localDurationLimitMin.TotalMinutes"
+                            ValueChanged="@(x => _localDurationLimitMin = TimeSpan.FromMinutes(x))"/>
+            <RadzenButton Click="OnFlightObjectiveClick" Text="Apply flight auto-objective rules"/>
+        </RadzenStack>
+
+
+    </RadzenCard>
 </RadzenCard>
 
 

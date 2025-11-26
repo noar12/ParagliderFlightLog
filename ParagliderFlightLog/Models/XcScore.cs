@@ -57,6 +57,47 @@ public class XcScore
     /// Route length in km
     /// </summary>
     public double RouteLength => Points / RouteCoefficient.GetCoefficientByName(Type).Value;
+    /// <summary>
+    /// The duration of the route from the first turnpoint (ep.start or cp.in) to the last turnpoint (ep.finish or cp.out)
+    /// </summary>
+    public TimeSpan? RouteDuration
+    {
+        get
+        {
+            string[] startEndRoutePointName = Type switch
+            {
+                "Free Flight" => ["ep_start", "ep_finish"],
+                "Free Triangle" or "FAI Triangle" or "Closed Free Triangle" or "Closed FAI Triangle" => ["cp_in", "cp_out"],
+                _ => [],
+            };
+            if (startEndRoutePointName.Length != 2)
+            {
+                return TimeSpan.Zero;
+            }
+            long? startTimestamp_ms = GeoJsonObject.features.SingleOrDefault(f => f.id == startEndRoutePointName[0])?.properties.timestamp;
+            long? endTimestamp_ms = GeoJsonObject.features.SingleOrDefault(f => f.id == startEndRoutePointName[1])?.properties.timestamp;
+            if (startTimestamp_ms is null || endTimestamp_ms is null)
+            {
+                return null;
+            }
+            return TimeSpan.FromMilliseconds((long)(endTimestamp_ms - startTimestamp_ms));
+        }
+    }
+    /// <summary>
+    /// Gets the average speed of the route in kilometers per hour (between first and last turnpoint).
+    /// </summary>
+    public double AverageSpeedKmh
+    {
+        get
+        {
+            double? durationHours = RouteDuration?.TotalHours;
+            if (durationHours is not null && durationHours > 0)
+            {
+                return RouteLength / durationHours.Value;
+            }
+            return 0.0;
+        }
+    }
 
     /// <summary>
     /// represent the score as its json
@@ -79,7 +120,7 @@ public class XcScore
         public static RouteCoefficient ClosedFreeTriangle => new("Closed Free Triangle", 1.4);
         public static RouteCoefficient ClosedFaiTriangle => new("Closed FAI Triangle", 1.6);
         public static RouteCoefficient Undefined => new("Undefined", 0.0);
-        
+
         public static RouteCoefficient GetCoefficientByName(string name)
         {
             return name switch
