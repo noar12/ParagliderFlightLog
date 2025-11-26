@@ -120,4 +120,7 @@ public abstract partial class StatisticPageBase : ComponentBase
         /// </summary>
         public double Hours { get; set; }
     }
+
+
+
 }

@@ -167,13 +167,15 @@ namespace ParaglidingFlightLogWeb.Services
         }
         
 
-        public XcScoreOverTheYears[] GetXcScoresOverTheYears()
+        public XcScoreOverTheYearsData[] GetXcScoresOverTheYears()
         {
-            XcScoreOverTheYears[] output = new XcScoreOverTheYears[4];
-            output[0] = new XcScoreOverTheYears(){FlightCount = 4, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]};
-            output[1] = new XcScoreOverTheYears(){FlightCount = 6, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]};
-            output[2] = new XcScoreOverTheYears(){FlightCount = 10, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]};
-            output[3] = new XcScoreOverTheYears(){FlightCount = 20, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]};
+            XcScoreOverTheYearsData[] output =
+            [
+                new XcScoreOverTheYearsData(){FlightCount = 4, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]},
+                new XcScoreOverTheYearsData(){FlightCount = 6, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]},
+                new XcScoreOverTheYearsData(){FlightCount = 10, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]},
+                new XcScoreOverTheYearsData(){FlightCount = 20, XcScores = new XcScoreItem[_mainViewModel.YearsOfFlying.Count]},
+            ];
             int i = 0;
             foreach (int year in _mainViewModel.YearsOfFlying)
             {
@@ -205,7 +207,13 @@ namespace ParaglidingFlightLogWeb.Services
             };
             return output;
         }
-
+        /// <summary>
+        /// Get the total hours flown for the given objective in the given period
+        /// </summary>
+        /// <param name="objectiveTxt"></param>
+        /// <param name="AnalyzeStart"></param>
+        /// <param name="AnalyzeEnd"></param>
+        /// <returns></returns>
         public TimeSpan GetHoursFlownForObjective(string objectiveTxt, DateTime AnalyzeStart, DateTime AnalyzeEnd)
         {
 
@@ -214,9 +222,34 @@ namespace ParaglidingFlightLogWeb.Services
                 f.TakeOffDateTime >= AnalyzeStart && f.TakeOffDateTime <= AnalyzeEnd)
                 .Aggregate(TimeSpan.Zero, (sub, f) => sub + f.FlightDuration);
         }
+        /// <summary>
+        /// Get the total distance flown on XC flights in the given period
+        /// </summary>
+        /// <param name="analysisStart"></param>
+        /// <param name="analysisEnd"></param>
+        /// <returns></returns>
+        public double GetTotalXcDistance(DateTime analysisStart, DateTime analysisEnd)
+        {
+            return _mainViewModel.FlightListViewModel
+                .Where(f => f.TakeOffDateTime >= analysisStart && f.TakeOffDateTime <= analysisEnd && f.Objective == "XC")
+                .Aggregate(0.0, (sub, f) => sub + f.XcScore?.RouteLength ?? 0.0);
+        }
+
+        internal double GetAverageXcSpeed(DateTime analysisStart, DateTime analysisEnd)
+        {
+            int xcFlightCount = _mainViewModel.FlightListViewModel
+                .Count(f => f.TakeOffDateTime >= analysisStart && f.TakeOffDateTime <= analysisEnd && f.Objective == "XC");
+            if (xcFlightCount == 0) return 0.0;
+            return _mainViewModel.FlightListViewModel
+                .Where(f => f.TakeOffDateTime >= analysisStart && f.TakeOffDateTime <= analysisEnd && f.Objective == "XC")
+                .Aggregate(0.0, (sub, f) => sub + (f.XcScore?.AverageSpeed_kmh ?? 0.0)) /
+                xcFlightCount;
+        }
+
+        
     }
 
-    public class XcScoreOverTheYears
+    public class XcScoreOverTheYearsData
     {
         public int? FlightCount { get; init; }
         public XcScoreItem[] XcScores { get; init; }
@@ -238,14 +271,5 @@ namespace ParaglidingFlightLogWeb.Services
             Counts = counts;
             BinEdges = binEdges;
         }
-    }
-
-    public enum StatisticalFlightsAnalysis
-    {
-        DurationDistribution,
-        MontlyMedian,
-        MonthlyFlightDuration,
-        MonthlyCumulatedFlightDuration,
-        XcoreOverTheYears,
     }
 }

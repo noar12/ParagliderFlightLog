@@ -3,40 +3,81 @@
 @attribute [Authorize]
 @rendermode InteractiveServer
 
-<RadzenRow>
-    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
-        <div>
-            <RadzenCheckBox Name="AllYearAnalysisCheckBox" @bind-Value="@_allYearAnalysis" />
-            <RadzenLabel Text="Analyze all year" Component="AllYearAnalysisCheckBox" class="rz-ms-2" />
-        </div>
+<PageTitle>Objectives Synthesis</PageTitle>
+<RadzenRow AlignItems="AlignItems.Center">
+    <RadzenColumn SizeMD="8">
+        <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Center" AlignItems="AlignItems.Center" Style="width: 100%; height: 100%;">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
 
-        <RadzenFormField Text="Year to analyze" Variant="Variant.Outlined">
-            <RadzenDropDown AllowFiltering="false" Data=@Core.YearsOfFlying @bind-Value=@_yearToAnalyse
-                            Class="w-100" Visible="!_allYearAnalysis" />
-        </RadzenFormField>
-    </RadzenStack>
+                <RadzenButton Icon="chevron_backward" Click="OnPreviousClick" Visible="!_allYearAnalysis" />
+                <RadzenText TextStyle="TextStyle.DisplayH4" Text="@(_allYearAnalysis ? "Global" : _yearToAnalyse.ToString())" />
+                <RadzenButton Icon="chevron_forward" Click="OnNextClick" Visible="!_allYearAnalysis" />
+            </RadzenStack>
 
-    <RadzenButton Click=@(_ => Analyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
-</RadzenRow>
+            <RadzenChart style="width: 100%; height: calc(100vh - 350px);">
+                <RadzenLegend Position="LegendPosition.Bottom" />
+                @if (_analyzed)
+                {
+                    <RadzenValueAxis FormatString="{0:N2}">
+                        <RadzenAxisTitle Text="Median in Hours" />
+                    </RadzenValueAxis>
 
-<RadzenButton Click=@(_ => Analyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
+                    <RadzenPieSeries Data="@_pieChartData"
+                                     Title="Flown hours"
+                                     CategoryProperty="ObjectiveType"
+                                     ValueProperty="Hours" />
 
-<RadzenRow style="overflow: auto;">
-    <RadzenColumn>
-        <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
-            <RadzenLegend Position="LegendPosition.Top" />
-            @if (_analyzed)
-            {
-                <RadzenValueAxis FormatString="{0:N2}">
-                    <RadzenAxisTitle Text="Median in Hours" />
-                </RadzenValueAxis>
+                }
+            </RadzenChart>
+            <div>
+                <RadzenCheckBox TValue="bool" Name="AllYearAnalysisCheckBox" Change="@(x => OnAllYearCheckBoxChange(x))" />
+                <RadzenLabel Text="Analyze all year" Component="AllYearAnalysisCheckBox" class="rz-ms-2" />
+            </div>
+        </RadzenStack>
+    </RadzenColumn>
+    <RadzenColumn SizeMD="4">
+        <RadzenStack Orientation="Orientation.Vertical" Gap="1rem">
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.H6" Text="Local" />
+                <RadzenRow>
+                    <RadzenColumn>
+                        <MyTextIndicator Label="Total flown hours" Text="@_localHoursTxt" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
 
-                <RadzenPieSeries Data="@_pieChartData"
-                                 Title="Flown hours"
-                                 CategoryProperty="ObjectiveType"
-                                 ValueProperty="Hours" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenCard>
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.H6" Text="Xc" />
+                <RadzenRow>
+                    <RadzenColumn>
+                        <MyTextIndicator Label="Total flown hours" Text="@_xcHoursTxt" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
+                        <MyPhysicalValueIndicator Label="Total Distance" Format="N1" Value="@_xcTotalDistance" UnitSymbol="km" />
+                        <MyPhysicalValueIndicator Label="Average Speed" Format="N2" Value="@_xcAverageSpeed" UnitSymbol="km/h" />
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenCard>
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.H6" Text="Glide" />
+                <RadzenRow>
+                    <RadzenColumn>
+                        <MyTextIndicator Label="Total flown hours" Text="@_glideHoursTxt" />
+                    </RadzenColumn>
+                </RadzenRow>
+                <RadzenRow>
+                    <RadzenColumn>
 
-            }
-        </RadzenChart>
+                    </RadzenColumn>
+                </RadzenRow>
+            </RadzenCard>
+        </RadzenStack>
     </RadzenColumn>
 </RadzenRow>
+

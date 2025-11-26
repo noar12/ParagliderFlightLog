@@ -1,8 +1,10 @@
+using ParaglidingFlightLogWeb.Services;
+
 namespace ParaglidingFlightLogWeb.Components.Pages.Statistics
 {
     public partial class XcScoreOverTheYears : StatisticPageBase
     {
-        private Services.XcScoreOverTheYears[] _xcScoresOverTheYears = [];
+        private XcScoreOverTheYearsData[] _xcScoresOverTheYears = [];
         private bool _analyzed;
 
         /// <summary>
