@@ -72,6 +72,25 @@ public class FlightViewModel
         }
     }
     /// <summary>
+    /// Objective of the flight
+    /// </summary>
+    public string Objective
+    {
+        get { return _db.GetFlightObjective(Flight).ToString(); }
+        set
+        {
+            if (Enum.TryParse<EFlightObjective>(value, out var enumValue))
+            {
+                Flight.Objective = enumValue;
+                _db.UpdateFlightObjective(Flight, enumValue);
+            }
+            else
+            {
+                Flight.Objective = EFlightObjective.Undefined;
+            }
+        }
+    }
+    /// <summary>
     /// Take off name
     /// </summary>
     public string TakeOffSiteName
@@ -139,9 +158,10 @@ public class FlightViewModel
     }
 
     /// <summary>
-    /// Comment
+    /// Comment (saved directly in the data base)
     /// </summary>
     public string Comment { get { return _db.GetFlightComment(Flight) ?? ""; } set { _db.UpdateFlightComment(Flight, value); } }
+
     /// <summary>
     /// Get the trace length in km
     /// </summary>

@@ -1,0 +1,30 @@
+@page "/Statistics/XcScoreOverTheYears"
+@inherits StatisticPageBase
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+
+<RadzenRow style="overflow: auto;">
+    <RadzenColumn>
+        <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
+            <RadzenLegend Position="LegendPosition.Top"/>
+
+            @if (_analyzed)
+            {
+                <RadzenCategoryAxis>
+                    <RadzenAxisTitle Text="Years"/>
+                </RadzenCategoryAxis>
+                <RadzenValueAxis FormatString="{0:N2}" Min="0">
+                    <RadzenAxisTitle Text="XcScore in [pts]"/>
+                </RadzenValueAxis>
+                @foreach (var scoreCategory in _xcScoresOverTheYears)
+                {
+                    <RadzenColumnSeries Data="@scoreCategory.XcScores"
+                                        Title="@scoreCategory.Name"
+                                        CategoryProperty="YearText"
+                                        ValueProperty="XcScore"/>
+                }
+            }
+        </RadzenChart>
+    </RadzenColumn>
+</RadzenRow>

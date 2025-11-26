@@ -1,13 +1,12 @@
-version: '3.8'
-
 services:
   paraglider-flightlog:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: paraglider-flightlog-dev
     ports:
       - "5001:8080"
+      - "4020:4020" # Expose debugger port
     volumes:
       # For development, mount local directories instead of Docker volumes
       - ./dev-data/db:/app/data/db

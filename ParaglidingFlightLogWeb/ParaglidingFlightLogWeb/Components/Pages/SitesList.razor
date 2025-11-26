@@ -32,6 +32,7 @@
                     <RadzenDataGridColumn  Title="Action" Width="150px" Sortable="false" Filterable="false">
                         <Template>
                             <RadzenButton Icon="edit" Click="@( _ => OnEditSiteButton(context))" />
+                            <RadzenButton Icon="delete" Click="@( _ => OnDeleteSiteButton(context))" ButtonStyle="ButtonStyle.Danger" />
                         </Template>
                     </RadzenDataGridColumn>
                 </Columns>

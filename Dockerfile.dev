@@ -14,11 +14,11 @@ RUN dotnet restore "ParaglidingFlightLogWeb/ParaglidingFlightLogWeb/ParaglidingF
 # Copy everything else and build
 COPY . .
 WORKDIR "/src/ParaglidingFlightLogWeb/ParaglidingFlightLogWeb"
-RUN dotnet build "ParaglidingFlightLogWeb.csproj" -c Release -o /app/build
+RUN dotnet build "ParaglidingFlightLogWeb.csproj" -c Debug -o /app/build
 
-# Publish the application
+# Publish the application in Debug mode
 FROM build AS publish
-RUN dotnet publish "ParaglidingFlightLogWeb.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "ParaglidingFlightLogWeb.csproj" -c Debug -o /app/publish /p:UseAppHost=false
 
 # Final runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
@@ -44,17 +44,22 @@ RUN mkdir -p /app/data/db && \
 # Copy published application
 COPY --from=publish /app/publish .
 
+# Install vsdbg for remote debugging
+RUN apt-get update && apt-get install -y unzip && \
+    curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
+
 # Create a non-root user for running the application
 RUN useradd -m -u 1000 appuser && \
-    chown -R appuser:appuser /app /var/log/ParagliderFlightLog
+    chown -R appuser:appuser /app /var/log/ParagliderFlightLog /vsdbg
 USER appuser
 
 # Expose ports
 EXPOSE 8080
 EXPOSE 8081
+EXPOSE 4020
 
 # Set environment variables
 ENV ASPNETCORE_URLS=http://+:8080
-ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ASPNETCORE_ENVIRONMENT=Development
 
 ENTRYPOINT ["dotnet", "ParaglidingFlightLogWeb.dll"]
