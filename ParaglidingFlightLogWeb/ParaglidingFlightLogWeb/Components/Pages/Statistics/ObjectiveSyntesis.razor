@@ -1,0 +1,42 @@
+﻿@page "/Statistics/ObjectiveSynthesis"
+@inherits StatisticPageBase
+@attribute [Authorize]
+@rendermode InteractiveServer
+
+<RadzenRow>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+        <div>
+            <RadzenCheckBox Name="AllYearAnalysisCheckBox" @bind-Value="@_allYearAnalysis" />
+            <RadzenLabel Text="Analyze all year" Component="AllYearAnalysisCheckBox" class="rz-ms-2" />
+        </div>
+
+        <RadzenFormField Text="Year to analyze" Variant="Variant.Outlined">
+            <RadzenDropDown AllowFiltering="false" Data=@Core.YearsOfFlying @bind-Value=@_yearToAnalyse
+                            Class="w-100" Visible="!_allYearAnalysis" />
+        </RadzenFormField>
+    </RadzenStack>
+
+    <RadzenButton Click=@(_ => Analyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
+</RadzenRow>
+
+<RadzenButton Click=@(_ => Analyze()) Text="Analyze" ButtonStyle="ButtonStyle.Primary" />
+
+<RadzenRow style="overflow: auto;">
+    <RadzenColumn>
+        <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
+            <RadzenLegend Position="LegendPosition.Top" />
+            @if (_analyzed)
+            {
+                <RadzenValueAxis FormatString="{0:N2}">
+                    <RadzenAxisTitle Text="Median in Hours" />
+                </RadzenValueAxis>
+
+                <RadzenPieSeries Data="@_pieChartData"
+                                 Title="Flown hours"
+                                 CategoryProperty="ObjectiveType"
+                                 ValueProperty="Hours" />
+
+            }
+        </RadzenChart>
+    </RadzenColumn>
+</RadzenRow>

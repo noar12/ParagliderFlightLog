@@ -106,4 +106,18 @@ public abstract partial class StatisticPageBase : ComponentBase
         /// </summary>
         public double BarValue { get; set; }
     }
+    /// <summary>
+    /// Class to represent the hours flown in a pie chart for each objective type.
+    /// </summary>
+    protected class ObjectiveItem
+    {
+        /// <summary>
+        /// Objective type name
+        /// </summary>
+        public string ObjectiveType { get; set; } = string.Empty;
+        /// <summary>
+        /// Hours flown for this objective type
+        /// </summary>
+        public double Hours { get; set; }
+    }
 }

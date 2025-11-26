@@ -205,6 +205,15 @@ namespace ParaglidingFlightLogWeb.Services
             };
             return output;
         }
+
+        public TimeSpan GetHoursFlownForObjective(string objectiveTxt, DateTime AnalyzeStart, DateTime AnalyzeEnd)
+        {
+
+            return _mainViewModel.FlightListViewModel
+                .Where(f => f.Objective == objectiveTxt &&
+                f.TakeOffDateTime >= AnalyzeStart && f.TakeOffDateTime <= AnalyzeEnd)
+                .Aggregate(TimeSpan.Zero, (sub, f) => sub + f.FlightDuration);
+        }
     }
 
     public class XcScoreOverTheYears

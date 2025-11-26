@@ -1,7 +1,7 @@
-﻿using ParaglidingFlightLogWeb.ViewModels;
-using ParagliderFlightLog.DataAccess;
+﻿using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
 using ParagliderFlightLog.Services;
+using ParaglidingFlightLogWeb.ViewModels;
 
 namespace ParaglidingFlightLogWeb.Services;
 
@@ -325,5 +325,13 @@ public class CoreService
     public async Task ApplyFlightObjectivesToUndefinedFlightsAsync(double xcDistanceLimitKm, TimeSpan localDurationLimitMin)
     {
         await _flightLog.ApplyFlightObjectivesToUndefinedFlightsAsync(xcDistanceLimitKm, localDurationLimitMin);
+    }
+    /// <summary>
+    /// List the available flight objectives as a string array.
+    /// </summary>
+    /// <returns></returns>
+    public string[] GetAvailableFlightObjectives()
+    {
+        return Enum.GetNames<EFlightObjective>();
     }
 }

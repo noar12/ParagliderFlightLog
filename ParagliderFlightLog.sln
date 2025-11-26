@@ -13,18 +13,18 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParaglidingFlightLogWeb.Cli
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E25BDE4F-8FBF-48C6-98E2-D3C660AF1A7B}"
 	ProjectSection(SolutionItems) = preProject
-		README.md = README.md
 		docker-compose.dev.yml = docker-compose.dev.yml
 		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
 		DOCKER_DEPLOYMENT_CHECKLIST.md = DOCKER_DEPLOYMENT_CHECKLIST.md
 		DOCKER_DEPLOYMENT_SUMMARY.md = DOCKER_DEPLOYMENT_SUMMARY.md
 		DOCKER_Q&A_SUMMARY.md = DOCKER_Q&A_SUMMARY.md
 		DOCKER_QUICKREF.md = DOCKER_QUICKREF.md
 		DOCKER_README.md = DOCKER_README.md
-		Dockerfile = Dockerfile
 		migrate-to-docker.bat = migrate-to-docker.bat
 		migrate-to-docker.sh = migrate-to-docker.sh
 		quick-start.sh = quick-start.sh
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
