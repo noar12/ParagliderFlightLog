@@ -1,4 +1,6 @@
 @rendermode InteractiveServer
+@inject NavigationManager NavigationMgr
+
 <RadzenHeader style="position: static">
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="3">
@@ -15,14 +17,9 @@
             <Authorized>
                 <RadzenColumn Size="3" Offset="6">
                     <RadzenStack Gap="0" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Orientation="Orientation.Horizontal">
-                        <form action="Account/Logout" method="post">
-                            <AntiforgeryToken />
-                            <input type="hidden" name="ReturnUrl" value="" />
-                            <RadzenButton Icon="logout" ButtonType="ButtonType.Submit" Text="Logout" ButtonStyle="ButtonStyle.Light" Variant="Variant.Text"></RadzenButton>
-                        </form>
-                        <div>
+                        <div style="padding-right:1rem">
                             Hello,
-                            <MyMaxSizeTextDisplay Value="@context.User.Identity!.Name" MaxChar="15"></MyMaxSizeTextDisplay>
+                            <MyMaxSizeTextDisplay Value="@context.User.Identity!.Name" MaxChar="15" />
                         </div>
                     </RadzenStack>
                 </RadzenColumn>
@@ -33,7 +30,7 @@
 </RadzenHeader>
 
 <RadzenSidebar Responsive="false" @bind-Expanded="@_sidebarExpanded" style="position: absolute">
-    <RadzenPanelMenu Click="@((x)=> _sidebarExpanded = string.IsNullOrEmpty(x.Path))">
+    <RadzenPanelMenu Click="@((x) => _sidebarExpanded = string.IsNullOrEmpty(x.Path))">
         <AuthorizeView>
             <Authorized>
                 <RadzenPanelMenuItem Text="Flights List" Icon="menu_book" Path="FlightsList"></RadzenPanelMenuItem>
@@ -50,7 +47,7 @@
                 <RadzenPanelMenuItem Text="Import from LogFly" Icon="input" Path="ImportLogFlyDb"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Settings" Icon="settings" Path="Settings"></RadzenPanelMenuItem>
                 <RadzenPanelMenuItem Text="Manage Account" Icon="account_circle" Path="/Account/Manage"></RadzenPanelMenuItem>
-
+                <RadzenPanelMenuItem Text="Logout" Icon="logout" Click="@LogoutAsync"></RadzenPanelMenuItem>
             </Authorized>
             <NotAuthorized>
                 <RadzenPanelMenuItem Text="Register" Icon="input" Path="Account/Register"></RadzenPanelMenuItem>
@@ -63,4 +60,8 @@
 </RadzenSidebar>
 @code {
     bool _sidebarExpanded = false;
+    private void LogoutAsync()
+    {
+        NavigationMgr.NavigateTo("Account/Logout", forceLoad: true);
+    }
 }
