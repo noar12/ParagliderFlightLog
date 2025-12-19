@@ -1,5 +1,5 @@
 @rendermode InteractiveServer
-@inject NavigationManager NavigationMgr
+@inject IJSRuntime JSRuntime
 
 <RadzenHeader style="position: static" class="cloud-header-svg">
     @* position: static because otherwise the header goes over the content*@
@@ -59,10 +59,18 @@
 
     </RadzenPanelMenu>
 </RadzenSidebar>
+
+<form @ref="_logoutForm" action="Account/Logout" method="post" style="display: none;">
+    <AntiforgeryToken />
+    <input type="hidden" name="returnUrl" value="" />
+</form>
+
 @code {
     bool _sidebarExpanded = false;
-    private void LogoutAsync()
+    private ElementReference _logoutForm;
+
+    private async Task LogoutAsync()
     {
-        NavigationMgr.NavigateTo("Account/Logout", forceLoad: true);
+        await JSRuntime.InvokeVoidAsync("eval", $"document.querySelector('form[action=\"Account/Logout\"]').submit()");
     }
 }
