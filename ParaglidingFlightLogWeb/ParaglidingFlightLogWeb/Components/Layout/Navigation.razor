@@ -1,7 +1,8 @@
 @rendermode InteractiveServer
 @inject NavigationManager NavigationMgr
 
-<RadzenHeader style="position: static">
+<RadzenHeader style="position: static" class="cloud-header-svg">
+    @* position: static because otherwise the header goes over the content*@
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="3">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="0">
