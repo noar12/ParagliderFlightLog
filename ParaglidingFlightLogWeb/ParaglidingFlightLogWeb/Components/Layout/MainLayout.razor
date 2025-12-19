@@ -8,7 +8,7 @@
         @Body
     </RadzenBody>
     <RadzenFooter class="ground-footer-svg">
-        <RadzenText TextAlign="TextAlign.Center">&copy; 2020 - @DateTime.Now.Year - Arnaud Moretti - V @(typeof(Program).Assembly.GetName().Version?.ToString() ?? "0.0.0")</RadzenText>
+        <RadzenText TextStyle="TextStyle.Body1" Style="color:#2d5016" TextAlign="TextAlign.Center">&copy; 2020 - @DateTime.Now.Year - Arnaud Moretti - V @(typeof(Program).Assembly.GetName().Version?.ToString() ?? "0.0.0")</RadzenText>
     </RadzenFooter>
 </RadzenLayout>
 

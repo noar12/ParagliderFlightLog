@@ -56,7 +56,7 @@
     align-items: center !important;
     justify-content: center !important;
     height: 2em !important;
-    background: linear-gradient(to bottom, #b0e4aa 20%, #8b7d6b);
+    background: linear-gradient(to bottom, #c7e5c3 20%, #8f8b86);
 }
 
     .ground-footer-svg::before {
@@ -67,7 +67,7 @@
         left: 0;
         width: 100%;
         height: 10px;
-        background: #b0e4aa;
+        background: #c7e5c3;
         border-radius: 50% 50% 0 0 / 100% 100% 0 0;
         z-index: 10;
         pointer-events: none;

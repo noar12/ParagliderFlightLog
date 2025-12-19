@@ -1,0 +1,114 @@
+﻿/* Make all Radzen cards slightly transparent to show background */
+/* Target multiple possible class names that Radzen might use */
+.rz-card,
+div.rz-card,
+.rz-card-content,
+[class*="rz-card"] {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px); /* Safari support */
+    transition: background-color 0.3s ease;
+}
+
+    /* Optional: Increase opacity on hover for better readability */
+    .rz-card:hover,
+    div.rz-card:hover {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+    }
+
+/* Make RadzenDataGrid components transparent like cards */
+/* Target the main grid wrapper */
+.rz-datatable-wrapper,
+.rz-datatable,
+.rz-datatable-scrollable-wrapper,
+.rz-datatable-scrollable-view,
+.rz-datatable-scrollable-body,
+.rz-grid,
+.rz-datatable-data,
+.rz-grid-table,
+table.rz-grid-table {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+    /* Target thead - FULLY OPAQUE to prevent content showing through when scrolling */
+    .rz-datatable thead,
+    .rz-datatable-thead,
+    .rz-grid-table > thead,
+    thead.rz-datatable-thead {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .rz-datatable tbody,
+    .rz-datatable-tbody,
+    .rz-grid-table > tbody,
+    tbody.rz-datatable-tbody {
+        background-color: transparent !important;
+    }
+
+        /* DataGrid rows - NO background on individual rows */
+        .rz-datatable-tbody > tr,
+        .rz-grid-table tbody > tr,
+        .rz-datatable tbody > tr,
+        tr.rz-datatable-row {
+            background-color: transparent !important;
+            transition: background-color 0.2s ease;
+        }
+
+            /* DataGrid row hover effect */
+            .rz-datatable-tbody > tr:hover,
+            .rz-grid-table tbody > tr:hover,
+            .rz-datatable tbody > tr:hover,
+            tr.rz-datatable-row:hover {
+                background-color: rgba(255, 255, 255, 0.15) !important;
+            }
+
+            /* Alternating row colors for better readability */
+            .rz-datatable-tbody > tr:nth-child(odd),
+            .rz-grid-table tbody > tr:nth-child(odd),
+            .rz-datatable tbody > tr:nth-child(odd) {
+                background-color: rgba(255, 255, 255, 0.05) !important;
+            }
+
+            .rz-datatable-tbody > tr:nth-child(even),
+            .rz-grid-table tbody > tr:nth-child(even),
+            .rz-datatable tbody > tr:nth-child(even) {
+                background-color: rgba(255, 255, 255, 0.12) !important;
+            }
+
+                .rz-datatable-tbody > tr:nth-child(odd):hover,
+                .rz-grid-table tbody > tr:nth-child(odd):hover,
+                .rz-datatable-tbody > tr:nth-child(even):hover,
+                .rz-grid-table tbody > tr:nth-child(even):hover {
+                    background-color: rgba(255, 255, 255, 0.45) !important;
+                }
+
+            /* DataGrid cells - restore visible borders */
+            .rz-datatable-tbody > tr > td,
+            .rz-grid-table tbody > tr > td,
+            .rz-datatable tbody > tr > td,
+            td.rz-cell {
+                background-color: transparent !important;
+                border-color: rgba(100, 100, 100, 0.25) !important;
+                border-bottom: 1px solid rgba(100, 100, 100, 0.25) !important;
+            }
+
+    /* DataGrid header cells - FULLY OPAQUE */
+    .rz-datatable-thead > tr > th,
+    .rz-grid-table thead > tr > th,
+    .rz-datatable thead > tr > th,
+    th.rz-header-cell {
+        background-color: rgba(255, 255, 255, 0.98) !important;
+        border-color: rgba(100, 100, 100, 0.4) !important;
+        border-bottom: 2px solid rgba(100, 100, 100, 0.5) !important;
+        font-weight: 600;
+    }
+
+    /* Additional: target any div inside grid that might have background */
+    .rz-datatable > div,
+    .rz-grid > div {
+        background-color: transparent !important;
+    }
