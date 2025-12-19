@@ -1,0 +1,28 @@
+﻿/* ===== Font Customization for RadzenText Components ===== */
+
+.rz-text-h1, .rz-text-h2, .rz-text-h3, .rz-text-h4, .rz-text-h5, .rz-text-h6,
+.rz-text-display-h1, .rz-text-display-h2, .rz-text-display-h3, .rz-text-display-h4, .rz-text-display-h5, .rz-text-display-h6 {
+    font-family: 'Trebuchet MS', -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+/* Fine-tune specific heading sizes */
+.rz-text-h1, .rz-text-display-h1 {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+}
+
+.rz-text-h3 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.rz-text-h4, .rz-text-h5, .rz-text-h6 {
+    font-weight: 600;
+}
+
+/* Body text */
+.rz-text-body1, .rz-text-body2 {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+}
