@@ -35,6 +35,9 @@
 		<Content Update="wwwroot\customCss\curved-layout.css">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Update="wwwroot\customCss\fonts.css">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Update="wwwroot\leafletmapV1_0_0.js">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
