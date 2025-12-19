@@ -32,8 +32,20 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Update="wwwroot\customCss\curved-layout.css">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\customCss\fonts.css">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\customCss\OverRadzenCss.css">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Update="wwwroot\leafletmapV1_0_0.js">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="wwwroot\Loading_icon.gif">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
 		<Content Update="wwwroot\paraglidingLogBackground.jpg">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
