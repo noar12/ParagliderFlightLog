@@ -45,6 +45,7 @@ public partial class FlightsList
     IList<FlightViewModel> SelectedFlights = [];
     private int _flightUploadProgress;
     private bool _showFlightUploadProgress;
+
     FlightViewModel? LastSelectedFlight
     {
         get
@@ -68,7 +69,6 @@ public partial class FlightsList
             await Mvm.Init(userId);
             Logger.LogInformation("Initialized for {User}", currentUser.UserName);
         }
-
     }
 
     /// <summary>
@@ -177,12 +177,13 @@ public partial class FlightsList
                     NotifyUser($"Individual file has to be smaller than {MAX_FILE_SIZE / 1024} kB");
                     return;
                 }
-                
+
                 string tmpDirectory = Path.Combine(Environment.ContentRootPath, "tmp");
                 if (!Directory.Exists(tmpDirectory))
                 {
                     _ = Directory.CreateDirectory(tmpDirectory);
                 }
+
                 string trustedFileNameForFileStorage = Path.GetRandomFileName();
                 string path = Path.Combine(tmpDirectory, trustedFileNameForFileStorage);
                 await using FileStream fs = new(path, FileMode.Create);
@@ -218,9 +219,7 @@ public partial class FlightsList
     {
         NotificationService.Notify(new NotificationMessage
         {
-            Severity = severity,
-            Duration = 4000,
-            Summary = message,
+            Severity = severity, Duration = 4000, Summary = message,
         });
     }
 
@@ -245,6 +244,7 @@ public partial class FlightsList
             NotifyUser("Only jpg file", NotificationSeverity.Error);
             return;
         }
+
         foreach (var file in files)
         {
             NotifyUser($"Starting {file.Name} upload...", NotificationSeverity.Info);
@@ -265,6 +265,7 @@ public partial class FlightsList
                 Logger.LogError(ex, "File: {Filename}", file.Name);
             }
         }
+
         NotifyUser($"{files.Count} file(s) have been uploaded", NotificationSeverity.Success);
         await InvokeAsync(StateHasChanged);
     }
@@ -283,6 +284,7 @@ public partial class FlightsList
     private async Task OpenShareFlight(MouseEventArgs arg)
     {
         if (LastSelectedFlight is null) { return; }
+
         await DialogService.OpenAsync<ShareFlightForm>("Share Flight",
             new Dictionary<string, object>() { { "Flight", LastSelectedFlight } },
             new DialogOptions() { Resizable = true, Draggable = false });
@@ -294,6 +296,7 @@ public partial class FlightsList
         {
             return;
         }
+
         SelectedFlights = flights;
         FlightId = flights[0].FlightID;
     }
@@ -312,5 +315,16 @@ public partial class FlightsList
         SelectedFlights.Add(flightToDelete);
         FlightId = flightToDelete.FlightID;
         await OnRemoveFlights(SelectedFlights);
+    }
+
+    private async Task OnAddFlightWithoutIgcFile()
+    {
+        var newFlight = Mvm.CreateNewFlightViewModel();
+        _ = await DialogService.OpenAsync<EditFlight>("Add flight manually",
+            new()
+            {
+                { "FlightToEdit", newFlight },
+                { "ViewModel", Mvm }
+            });
     }
 }
