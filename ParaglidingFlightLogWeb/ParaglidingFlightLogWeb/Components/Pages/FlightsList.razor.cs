@@ -319,11 +319,9 @@ public partial class FlightsList
 
     private async Task OnAddFlightWithoutIgcFile()
     {
-        var newFlight = Mvm.CreateNewFlightViewModel();
-        _ = await DialogService.OpenAsync<EditFlight>("Add flight manually",
+        _ = await DialogService.OpenAsync<CreateNewManualFlight>("Add flight manually",
             new()
             {
-                { "FlightToEdit", newFlight },
                 { "ViewModel", Mvm }
             });
     }

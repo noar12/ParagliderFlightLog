@@ -59,6 +59,7 @@ public partial class Index
     /// <returns></returns>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        _logger.LogDebug("Rendering index page");
         if (firstRender)
         {
             await Task.Run(() => _flightToRemember = CoreService.GetFlightToRemember());
