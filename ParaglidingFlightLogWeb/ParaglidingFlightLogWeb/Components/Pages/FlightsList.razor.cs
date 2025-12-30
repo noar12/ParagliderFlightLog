@@ -229,7 +229,7 @@ public partial class FlightsList
         _flightUploadProgress = args.Progress;
     }
 
-    private async Task AddPhotos(UploadChangeEventArgs e)
+    private async Task AddPhotos(UploadChangeEventArgs e, FlightViewModel flight)
     {
         var files = e.Files.ToList();
         if (files.Count > MAX_PHOTO_COUNT)
@@ -258,7 +258,7 @@ public partial class FlightsList
 
                 using var memory = new MemoryStream();
                 await file.OpenReadStream(MAX_PHOTO_SIZE).CopyToAsync(memory);
-                await Mvm.SavePhoto(LastSelectedFlight, memory);
+                await Mvm.SavePhoto(flight, memory);
             }
             catch (Exception ex)
             {
@@ -270,23 +270,15 @@ public partial class FlightsList
         await InvokeAsync(StateHasChanged);
     }
 
-    private async Task OnPhotosProgress(UploadProgressArgs args)
-    {
-        throw new NotImplementedException();
-    }
-
-
     private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
     {
         return Mvm.GetBase64StringPhotoData(photo);
     }
 
-    private async Task OpenShareFlight(MouseEventArgs arg)
+    private async Task OpenShareFlight(FlightViewModel flight)
     {
-        if (LastSelectedFlight is null) { return; }
-
         await DialogService.OpenAsync<ShareFlightForm>("Share Flight",
-            new Dictionary<string, object>() { { "Flight", LastSelectedFlight } },
+            new Dictionary<string, object>() { { "Flight", flight } },
             new DialogOptions() { Resizable = true, Draggable = false });
     }
 

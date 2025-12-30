@@ -42,12 +42,7 @@ public class PhotosService
         }
 
         string? flightPhotoPath = GetFlightPhotoPath(flightPhoto);
-        if (flightPhotoPath == null)
-        {
-            _logger.LogError("Cannot get flight photo path for user {User} flight {Flight}",
-                flightPhoto.REF_User_Id, flightPhoto.REF_Flight_ID);
-            return;
-        }
+        
         Directory.CreateDirectory(Path.GetDirectoryName(flightPhotoPath)!);
         await using FileStream fs = new (flightPhotoPath, FileMode.Create);
         flightPhoto.PhotoStream.Seek(0, SeekOrigin.Begin);
@@ -83,7 +78,7 @@ public class PhotosService
     /// </summary>
     /// <param name="flightPhoto"></param>
     /// <returns></returns>
-    public string? GetFlightPhotoPath(FlightPhoto flightPhoto)
+    public string GetFlightPhotoPath(FlightPhoto flightPhoto)
     {
         string output = _config.GetValue<string>("UserDirectory:Root") ?? "";
         string userFlightPhotoDirName = _config.GetValue<string>("UserDirectory:RelativeFlightPhotos") ?? "";
@@ -93,6 +88,6 @@ public class PhotosService
         {
             _logger.LogWarning("Flight photo not found at {Path}", output);
         } 
-        return File.Exists(output) ? output : null;
+        return output;
     }
 }

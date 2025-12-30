@@ -13,7 +13,7 @@ namespace ParaglidingFlightLogWeb.ViewModels
         public string GetBase64PhotoData(PhotosService service)
         {
             string? photoPath = service.GetFlightPhotoPath(flightPhoto);
-            if (photoPath == null || !File.Exists(photoPath))
+            if (!File.Exists(photoPath))
             {
                 return string.Empty;
             }
