@@ -3,12 +3,16 @@
 @rendermode InteractiveServer
 @inject ILogger<CreateNewManualFlight> Logger
 @inject DialogService DialogService
+@inject NotificationService NotificationService
+
 @if (_flightToCreate is null)
 {
     return;
 }
 <MyDatePicker Label="Take Off Time" @bind-Value="@_flightToCreate.TakeOffDateTime" />
+<RadzenFormField Text="Duration" Variant="Variant.Outlined">
 <RadzenTimeSpanPicker @bind-Value="@_flightToCreate.FlightDuration" AllowClear="true" AllowInput="true" ShowPopupButton="true" FieldPrecision="TimeSpanUnit.Second" Name="" />
+</RadzenFormField>
 <RadzenFormField Text="Glider" Variant="Variant.Outlined">
     <RadzenDropDown AllowFiltering="true"
                     FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
@@ -30,7 +34,7 @@
 <RadzenTextArea Placeholder="Comment" @bind-Value=_flightToCreate.Comment Class="w-100" Rows="10" />
 
 <RadzenStack Orientation="Orientation.Horizontal">
-    <RadzenButton Icon="check" Click="WriteNewFlight"/>
+    <RadzenButton Icon="check" Click="WriteNewFlight" />
     <RadzenButton Icon="cancel" Click="RevertFlightCreation"/>
 </RadzenStack>
 @code {
@@ -38,7 +42,7 @@
     /// Class to link to the model
     /// </summary>
     [Parameter] public CoreService ViewModel { get; set; } = null!;
-    
+
     private FlightViewModel? _flightToCreate;
     /// <inheritdoc/>
     protected override async Task OnParametersSetAsync()
@@ -61,6 +65,11 @@
 
     private async Task WriteNewFlight()
     {
+        if (!CheckIfOkToCreate())
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Please fill in all required fields");
+            return;
+        }
         Logger.LogInformation("Write new flight with id {FlightId}", _flightToCreate.FlightID);
         if (_flightToCreate is null)
         {
@@ -70,5 +79,12 @@
         await _flightToCreate.UpdateOrCreateFlightInDb();
         DialogService.Close();
     }
-
+    private bool CheckIfOkToCreate()
+    {
+        return _flightToCreate is not null &&
+                      _flightToCreate.TakeOffDateTime != default &&
+                      _flightToCreate.FlightDuration != TimeSpan.Zero &&
+                      _flightToCreate.Glider is not null &&
+                      _flightToCreate.TakeOffSite is not null;
+    }
 }
