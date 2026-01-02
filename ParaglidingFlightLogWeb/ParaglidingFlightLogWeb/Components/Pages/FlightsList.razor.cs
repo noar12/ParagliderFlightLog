@@ -146,7 +146,7 @@ public partial class FlightsList
     {
         await DialogService.OpenAsync<EditFlight>($"Edit flight",
             new Dictionary<string, object>() { { "FlightToEdit", LastSelectedFlight! }, { "ViewModel", Mvm } },
-            new DialogOptions() { Width = "700px", Height = "570px", Resizable = true, Draggable = false });
+            new DialogOptions() { Resizable = true, Draggable = false });
         StateHasChanged();
     }
 

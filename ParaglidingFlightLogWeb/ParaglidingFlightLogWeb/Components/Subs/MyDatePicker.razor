@@ -1,4 +1,4 @@
-﻿<RadzenFormField Text="@Label" Variant="@Variant">
+﻿<RadzenFormField Text="@Label" Variant="@Variant" class="@Class">
     <RadzenDatePicker TValue="DateTime" Value="@Value" DateFormat="@DateFormat" Change="OnChange" />
 </RadzenFormField>
 @code {
@@ -12,6 +12,7 @@
     public EventCallback<DateTime> ValueChanged { get; set; }
     [Parameter]
     public string DateFormat { get; set; } = "d";
+    [Parameter] public string Class { get; set; } = "";
     private void OnChange(DateTime? newValue)
     {
         if (newValue != null)
