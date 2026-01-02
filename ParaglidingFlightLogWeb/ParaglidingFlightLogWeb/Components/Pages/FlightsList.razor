@@ -1,10 +1,4 @@
-﻿@using System
-@using System.IO
-@using ParaglidingFlightLogWeb.Components.Subs
-@using Microsoft.AspNetCore.Hosting
-@using Microsoft.Extensions.Logging
-@using ParaglidingFlightLogWeb.ViewModels
-@using static System.Runtime.InteropServices.JavaScript.JSType
+﻿@using ParaglidingFlightLogWeb.ViewModels
 
 @page "/FlightsList"
 @page "/FlightsList/{FlightId}"
@@ -21,11 +15,9 @@
                 <RadzenUpload Icon="publish"
                               ChooseText="Add Flights with IGC files"
                               Multiple="true"
-                              Progress=@(args => OnFlightUploadProgress(args))
                               Accept="@ALLOWED_FILE_EXTENSION"
                               Change="OnAddFlights"
                               MaxFileCount="MAX_FILE_COUNT"/>
-                <RadzenProgressBar Value=@_flightUploadProgress class="rz-mt-6" Visible=@_showFlightUploadProgress/>
             </RadzenStack>
         </RadzenStack>
         <RadzenDataGrid @ref="_dataGrid" AllowFiltering="true"

@@ -103,7 +103,7 @@ else
     /// </summary>
     [Parameter] public CoreService? CoreService { get; set; }
     
-    private int _selectedIndex = 0;
+    private int _selectedIndex;
     private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
     {
         return CoreService?.GetBase64StringPhotoData(photo) ?? "";

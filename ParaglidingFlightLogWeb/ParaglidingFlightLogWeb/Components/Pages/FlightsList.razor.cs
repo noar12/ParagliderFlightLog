@@ -24,7 +24,7 @@ public partial class FlightsList
     private const string PHOTO_EXTENSION = ".jpg";
 
     /// <summary>
-    /// Flight Id reflecting what flight is currently selected or used to acces a flight directly at page loading
+    /// Flight Id reflecting what flight is currently selected or used to access a flight directly at page loading
     /// </summary>
     [Parameter]
     public string FlightId { get; set; } = "";
@@ -35,24 +35,13 @@ public partial class FlightsList
     [Inject] IWebHostEnvironment Environment { get; set; } = null!;
     [Inject] CoreService Mvm { get; set; } = null!;
     [Inject] ILogger<FlightsList> Logger { get; set; } = null!;
-    [Inject] NavigationManager NavigationManager { get; set; } = null!;
-    [Inject] SharingService SharingService { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
 
     private RadzenDataGrid<FlightViewModel> _dataGrid = new();
 
     IList<FlightViewModel> SelectedFlights = [];
-    private int _flightUploadProgress;
-    private bool _showFlightUploadProgress;
-
-    FlightViewModel? LastSelectedFlight
-    {
-        get
-        {
-            return SelectedFlights.Count > 0 ? SelectedFlights[^1] : null;
-        }
-    }
+    FlightViewModel? LastSelectedFlight => SelectedFlights.Count > 0 ? SelectedFlights[^1] : null;
 
     /// <summary>
     /// <inheritdoc/>
@@ -91,7 +80,7 @@ public partial class FlightsList
 
     void ShowContextMenuWithItems(MouseEventArgs args)
     {
-        if (SelectedFlights is not null && SelectedFlights.Count == 1)
+        if (SelectedFlights.Count == 1)
         {
             ContextMenuService.Open(args,
                 [
@@ -202,9 +191,9 @@ public partial class FlightsList
         {
             try
             {
-                System.IO.File.Delete(filepath);
+                File.Delete(filepath);
             }
-            catch (System.IO.IOException ex)
+            catch (IOException ex)
             {
                 Logger.LogError("{Message}", ex.Message);
             }
@@ -212,7 +201,6 @@ public partial class FlightsList
 
         StateHasChanged();
         await _dataGrid.Reload();
-        _showFlightUploadProgress = false;
     }
 
     private void NotifyUser(string message, NotificationSeverity severity = NotificationSeverity.Error)
@@ -223,25 +211,19 @@ public partial class FlightsList
         });
     }
 
-    private async Task OnFlightUploadProgress(UploadProgressArgs args)
-    {
-        _showFlightUploadProgress = true;
-        _flightUploadProgress = args.Progress;
-    }
-
     private async Task AddPhotos(UploadChangeEventArgs e, FlightViewModel flight)
     {
         var files = e.Files.ToList();
         if (files.Count > MAX_PHOTO_COUNT)
         {
-            NotifyUser($"Cannot accept more than {MAX_PHOTO_COUNT} files", NotificationSeverity.Error);
+            NotifyUser($"Cannot accept more than {MAX_PHOTO_COUNT} files");
             return;
         }
 
         if (files.Select(f => f.Name)
             .Any(n => !n.ToLower().EndsWith(PHOTO_EXTENSION)))
         {
-            NotifyUser("Only jpg file", NotificationSeverity.Error);
+            NotifyUser("Only jpg file");
             return;
         }
 
@@ -268,11 +250,6 @@ public partial class FlightsList
 
         NotifyUser($"{files.Count} file(s) have been uploaded", NotificationSeverity.Success);
         await InvokeAsync(StateHasChanged);
-    }
-
-    private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
-    {
-        return Mvm.GetBase64StringPhotoData(photo);
     }
 
     private async Task OpenShareFlight(FlightViewModel flight)

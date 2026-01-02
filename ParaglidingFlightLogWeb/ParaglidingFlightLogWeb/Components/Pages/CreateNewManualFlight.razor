@@ -80,7 +80,7 @@
 
     private async Task WriteNewFlight()
     {
-        if (!CheckIfOkToCreate())
+        if (_flightToCreate is null || !CheckIfOkToCreate())
         {
             NotificationService.Notify(NotificationSeverity.Error, "Error", "Please fill in all required fields");
             return;
