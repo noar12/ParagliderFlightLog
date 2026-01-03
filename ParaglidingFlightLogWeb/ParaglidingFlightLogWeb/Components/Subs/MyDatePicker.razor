@@ -1,5 +1,5 @@
 ﻿<RadzenFormField Text="@Label" Variant="@Variant" class="@Class">
-    <RadzenDatePicker TValue="DateTime" Value="@Value" DateFormat="@DateFormat" Change="OnChange" />
+    <RadzenDatePicker TValue="DateTime" Value="@Value" DateFormat="@DateFormat" ShowTime="@ShowTime" Change="OnChange" />
 </RadzenFormField>
 @code {
     [Parameter]
@@ -13,6 +13,7 @@
     [Parameter]
     public string DateFormat { get; set; } = "d";
     [Parameter] public string Class { get; set; } = "";
+    [Parameter] public bool ShowTime { get; set; } = false;
     private void OnChange(DateTime? newValue)
     {
         if (newValue != null)

@@ -11,10 +11,10 @@
 }
 <RadzenStack>
     <RadzenStack Orientation="Orientation.Horizontal">
-        <MyDatePicker Label="Take Off Time" @bind-Value="@_flightToCreate.TakeOffDateTime" Class="w-50"/>
+        <MyDatePicker ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" Label="Take Off Time" @bind-Value="@_flightToCreate.TakeOffDateTime" Class="w-50"/>
         <RadzenFormField Text="Duration" Variant="Variant.Outlined" class="w-50">
             <RadzenTimeSpanPicker @bind-Value="@_flightToCreate.FlightDuration" AllowClear="true" AllowInput="true"
-                                  ShowPopupButton="true" FieldPrecision="TimeSpanUnit.Second" Name=""/>
+                                  ShowPopupButton="true" FieldPrecision="TimeSpanUnit.Second" Name="" />
         </RadzenFormField>
     </RadzenStack>
     <RadzenStack Orientation="Orientation.Horizontal">
@@ -62,7 +62,7 @@
     protected override async Task OnParametersSetAsync()
     {
         _flightToCreate = await ViewModel.CreateNewFlightViewModelAsync();
-        Logger.LogInformation("Instanciate new flight to create with id {FlightId}", _flightToCreate.FlightID);
+        Logger.LogInformation("Instantiate new flight to create with id {FlightId}", _flightToCreate.FlightID);
     }
 
     private void RevertFlightCreation()
