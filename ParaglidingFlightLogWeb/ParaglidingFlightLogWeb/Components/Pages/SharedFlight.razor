@@ -34,22 +34,27 @@
     </RadzenColumn>
 </RadzenRow>
 <RadzenRow>
-    <RadzenColumn>
-        <MyPhysicalValueIndicator Label="Max Altitude" Value="@_flight.MaxAltitude" UnitSymbol="m" Format="F0"/>
-        <MyPhysicalValueIndicator Label="Trace Length" Value="@_flight.TraceLength" UnitSymbol="km" Format="F2"/>
-        <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@_flight.MaxClimb" UnitSymbol="m/s" Format="F1"/>
-        <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@_flight.MaxSink" UnitSymbol="m/s" Format="F1"/>
-    </RadzenColumn>
-    <RadzenColumn>
-        @if (_flight.XcScore is not null)
-        {
-            <MyNumericIndicator Label="Score" Value="@_flight.XcScore.Points"/>
-            <MyTextIndicator Label="Type of flight" Text="@_flight.XcScore.Type"/>
-            <MyPhysicalValueIndicator  Label="Route length" UnitSymbol="km" Value="@_flight.XcScore.RouteLength"/>
-        }
-    </RadzenColumn>
+    @if (_flight.FlightPoints.Count > 0)
+    {
+        <RadzenColumn>
+            <MyPhysicalValueIndicator Label="Max Altitude" Value="@_flight.MaxAltitude" UnitSymbol="m" Format="F0"/>
+            <MyPhysicalValueIndicator Label="Trace Length" Value="@_flight.TraceLength" UnitSymbol="km" Format="F2"/>
+            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@_flight.MaxClimb" UnitSymbol="m/s" Format="F1"/>
+            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@_flight.MaxSink" UnitSymbol="m/s" Format="F1"/>
+        </RadzenColumn>
+        <RadzenColumn>
+            @if (_flight.XcScore is not null)
+            {
+                <MyNumericIndicator Label="Score" Value="@_flight.XcScore.Points"/>
+                <MyTextIndicator Label="Type of flight" Text="@_flight.XcScore.Type"/>
+                <MyPhysicalValueIndicator Label="Route length" UnitSymbol="km" Value="@_flight.XcScore.RouteLength"/>
+            }
+        </RadzenColumn>
+    }
 </RadzenRow>
 <RadzenRow>
+@if (!string.IsNullOrEmpty(_flight.Comment) || _flight.FlightPoints.Count > 0 || _flight.GetFlightPhotos().Count > 0)
+{
     <RadzenCarousel ButtonStyle="ButtonStyle.Dark" PagerOverlay="false" Auto="false" class="rz-w-100 rz-h-auto">
         <Items>
             @if (_flight.FlightPoints.Count > 0)
@@ -77,13 +82,12 @@
                     <RadzenImage
                         Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
                         AlternateText="A photo of flight uploaded by the user"
-                        Style="max-height: 400px; overflow-y:auto;"
-                    />
+                        Style="max-height: 400px; overflow-y:auto;"/>
                 </RadzenCarouselItem>
             }
         </Items>
     </RadzenCarousel>
-
+}
 </RadzenRow>
 
 @code {
@@ -94,10 +98,9 @@
     [Parameter]
     public string? SharedFlightId { get; set; }
 
-    private bool _initialized = false;
     private SharedFlightViewModel? _flight;
-    private string _description;
-    private string _title;
+    private string? _description;
+    private string? _title;
 
     /// <summary>
     /// <inheritdoc />
@@ -116,7 +119,6 @@
             _description = $"Flight Share \u26f3 {_flight.SiteName} - \u231b {_flight.FlightDuration} h \u22ba {_flight.MaxAltitude} m - \ud83c\udfc6 {_flight.XcScore?.Points:N2} pts";
         }
 
-        _initialized = true;
         await InvokeAsync(StateHasChanged);
         Logger.LogInformation("Flight shared with id {SharedFlightId} has been loaded", SharedFlightId);
     }
