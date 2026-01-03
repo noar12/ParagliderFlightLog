@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>aspnet-ParaglidingFlightLogWeb-62098263-39ac-420e-b684-45e67ba37259</UserSecretsId>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.1.2</Version>
+		<Version>1.2.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -23,7 +23,7 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Plotly.Blazor" Version="5.3.0" />
-		<PackageReference Include="Radzen.Blazor" Version="5.7.2" />
+		<PackageReference Include="Radzen.Blazor" Version="8.4.2" />
 		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
 		<PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0" />
 		<PackageReference Include="Serilog.Enrichers.Process" Version="2.0.2" />

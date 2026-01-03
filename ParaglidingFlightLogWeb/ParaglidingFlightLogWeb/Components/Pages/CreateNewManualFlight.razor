@@ -1,0 +1,109 @@
+@using ParaglidingFlightLogWeb.ViewModels
+@using ParaglidingFlightLogWeb.Services
+@rendermode InteractiveServer
+@inject ILogger<CreateNewManualFlight> Logger
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+@if (_flightToCreate is null)
+{
+    return;
+}
+<RadzenStack>
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <MyDatePicker ShowTime="true" DateFormat="dd/MM/yyyy HH:mm" Label="Take Off Time" @bind-Value="@_flightToCreate.TakeOffDateTime" Class="w-50"/>
+        <RadzenFormField Text="Duration" Variant="Variant.Outlined" class="w-50">
+            <RadzenTimeSpanPicker @bind-Value="@_flightToCreate.FlightDuration" AllowClear="true" AllowInput="true"
+                                  ShowPopupButton="true" FieldPrecision="TimeSpanUnit.Second" Name="" />
+        </RadzenFormField>
+    </RadzenStack>
+    <RadzenStack Orientation="Orientation.Horizontal">
+        <RadzenFormField Text="Glider" Variant="Variant.Outlined" class="w-50">
+            <RadzenDropDown AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            Data=@ViewModel.GliderListViewModel
+                            @bind-Value=@_flightToCreate.Glider />
+        </RadzenFormField>
+        <RadzenFormField Text="Site" Variant="Variant.Outlined" class="w-50">
+            <RadzenDropDown AllowFiltering="true"
+                            FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
+                            Data=@ViewModel.SiteListViewModel
+                            @bind-Value=@_flightToCreate.TakeOffSite />
+
+        </RadzenFormField>
+    </RadzenStack>
+    <RadzenStack>
+        <RadzenFormField Text="Objective" Variant="Variant.Outlined" class="w-100">
+            <RadzenDropDown Data="@CoreService.GetObjectiveList()" 
+                            @bind-Value=@_flightToCreate.Objective />
+        </RadzenFormField>
+    </RadzenStack>
+
+
+    <RadzenTextArea Placeholder="Comment" @bind-Value=_flightToCreate.Comment Class="w-100" Rows="10"/>
+
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+        <RadzenButton Icon="check" Click="WriteNewFlight"/>
+        <RadzenButton Icon="cancel" Click="RevertFlightCreation"/>
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+
+    /// <summary>
+    /// Class to link to the model
+    /// </summary>
+    [Parameter]
+    public CoreService ViewModel { get; set; } = null!;
+
+    private FlightViewModel? _flightToCreate;
+
+    /// <inheritdoc/>
+    protected override async Task OnParametersSetAsync()
+    {
+        _flightToCreate = await ViewModel.CreateNewFlightViewModelAsync();
+        Logger.LogInformation("Instantiate new flight to create with id {FlightId}", _flightToCreate.FlightID);
+    }
+
+    private void RevertFlightCreation()
+    {
+        Logger.LogInformation("Revert flight creation");
+        if (_flightToCreate is null)
+        {
+            Logger.LogError("Flight to create is null");
+            return;
+        }
+
+        ViewModel.FlightListViewModel.Remove(_flightToCreate);
+        DialogService.Close();
+    }
+
+    private async Task WriteNewFlight()
+    {
+        if (_flightToCreate is null || !CheckIfOkToCreate())
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Error", "Please fill in all required fields");
+            return;
+        }
+
+        Logger.LogInformation("Write new flight with id {FlightId}", _flightToCreate.FlightID);
+        if (_flightToCreate is null)
+        {
+            Logger.LogError("Flight to create is null");
+            return;
+        }
+
+        await _flightToCreate.UpdateOrCreateFlightInDb();
+        DialogService.Close();
+    }
+
+    private bool CheckIfOkToCreate()
+    {
+        return _flightToCreate is not null &&
+               _flightToCreate.TakeOffDateTime != default &&
+               _flightToCreate.FlightDuration != TimeSpan.Zero &&
+               _flightToCreate.Glider is not null &&
+               _flightToCreate.TakeOffSite is not null;
+    }
+
+}

@@ -14,35 +14,44 @@
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow>
-        <RadzenColumn>
-            <MyPhysicalValueIndicator Label="Max Height" Value="@Flight.MaxAltitude" UnitSymbol="m" Format="F0" />
-            <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@Flight.MaxClimb" UnitSymbol="m/s" Format="F1" />
-            <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@Flight.MaxSink" UnitSymbol="m/s" Format="F1" />
-        </RadzenColumn>
+        @if(Flight.FlightPoints.Count > 0)
+        {
+            <RadzenColumn>
+                <MyPhysicalValueIndicator Label="Max Height" Value="@Flight.MaxAltitude" UnitSymbol="m" Format="F0"/>
+                <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@Flight.MaxClimb" UnitSymbol="m/s" Format="F1"/>
+                <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@Flight.MaxSink" UnitSymbol="m/s" Format="F1"/>
+            </RadzenColumn>
+        }
+
 
         @if (Flight.XcScore is not null)
         {
             <RadzenColumn>
-                <MyNumericIndicator Label="Score" Value="@Flight.XcScore.Points" />
-                <MyTextIndicator Label="Type of flight" Text="@Flight.XcScore.Type" />
+                <MyNumericIndicator Label="Score" Value="@Flight.XcScore.Points"/>
+                <MyTextIndicator Label="Type of flight" Text="@Flight.XcScore.Type"/>
 
             </RadzenColumn>
             <RadzenColumn>
-                <MyPhysicalValueIndicator Label="Route length" UnitSymbol="km" Value="@Flight.XcScore.RouteLength" />
-                <MyPhysicalValueIndicator Label="Average Speed" UnitSymbol="km/h" Value="@Flight.XcScore.AverageSpeed_kmh" />
+                <MyPhysicalValueIndicator Label="Route length" UnitSymbol="km" Value="@Flight.XcScore.RouteLength"/>
+                <MyPhysicalValueIndicator Label="Average Speed" UnitSymbol="km/h" Value="@Flight.XcScore.AverageSpeed_kmh"/>
 
             </RadzenColumn>
         }
         <RadzenColumn>
-            <MyTextIndicator Label="Objective" Text="@Flight.Objective" />
+            <MyTextIndicator Label="Objective" Text="@Flight.Objective"/>
+            <MyTextIndicator Label="Duration" Text="@Flight.FlightDuration.ToString(@"hh\:mm")" />
         </RadzenColumn>
     </RadzenRow>
     <RadzenRow>
-
-        <RadzenCarousel ButtonStyle="ButtonStyle.Dark" PagerOverlay="false" Auto="false" class="rz-w-100 rz-h-auto">
+    @if (!string.IsNullOrEmpty(Flight.Comment) || Flight.FlightPoints.Count > 0 || Flight.GetFlightPhotos().Count > 0)
+    {
+        <RadzenCarousel @key="Flight?.FlightID" 
+                        ButtonStyle="ButtonStyle.Dark"
+                        @bind-SelectedIndex="_selectedIndex"
+                        PagerOverlay="false"
+                        Auto="false" 
+                        class="rz-w-100 rz-h-auto">
             <Items>
-
-
                 @if (Flight.FlightPoints.Count > 0)
                 {
                     <RadzenCarouselItem>
@@ -73,6 +82,8 @@
 
             </Items>
         </RadzenCarousel>
+    }
+        
 
     </RadzenRow>
 }
@@ -86,14 +97,20 @@ else
     /// <summary>
     /// Flight to display
     /// </summary>
-    [Parameter]
-    public FlightViewModel? Flight { get; set; }
-
+    [Parameter] public FlightViewModel? Flight { get; set; }
+    /// <summary>
+    /// Service to access core functionality
+    /// </summary>
     [Parameter] public CoreService? CoreService { get; set; }
-
+    
+    private int _selectedIndex;
     private string GetBase64StringPhotoData(FlightPhotoViewModel photo)
     {
         return CoreService?.GetBase64StringPhotoData(photo) ?? "";
     }
-
+    protected override async Task OnParametersSetAsync()
+    {
+        _selectedIndex = 0;
+        await InvokeAsync(StateHasChanged);
+    }
 }

@@ -334,4 +334,14 @@ public class CoreService
     {
         return Enum.GetNames<EFlightObjective>();
     }
+    /// <summary>
+    /// Create a new FlightViewModel with a new Flight instance
+    /// </summary>
+    /// <returns></returns>
+    public async Task<FlightViewModel> CreateNewFlightViewModelAsync()
+    {
+        var newFlight = new FlightViewModel(new(), _flightLog);
+        FlightListViewModel.Add(newFlight);
+        return newFlight;
+    }
 }
