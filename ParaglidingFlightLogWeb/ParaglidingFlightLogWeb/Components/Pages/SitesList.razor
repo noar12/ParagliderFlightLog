@@ -1,9 +1,4 @@
-﻿@using System
-@using System.IO
-@using Microsoft.AspNetCore.Hosting
-@using Microsoft.Extensions.Logging
-@using ParaglidingFlightLogWeb.ViewModels
-@using ParaglidingFlightLogWeb.Components.Subs
+﻿@using ParaglidingFlightLogWeb.ViewModels
 @attribute [Authorize]
 @page "/SitesList"
 @page "/SitesList/{SiteId}"
@@ -11,11 +6,13 @@
 
 <PageTitle>Sites list</PageTitle>
 
-    <RadzenRow>
-        <MyDatePicker @bind-Value=_startDate Label="From" />
-        <MyDatePicker @bind-Value=_endDate Label="To"/>
-        <RadzenButton Text="Show sites in time range" Click=OnShowSiteTimeRange Size="ButtonSize.Small"/>
-    </RadzenRow>
+<RadzenRow>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+        <MyDatePicker @bind-Value=_startDate Label="From" Class="w-auto"/>
+        <MyDatePicker @bind-Value=_endDate Label="To" Class="w-auto"/>
+        <RadzenButton Text="Show sites in time range" Click=OnShowSiteTimeRange Size="ButtonSize.Small" class="w-50"/>
+    </RadzenStack>
+</RadzenRow>
    <RadzenRow>
     <RadzenColumn Size="12" SizeSM="6" Style="overflow: auto;">
             <RadzenDataGrid @ref="_dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"

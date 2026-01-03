@@ -1011,4 +1011,25 @@ public class FlightLogDB
             await UpdateFlightAsync(f);
         }
     }
+
+    public async Task AddFlightAsync(Flight newFlight)
+    {
+        string sql = @"INSERT INTO Flights
+                (Flight_ID, Comment, REF_TakeOffSite_ID, REF_Glider_ID, TakeOffDateTime, FlightDuration_s, Objective)
+                VALUES
+                (@Flight_ID, @Comment, @REF_TakeOffSite_ID, @REF_Glider_ID, @TakeOffDateTime, @FlightDuration_s, @Objective);";
+        await _db.SaveDataAsync(sql, newFlight, LoadConnectionString());
+    }
+    /// <summary>
+    /// Check if the <paramref name="flight"/> exists in the db
+    /// </summary>
+    /// <param name="flight"></param>
+    /// <returns></returns>
+    public async Task<bool> FlightExistsAsync(Flight flight)
+    {
+        string sql = "SELECT COUNT(1) FROM Flights WHERE Flight_ID = @Flight_ID;";
+        int count = await _db.LoadDataAsync<int, dynamic>(sql, new { flight.Flight_ID }, LoadConnectionString())
+            .ContinueWith(t => t.Result.FirstOrDefault());
+        return count > 0;
+    }
 }
