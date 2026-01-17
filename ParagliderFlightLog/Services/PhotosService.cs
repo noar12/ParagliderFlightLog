@@ -59,6 +59,11 @@ public class PhotosService
 
     private async Task<bool> ResizePhoto(int width, int height, string flightPhotoPath)
     {
+        if (!File.Exists(flightPhotoPath))
+        {
+            _logger.LogError("Flight photo at {Path} does not exist, cannot resize", flightPhotoPath);
+            return false;
+        }
         var result = await Cli.Wrap("gm")
             .WithArguments($"convert -size {width}x{height} {flightPhotoPath} -resize {width}x{height} {flightPhotoPath}")
             .WithValidation(CommandResultValidation.None)
@@ -84,10 +89,7 @@ public class PhotosService
         string userFlightPhotoDirName = _config.GetValue<string>("UserDirectory:RelativeFlightPhotos") ?? "";
         output = output.Replace("{UserId}", flightPhoto.REF_User_Id);
         output = Path.Combine(output, userFlightPhotoDirName, flightPhoto.REF_Flight_ID, flightPhoto.PhotoFileName);
-        if (!File.Exists(output))
-        {
-            _logger.LogWarning("Flight photo not found at {Path}", output);
-        } 
+
         return output;
     }
 }
