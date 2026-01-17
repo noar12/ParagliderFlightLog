@@ -41,6 +41,12 @@ RUN mkdir -p /app/data/db && \
     mkdir -p /app/data/score && \
     mkdir -p /var/log/ParagliderFlightLog
 
+# Install graphicsmagick
+RUN apt-get update && \
+    apt-get install -y graphicsmagick && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copy published application
 COPY --from=publish /app/publish .
 
