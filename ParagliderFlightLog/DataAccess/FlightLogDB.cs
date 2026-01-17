@@ -1032,4 +1032,14 @@ public class FlightLogDB
             .ContinueWith(t => t.Result.FirstOrDefault());
         return count > 0;
     }
+
+    public async Task CrateSiteAsync(Site site)
+    {
+        string sql = """
+                     INSERT INTO Sites
+                     (Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude)
+                     VALUES (@Site_ID, @Name, @Town, @Country, @WindOrientationBegin, @WindOrientationEnd, @Altitude, @Latitude, @Longitude);
+                     """;
+        await _db.SaveDataAsync(sql, site, LoadConnectionString());
+    }
 }
