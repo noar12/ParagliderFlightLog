@@ -10,7 +10,8 @@
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
         <MyDatePicker @bind-Value=_startDate Label="From" Class="w-auto"/>
         <MyDatePicker @bind-Value=_endDate Label="To" Class="w-auto"/>
-        <RadzenButton Text="Show sites in time range" Click=OnShowSiteTimeRange Size="ButtonSize.Small" class="w-50"/>
+        <RadzenButton Text="Show sites" Click=OnShowSiteTimeRange Size="ButtonSize.Small" class="w-25"/>
+        <RadzenButton Text="Add new site" Icon="add_location" Click=OnAddNewSiteButton Size="ButtonSize.Small" class="w-25"/>
     </RadzenStack>
 </RadzenRow>
    <RadzenRow>

@@ -344,4 +344,11 @@ public class CoreService
         FlightListViewModel.Add(newFlight);
         return newFlight;
     }
+
+    public async Task<SiteViewModel> CreateNewSite()
+    {
+        Site newSite = new();
+        await _flightLog.CrateSiteAsync(newSite);
+        return newSite.ToVM(_flightLog);
+    }
 }

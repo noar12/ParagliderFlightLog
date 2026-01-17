@@ -155,7 +155,7 @@ namespace ParaglidingFlightLogWeb.Components.Pages
             await DialogService.OpenAsync<EditSite>($"Edit site",
                 new Dictionary<string, object>() { { "SiteToEdit", LastSelectedSite! }, { "ViewModel", Core } },
                 new DialogOptions() { Width = "700px", Height = "600px", Resizable = true, Draggable = false });
-            StateHasChanged();
+            await InvokeAsync(StateHasChanged);
         }
         private async Task OnEditSiteButton(SiteViewModel siteToEdit)
         {
@@ -211,6 +211,16 @@ namespace ParaglidingFlightLogWeb.Components.Pages
             await UpdateSiteDetails(newSite);
             SelectedSites = newSite;
             SiteId = newSite[0].Site_ID;
+        }
+
+        private async Task OnAddNewSiteButton()
+        {
+            SiteViewModel newSite = await Core.CreateNewSite();
+            SelectedSites.Clear();
+            SelectedSites.Add(newSite);
+            
+            SiteId = newSite.Site_ID;
+            await OnEditSite();
         }
     }
 }
