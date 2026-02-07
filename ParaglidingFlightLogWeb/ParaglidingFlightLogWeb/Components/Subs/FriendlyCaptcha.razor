@@ -1,0 +1,78 @@
+﻿@using ParaglidingFlightLogWeb.Services
+
+@inject IJSRuntime JSRuntime
+@inject ICaptchaManager CaptchaManager
+@inject ILogger<FriendlyCaptcha> Logger
+
+@if (_browserNotSupported)
+{
+    <div class="alert alert-warning">
+        <strong>⚠️ Browser Not Supported</strong>
+        <p>Your browser doesn't support the security features required for this form. Please use a modern browser like:</p>
+        <ul>
+            <li>Chrome 61+</li>
+            <li>Firefox 60+</li>
+            <li>Safari 11+</li>
+            <li>Edge 79+</li>
+        </ul>
+    </div>
+    return;
+}
+
+<div class="frc-captcha mb-3"
+     data-sitekey="@CaptchaManager.SiteKey"
+     data-start="auto"></div>
+
+@code {
+    private IJSObjectReference? _module;
+    private bool _browserNotSupported = false;
+    private string? _errorMessage;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Use the helper function for ES module detection
+                var helperModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./friendlyCaptchaHelperV1_0_0.js");
+                bool supportsModules = await helperModule.InvokeAsync<bool>("supportsESModules");
+
+                if (!supportsModules)
+                {
+                    _browserNotSupported = true;
+                    StateHasChanged();
+                    return;
+                }
+
+                _module = helperModule;
+                await _module.InvokeVoidAsync("initializeFriendlyCaptcha");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error initializing Friendly Captcha");
+                _errorMessage = "Error initializing Captcha Feature";
+                _browserNotSupported = true;
+                StateHasChanged();
+            }
+        }
+    }
+
+    public async Task<bool> Check()
+    {
+        if (_module is null)
+        {
+            _errorMessage = "Error: Captcha module not loaded.";
+            return false;
+        }
+
+        string? solution = await _module.InvokeAsync<string>("getCaptchaResponse");
+
+        if (string.IsNullOrEmpty(solution))
+        {
+            _errorMessage = "⏳ Please complete the captcha first";
+            return false;
+        }
+
+        return await CaptchaManager.CheckCaptcha(solution);
+    }
+}

@@ -4,15 +4,18 @@
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 @using ParaglidingFlightLogWeb.Data
+@using ParaglidingFlightLogWeb.Services
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject ICaptchaManager CaptchaManager
 
 <PageTitle>Log in</PageTitle>
 
 <h1>Log in</h1>
+
 <div class="row">
     <div class="col-md-4">
         <section>
@@ -52,14 +55,18 @@
                         <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
                     </p>
                 </div>*@
+                <FriendlyCaptcha @rendermode="InteractiveServer" @ref="_captchaRef" />
             </EditForm>
+            <RadzenAlert Title="Information" AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
+                This form is protected by Friendly Captcha, a privacy-friendly anti-bot solution. Friendly Captcha may use cookies or local storage and process device/browser information to verify you are human. For more information, see the Friendly Captcha privacy policy.
+            </RadzenAlert>
         </section>
     </div>
 </div>
 
 @code {
     private string? errorMessage;
-
+    private FriendlyCaptcha? _captchaRef;
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
@@ -71,18 +78,30 @@
 
     protected override async Task OnInitializedAsync()
     {
-        if (HttpMethods.IsGet(HttpContext.Request.Method))
+        if (HttpContext is not null && HttpMethods.IsGet(HttpContext.Request.Method))
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            Logger.LogInformation("External cookie cleared");
         }
         Logger.LogInformation("Initialized");
     }
 
     public async Task LoginUser()
     {
-        // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+        if (_captchaRef is null)
+        {
+            errorMessage = "Error: Captcha verification failed. Please try again.";
+            return;
+        }
+        bool isHuman = await _captchaRef.Check();
+        if (!isHuman)
+        {
+            errorMessage = $"✗ Captcha verification failed. If you really are a human, I am sorry for that and please try again.";
+            return;
+        }
+
+
         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
         if (result.Succeeded)
         {

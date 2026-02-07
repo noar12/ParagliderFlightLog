@@ -41,6 +41,9 @@
 		<Content Update="wwwroot\customCss\OverRadzenCss.css">
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>
+		<Content Update="wwwroot\friendlyCaptchaHelperV1_0_0.js">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
 		<Content Update="wwwroot\leafletmapV1_0_0.js">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</Content>

@@ -67,6 +67,7 @@ try
     builder.Services.AddTransient<PhotosService>();
     builder.Services.AddSingleton<SharingService>();
     builder.Services.AddSingleton<SharedDb>();
+    builder.Services.AddScoped<ICaptchaManager, FriendlyCaptchaManager>();
     var app = builder.Build();
     // Set the culture for something globally accepted... TODO Customize for each client
     var customCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
