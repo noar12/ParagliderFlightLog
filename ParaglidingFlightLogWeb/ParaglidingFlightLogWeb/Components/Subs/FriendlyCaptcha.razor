@@ -57,7 +57,7 @@
         }
     }
 
-    public async Task<bool> Check()
+    public async Task<bool?> Check()
     {
         if (_module is null)
         {
@@ -72,7 +72,7 @@
             _errorMessage = "⏳ Please complete the captcha first";
             return false;
         }
-
-        return await CaptchaManager.CheckCaptcha(solution);
+        await CaptchaManager.CheckCaptcha(solution);
+        return CaptchaManager.IsHuman;
     }
 }

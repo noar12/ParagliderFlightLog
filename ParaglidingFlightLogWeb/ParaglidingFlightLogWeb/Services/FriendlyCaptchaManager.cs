@@ -3,10 +3,25 @@
 public class FriendlyCaptchaManager : ICaptchaManager
 {
     private readonly string? _apiKey;
-    
+    private const int MAX_CHALLENGE_REUSE = 5;
     private readonly string? _apiUrl;
     private readonly ILogger<FriendlyCaptchaManager> _logger;
     public string? SiteKey { get; private init; }
+
+    private bool? _isHuman;
+    private int _challengeCount;
+    public bool? IsHuman
+    {
+        get
+        {
+            _challengeCount++;
+            if (_challengeCount > MAX_CHALLENGE_REUSE)
+            {
+                _isHuman = null;
+            }
+            return _isHuman;
+        }
+    }
 
     public FriendlyCaptchaManager(IConfiguration configuration, ILogger<FriendlyCaptchaManager> logger)
     {
@@ -29,36 +44,36 @@ public class FriendlyCaptchaManager : ICaptchaManager
         var serviceAnswer = await client.PostAsJsonAsync(_apiUrl, new
         {
             sitekey = SiteKey,
-            response = response
+            response
         });
 
         serviceAnswer.EnsureSuccessStatusCode();
         return await serviceAnswer.Content.ReadFromJsonAsync<FriendlyCaptchaApiResponse>();
     }
 
-    public async Task<bool> CheckCaptcha(string challengeResponse)
+    public async Task CheckCaptcha(string challengeResponse)
     {
-        bool isSuccess = false;
         try
         {
             var result = await VerifyChallengeAsync(challengeResponse);
 
             if (result?.Success == true)
             {
-                isSuccess = true;
+                _isHuman = true;
+                _challengeCount = 0;
                 _logger.LogInformation($"Captcha verified successfully!");
             }
             else
             {
+                _isHuman = false;                
                 _logger.LogError("Captcha verification failed: {Code}, {Detail}", result?.Error?.Error_Code, result?.Error?.Detail);
             }
-            
+
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while verifying captcha");
         }
-        return isSuccess;
     }
 }
 

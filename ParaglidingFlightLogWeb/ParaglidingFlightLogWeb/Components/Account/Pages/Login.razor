@@ -55,7 +55,6 @@
                         <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
                     </p>
                 </div>*@
-                <FriendlyCaptcha @rendermode="InteractiveServer" @ref="_captchaRef" />
             </EditForm>
             <RadzenAlert Title="Information" AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
                 This form is protected by Friendly Captcha, a privacy-friendly anti-bot solution. Friendly Captcha may use cookies or local storage and process device/browser information to verify you are human. For more information, see the Friendly Captcha privacy policy.
@@ -66,7 +65,6 @@
 
 @code {
     private string? errorMessage;
-    private FriendlyCaptcha? _captchaRef;
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
@@ -89,18 +87,16 @@
 
     public async Task LoginUser()
     {
-        if (_captchaRef is null)
+        if (CaptchaManager.IsHuman is null)
         {
             errorMessage = "Error: Captcha verification failed. Please try again.";
             return;
         }
-        bool isHuman = await _captchaRef.Check();
-        if (!isHuman)
+        if (!CaptchaManager.IsHuman.Value)
         {
             errorMessage = $"✗ Captcha verification failed. If you really are a human, I am sorry for that and please try again.";
             return;
         }
-
 
         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
         if (result.Succeeded)

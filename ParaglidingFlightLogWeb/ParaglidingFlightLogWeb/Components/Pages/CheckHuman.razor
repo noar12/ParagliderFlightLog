@@ -1,0 +1,31 @@
+﻿@page "/CheckHuman"
+@using ParaglidingFlightLogWeb.Services
+@inject ICaptchaManager CaptchaManager
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<FriendlyCaptcha @ref="_friendlyCaptcha" />
+
+@code {
+    private FriendlyCaptcha? _friendlyCaptcha;
+    [Parameter] public string? TargetPage { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && _friendlyCaptcha != null)
+        {
+            bool? captchaResult = await _friendlyCaptcha.Check();
+            if (captchaResult == true)
+            {
+                // Captcha solved successfully, navigate to the target page
+                NavigationManager.NavigateTo(TargetPage ?? "/");
+            }
+            else if (captchaResult == false)
+            {
+                NotificationService.Notify(NotificationSeverity.Error,"Captcha","Captcha verification failed. Please try again.");
+            }
+        }
+    }
+}
