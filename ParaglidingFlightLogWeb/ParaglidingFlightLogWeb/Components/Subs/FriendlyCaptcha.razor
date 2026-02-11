@@ -57,12 +57,13 @@
         }
     }
 
-    public async Task<bool?> Check()
+    public async Task< string> Check()
     {
+        string token = Guid.NewGuid().ToString();
         if (_module is null)
         {
             _errorMessage = "Error: Captcha module not loaded.";
-            return false;
+            return token;
         }
 
         string? solution = await _module.InvokeAsync<string>("getCaptchaResponse");
@@ -70,9 +71,9 @@
         if (string.IsNullOrEmpty(solution))
         {
             _errorMessage = "⏳ Please complete the captcha first";
-            return false;
+            return token;
         }
-        await CaptchaManager.CheckCaptcha(solution);
-        return CaptchaManager.IsHuman;
+
+        return await CaptchaManager.CheckCaptcha(solution);
     }
 }

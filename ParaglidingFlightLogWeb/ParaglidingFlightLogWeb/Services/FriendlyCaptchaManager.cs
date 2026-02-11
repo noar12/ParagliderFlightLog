@@ -1,27 +1,15 @@
-﻿namespace ParaglidingFlightLogWeb.Services;
+﻿using System.Collections.Concurrent;
+
+namespace ParaglidingFlightLogWeb.Services;
 
 public class FriendlyCaptchaManager : ICaptchaManager
 {
     private readonly string? _apiKey;
-    private const int MAX_CHALLENGE_REUSE = 5;
     private readonly string? _apiUrl;
     private readonly ILogger<FriendlyCaptchaManager> _logger;
+    private ConcurrentDictionary<string, DateTime> _validTokens = [];
+    private readonly TimeSpan _tokenValidity = TimeSpan.FromMinutes(10);
     public string? SiteKey { get; private init; }
-
-    private bool? _isHuman;
-    private int _challengeCount;
-    public bool? IsHuman
-    {
-        get
-        {
-            _challengeCount++;
-            if (_challengeCount > MAX_CHALLENGE_REUSE)
-            {
-                _isHuman = null;
-            }
-            return _isHuman;
-        }
-    }
 
     public FriendlyCaptchaManager(IConfiguration configuration, ILogger<FriendlyCaptchaManager> logger)
     {
@@ -51,28 +39,50 @@ public class FriendlyCaptchaManager : ICaptchaManager
         return await serviceAnswer.Content.ReadFromJsonAsync<FriendlyCaptchaApiResponse>();
     }
 
-    public async Task CheckCaptcha(string challengeResponse)
+    public async Task<string> CheckCaptcha(string challengeResponse)
     {
+        string token = Guid.NewGuid().ToString(); // The only difference between valid token and unvalid token is the fact that they are added to the dictionary. This way we don't expose the fact that the token is valid by its format.
         try
         {
             var result = await VerifyChallengeAsync(challengeResponse);
 
             if (result?.Success == true)
             {
-                _isHuman = true;
-                _challengeCount = 0;
                 _logger.LogInformation($"Captcha verified successfully!");
+                if (!_validTokens.TryAdd(token, DateTime.UtcNow + _tokenValidity))
+                {
+                    _logger.LogError("The token {Token} already exists in the valid tokens dictionary", token);
+                }
             }
             else
             {
-                _isHuman = false;                
                 _logger.LogError("Captcha verification failed: {Code}, {Detail}", result?.Error?.Error_Code, result?.Error?.Detail);
             }
-
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error occurred while verifying captcha");
+        }
+        return token;
+    }
+
+    public bool IsCaptchaValid(string token)
+    {
+        bool output = false;
+        CleanupExpiredTokens();
+        if (_validTokens.TryGetValue(token, out var _))
+        {
+            output = true;
+            _validTokens.TryRemove(token, out _);
+        }
+        return output;
+    }
+    private void CleanupExpiredTokens()
+    {
+        var now = DateTime.UtcNow;
+        foreach (var token in _validTokens.Where(kvp => kvp.Value < now).Select(kvp => kvp.Key))
+        {
+            _validTokens.TryRemove(token, out _);
         }
     }
 }

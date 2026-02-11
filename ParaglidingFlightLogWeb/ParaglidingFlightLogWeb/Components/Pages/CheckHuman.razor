@@ -8,24 +8,28 @@
 
 <FriendlyCaptcha @ref="_friendlyCaptcha" />
 
+<RadzenButton Text="Check" Click="@Check" />
+
 @code {
     private FriendlyCaptcha? _friendlyCaptcha;
+    [SupplyParameterFromQuery]
     [Parameter] public string? TargetPage { get; set; }
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    //todo: call that only when captcha is solved, no user interaction needed
+    private async Task Check()
     {
-        if (firstRender && _friendlyCaptcha != null)
+        if (_friendlyCaptcha is null) { return; }
+        string token = await _friendlyCaptcha.Check();
+        // Captcha solved successfully, navigate to the target page
+        string finalTargetPage;
+
+        if (string.IsNullOrEmpty(TargetPage))
         {
-            bool? captchaResult = await _friendlyCaptcha.Check();
-            if (captchaResult == true)
-            {
-                // Captcha solved successfully, navigate to the target page
-                NavigationManager.NavigateTo(TargetPage ?? "/");
-            }
-            else if (captchaResult == false)
-            {
-                NotificationService.Notify(NotificationSeverity.Error,"Captcha","Captcha verification failed. Please try again.");
-            }
+            finalTargetPage = "/";            
         }
+        else
+        {
+            finalTargetPage = $"{TargetPage}?captchaToken={token}";
+        }
+        NavigationManager.NavigateTo(finalTargetPage);
     }
 }
