@@ -64,6 +64,7 @@
 </div>
 
 @code {
+    private bool _captchaIsValid = false;
     private string? errorMessage;
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
@@ -73,6 +74,10 @@
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? CaptchaToken { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -85,14 +90,17 @@
         Logger.LogInformation("Initialized");
     }
 
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(CaptchaToken))
+        {
+            _captchaIsValid = CaptchaManager.IsCaptchaValid(CaptchaToken);
+        }
+    }
+
     public async Task LoginUser()
     {
-        if (CaptchaManager.IsHuman is null)
-        {
-            errorMessage = "Error: Captcha verification failed. Please try again.";
-            return;
-        }
-        if (!CaptchaManager.IsHuman.Value)
+        if (!_captchaIsValid)
         {
             errorMessage = $"✗ Captcha verification failed. If you really are a human, I am sorry for that and please try again.";
             return;

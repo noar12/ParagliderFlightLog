@@ -7,8 +7,9 @@ public class FriendlyCaptchaManager : ICaptchaManager
     private readonly string? _apiKey;
     private readonly string? _apiUrl;
     private readonly ILogger<FriendlyCaptchaManager> _logger;
-    private ConcurrentDictionary<string, DateTime> _validTokens = [];
+    private readonly ConcurrentDictionary<string, (DateTime, int)> _validTokens = [];
     private readonly TimeSpan _tokenValidity = TimeSpan.FromMinutes(10);
+    private readonly int _maxTokenUsage = 2; // login page are reload when the user submit the form so we have to allow multiple usage of the same token, but we want to limit it to prevent abuse.
     public string? SiteKey { get; private init; }
 
     public FriendlyCaptchaManager(IConfiguration configuration, ILogger<FriendlyCaptchaManager> logger)
@@ -49,7 +50,7 @@ public class FriendlyCaptchaManager : ICaptchaManager
             if (result?.Success == true)
             {
                 _logger.LogInformation($"Captcha verified successfully!");
-                if (!_validTokens.TryAdd(token, DateTime.UtcNow + _tokenValidity))
+                if (!_validTokens.TryAdd(token, (DateTime.UtcNow + _tokenValidity, _maxTokenUsage)))
                 {
                     _logger.LogError("The token {Token} already exists in the valid tokens dictionary", token);
                 }
@@ -70,17 +71,24 @@ public class FriendlyCaptchaManager : ICaptchaManager
     {
         bool output = false;
         CleanupExpiredTokens();
-        if (_validTokens.TryGetValue(token, out var _))
+        if (_validTokens.TryGetValue(token, out var value))
         {
             output = true;
-            _validTokens.TryRemove(token, out _);
+            if (value.Item2 > 1)
+            {
+                _validTokens[token] = (value.Item1, value.Item2 - 1);
+            }
+            else
+            {
+                _validTokens.TryRemove(token, out _);
+            }
         }
         return output;
     }
     private void CleanupExpiredTokens()
     {
         var now = DateTime.UtcNow;
-        foreach (var token in _validTokens.Where(kvp => kvp.Value < now).Select(kvp => kvp.Key))
+        foreach (var token in _validTokens.Where(kvp => kvp.Value.Item1 < now || kvp.Value.Item2 <= 0).Select(kvp => kvp.Key))
         {
             _validTokens.TryRemove(token, out _);
         }
