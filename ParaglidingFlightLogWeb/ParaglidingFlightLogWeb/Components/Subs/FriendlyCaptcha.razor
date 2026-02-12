@@ -27,6 +27,8 @@
     private IJSObjectReference? _module;
     private bool _browserNotSupported = false;
     private string? _errorMessage;
+    private DotNetObjectReference<FriendlyCaptcha>? _dotNetRef;
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -46,6 +48,10 @@
 
                 _module = helperModule;
                 await _module.InvokeVoidAsync("initializeFriendlyCaptcha");
+
+                // Subscribe to the complete event
+                _dotNetRef = DotNetObjectReference.Create(this);
+                await _module.InvokeVoidAsync("subscribeCaptchaComplete", _dotNetRef);
             }
             catch (Exception ex)
             {
@@ -75,5 +81,12 @@
         }
 
         return await CaptchaManager.CheckCaptcha(solution);
+    }
+    [JSInvokable]
+    public async Task OnCaptchaComplete(string response)
+    {
+        // You can now check the response as soon as the challenge is done
+        var result = await CaptchaManager.CheckCaptcha(response);
+        // Handle result (e.g., update UI, notify parent, etc.)
     }
 }

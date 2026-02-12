@@ -55,3 +55,11 @@ export function supportsESModules() {
     const script = document.createElement('script');
     return 'noModule' in script;
 }
+export function subscribeCaptchaComplete(dotNetRef) {
+    document.addEventListener('frc:widget.complete', function (event) {
+        // Pass only the response string to .NET
+        if (event && event.detail && event.detail.response) {
+            dotNetRef.invokeMethodAsync('OnCaptchaComplete', event.detail.response);
+        }
+    });
+}
