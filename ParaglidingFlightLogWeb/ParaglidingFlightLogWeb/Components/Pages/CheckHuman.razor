@@ -6,22 +6,26 @@
 
 @rendermode InteractiveServer
 
-<FriendlyCaptcha @ref="_friendlyCaptcha" />
+<FriendlyCaptcha @ref="_friendlyCaptcha" OnCaptchaChecked="GoToTarget"/>
 
-<RadzenButton Text="Check" Click="@Check" />
+<RadzenButton Text="Click if not automatically redirected" Click="@Check" />
 
 @code {
     private FriendlyCaptcha? _friendlyCaptcha;
     [SupplyParameterFromQuery]
     [Parameter] public string? TargetPage { get; set; }
-    //todo: call that only when captcha is solved, no user interaction needed
+    
     private async Task Check()
     {
         if (_friendlyCaptcha is null) { return; }
         string token = await _friendlyCaptcha.Check();
         // Captcha solved successfully, navigate to the target page
-        string finalTargetPage;
+        await GoToTarget(token);
+    }
 
+    private async Task GoToTarget(string token)
+    {
+        string finalTargetPage;
         if (string.IsNullOrEmpty(TargetPage))
         {
             finalTargetPage = "/";            
@@ -32,4 +36,5 @@
         }
         NavigationManager.NavigateTo(finalTargetPage);
     }
+
 }

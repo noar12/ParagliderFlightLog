@@ -28,7 +28,7 @@
     private bool _browserNotSupported = false;
     private string? _errorMessage;
     private DotNetObjectReference<FriendlyCaptcha>? _dotNetRef;
-
+    [Parameter] public EventCallback<string> OnCaptchaChecked { get; set; }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -87,6 +87,6 @@
     {
         // You can now check the response as soon as the challenge is done
         var result = await CaptchaManager.CheckCaptcha(response);
-        // Handle result (e.g., update UI, notify parent, etc.)
+        await OnCaptchaChecked.InvokeAsync(result);
     }
 }
