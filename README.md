@@ -43,6 +43,7 @@ The easiest way to run Paraglider Flight Log is using the official Docker image 
    # Edit .env as needed
    ```
 3. **Start the application using Docker Compose:**
+	Before running the command, make sure to update the `docker-compose.yml` file to point to the correct image tag if you want to use a specific version. By default, it will pull the latest image from GHCR and replace the Friendly Captcha dummy credentials with the ones of your own account.
    ```sh
    docker-compose up -d
    ```

@@ -1,7 +1,6 @@
 services:
   paraglider-flightlog:
     image: ghcr.io/noar12/paragliderflightlog:latest
-
     container_name: paraglider-flightlog
     ports:
       - "5001:8080"
@@ -17,6 +16,9 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:8080
+      - FriendlyCaptcha__ApiKey=YOUR_API_KEY_HERE
+      - FriendlyCaptcha__SiteKey=YOUR_SITE_KEY_HERE
+      - FriendlyCaptcha__ApiUrl=https://api.friendlycaptcha.com
     restart: unless-stopped
     networks:
       - flightlog-network
