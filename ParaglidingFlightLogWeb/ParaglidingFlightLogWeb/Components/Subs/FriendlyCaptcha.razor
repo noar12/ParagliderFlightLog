@@ -1,6 +1,6 @@
 ﻿@using ParaglidingFlightLogWeb.Services
 
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 @inject ICaptchaManager CaptchaManager
 @inject ILogger<FriendlyCaptcha> Logger
 
@@ -25,8 +25,7 @@
 
 @code {
     private IJSObjectReference? _module;
-    private bool _browserNotSupported = false;
-    private string? _errorMessage;
+    private bool _browserNotSupported;
     private DotNetObjectReference<FriendlyCaptcha>? _dotNetRef;
     [Parameter] public EventCallback<string> OnCaptchaChecked { get; set; }
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -36,7 +35,7 @@
             try
             {
                 // Use the helper function for ES module detection
-                var helperModule = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./friendlyCaptchaHelperV1_0_0.js");
+                var helperModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./friendlyCaptchaHelperV1_0_0.js");
                 bool supportsModules = await helperModule.InvokeAsync<bool>("supportsESModules");
 
                 if (!supportsModules)
@@ -56,7 +55,6 @@
             catch (Exception ex)
             {
                 Logger.LogError(ex, "Error initializing Friendly Captcha");
-                _errorMessage = "Error initializing Captcha Feature";
                 _browserNotSupported = true;
                 StateHasChanged();
             }
@@ -68,15 +66,13 @@
         string token = Guid.NewGuid().ToString();
         if (_module is null)
         {
-            _errorMessage = "Error: Captcha module not loaded.";
             return token;
         }
 
-        string? solution = await _module.InvokeAsync<string>("getCaptchaResponse");
+        string solution = await _module.InvokeAsync<string>("getCaptchaResponse");
 
         if (string.IsNullOrEmpty(solution))
         {
-            _errorMessage = "⏳ Please complete the captcha first";
             return token;
         }
 

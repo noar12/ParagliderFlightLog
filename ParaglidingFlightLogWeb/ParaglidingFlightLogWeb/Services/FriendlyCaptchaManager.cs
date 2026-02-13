@@ -1,7 +1,9 @@
 ﻿using System.Collections.Concurrent;
+using ParaglidingFlightLogWeb.Data;
 
 namespace ParaglidingFlightLogWeb.Services;
 
+/// <inheritdoc/>
 public class FriendlyCaptchaManager : ICaptchaManager
 {
     private readonly string? _apiKey;
@@ -10,8 +12,13 @@ public class FriendlyCaptchaManager : ICaptchaManager
     private readonly ConcurrentDictionary<string, (DateTime, int)> _validTokens = [];
     private readonly TimeSpan _tokenValidity = TimeSpan.FromMinutes(10);
     private readonly int _maxTokenUsage = 2; // login page are reload when the user submit the form so we have to allow multiple usage of the same token, but we want to limit it to prevent abuse.
+    /// <inheritdoc/>
     public string? SiteKey { get; private init; }
-
+    /// <summary>
+    /// ctor
+    /// </summary>
+    /// <param name="configuration"></param>
+    /// <param name="logger"></param>
     public FriendlyCaptchaManager(IConfiguration configuration, ILogger<FriendlyCaptchaManager> logger)
     {
         _apiKey = configuration["FriendlyCaptcha:ApiKey"];
@@ -39,7 +46,7 @@ public class FriendlyCaptchaManager : ICaptchaManager
         serviceAnswer.EnsureSuccessStatusCode();
         return await serviceAnswer.Content.ReadFromJsonAsync<FriendlyCaptchaApiResponse>();
     }
-
+    /// <inheritdoc/>
     public async Task<string> CheckCaptcha(string challengeResponse)
     {
         string token = Guid.NewGuid().ToString(); // The only difference between valid token and unvalid token is the fact that they are added to the dictionary. This way we don't expose the fact that the token is valid by its format.
@@ -57,7 +64,7 @@ public class FriendlyCaptchaManager : ICaptchaManager
             }
             else
             {
-                _logger.LogError("Captcha verification failed: {Code}, {Detail}", result?.Error?.Error_Code, result?.Error?.Detail);
+                _logger.LogError("Captcha verification failed: {Code}, {Detail}", result?.Error?.ErrorCode, result?.Error?.Detail);
             }
         }
         catch (Exception ex)
@@ -66,7 +73,7 @@ public class FriendlyCaptchaManager : ICaptchaManager
         }
         return token;
     }
-
+    /// <inheritdoc/>
     public bool IsCaptchaValid(string token)
     {
         bool output = false;
@@ -95,27 +102,3 @@ public class FriendlyCaptchaManager : ICaptchaManager
     }
 }
 
-public class FriendlyCaptchaApiResponse
-{
-    public bool Success { get; set; }
-    public FriendlyCaptchaData? Data { get; set; }
-    public FriendlyCaptchaError? Error { get; set; }
-}
-
-public class FriendlyCaptchaData
-{
-    public string? Event_Id { get; set; }
-    public CaptchaChallenge? Challenge { get; set; }
-}
-
-public class CaptchaChallenge
-{
-    public DateTime Timestamp { get; set; }
-    public string? Origin { get; set; }
-}
-
-public class FriendlyCaptchaError
-{
-    public string? Error_Code { get; set; }
-    public string? Detail { get; set; }
-}
