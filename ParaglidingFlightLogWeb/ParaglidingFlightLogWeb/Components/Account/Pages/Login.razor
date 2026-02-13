@@ -4,15 +4,18 @@
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 @using ParaglidingFlightLogWeb.Data
+@using ParaglidingFlightLogWeb.Services
 
 @inject SignInManager<ApplicationUser> SignInManager
 @inject ILogger<Login> Logger
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
+@inject ICaptchaManager CaptchaManager
 
 <PageTitle>Log in</PageTitle>
 
 <h1>Log in</h1>
+
 <div class="row">
     <div class="col-md-4">
         <section>
@@ -53,13 +56,16 @@
                     </p>
                 </div>*@
             </EditForm>
+            <RadzenAlert Title="Information" AlertStyle="AlertStyle.Info" Variant="Variant.Flat" Shade="Shade.Lighter">
+                This form is protected by Friendly Captcha, a privacy-friendly anti-bot solution. Friendly Captcha may use cookies or local storage and process device/browser information to verify you are human. For more information, see the Friendly Captcha privacy policy.
+            </RadzenAlert>
         </section>
     </div>
 </div>
 
 @code {
+    private bool _captchaIsValid = false;
     private string? errorMessage;
-
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 
@@ -69,20 +75,37 @@
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string? CaptchaToken { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        if (HttpMethods.IsGet(HttpContext.Request.Method))
+        if (HttpContext is not null && HttpMethods.IsGet(HttpContext.Request.Method))
         {
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            Logger.LogInformation("External cookie cleared");
         }
         Logger.LogInformation("Initialized");
     }
 
+    protected override void OnParametersSet()
+    {
+        if (!string.IsNullOrEmpty(CaptchaToken))
+        {
+            _captchaIsValid = CaptchaManager.IsCaptchaValid(CaptchaToken);
+        }
+    }
+
     public async Task LoginUser()
     {
-        // This doesn't count login failures towards account lockout
-        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+        if (!_captchaIsValid)
+        {
+            errorMessage = $"✗ Captcha verification failed. If you really are a human, I am sorry for that and please try again.";
+            return;
+        }
+
         var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
         if (result.Succeeded)
         {

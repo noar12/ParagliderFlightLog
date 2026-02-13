@@ -67,6 +67,7 @@ try
     builder.Services.AddTransient<PhotosService>();
     builder.Services.AddSingleton<SharingService>();
     builder.Services.AddSingleton<SharedDb>();
+    builder.Services.AddSingleton<ICaptchaManager, FriendlyCaptchaManager>();
     var app = builder.Build();
     // Set the culture for something globally accepted... TODO Customize for each client
     var customCulture = (CultureInfo)CultureInfo.InvariantCulture.Clone();
@@ -114,7 +115,6 @@ try
 catch (Exception ex)
 {
     Log.Fatal(ex, "The application failed to start");
-    throw;
 }
 finally
 {

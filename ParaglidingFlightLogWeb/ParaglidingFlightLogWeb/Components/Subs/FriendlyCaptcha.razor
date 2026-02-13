@@ -1,0 +1,88 @@
+﻿@using ParaglidingFlightLogWeb.Services
+
+@inject IJSRuntime JsRuntime
+@inject ICaptchaManager CaptchaManager
+@inject ILogger<FriendlyCaptcha> Logger
+
+@if (_browserNotSupported)
+{
+    <div class="alert alert-warning">
+        <strong>⚠️ Browser Not Supported</strong>
+        <p>Your browser doesn't support the security features required for this form. Please use a modern browser like:</p>
+        <ul>
+            <li>Chrome 61+</li>
+            <li>Firefox 60+</li>
+            <li>Safari 11+</li>
+            <li>Edge 79+</li>
+        </ul>
+    </div>
+    return;
+}
+
+<div class="frc-captcha mb-3"
+     data-sitekey="@CaptchaManager.SiteKey"
+     data-start="auto"></div>
+
+@code {
+    private IJSObjectReference? _module;
+    private bool _browserNotSupported;
+    private DotNetObjectReference<FriendlyCaptcha>? _dotNetRef;
+    [Parameter] public EventCallback<string> OnCaptchaChecked { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Use the helper function for ES module detection
+                var helperModule = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./friendlyCaptchaHelperV1_0_0.js");
+                bool supportsModules = await helperModule.InvokeAsync<bool>("supportsESModules");
+
+                if (!supportsModules)
+                {
+                    _browserNotSupported = true;
+                    StateHasChanged();
+                    return;
+                }
+
+                _module = helperModule;
+                await _module.InvokeVoidAsync("initializeFriendlyCaptcha");
+
+                // Subscribe to the complete event
+                _dotNetRef = DotNetObjectReference.Create(this);
+                await _module.InvokeVoidAsync("subscribeCaptchaComplete", _dotNetRef);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error initializing Friendly Captcha");
+                _browserNotSupported = true;
+                StateHasChanged();
+            }
+        }
+    }
+
+    public async Task< string> Check()
+    {
+        string token = Guid.NewGuid().ToString();
+        if (_module is null)
+        {
+            return token;
+        }
+
+        string solution = await _module.InvokeAsync<string>("getCaptchaResponse");
+
+        if (string.IsNullOrEmpty(solution))
+        {
+            return token;
+        }
+
+        return await CaptchaManager.CheckCaptcha(solution);
+    }
+    [JSInvokable]
+    public async Task OnCaptchaComplete(string response)
+    {
+        // You can now check the response as soon as the challenge is done
+        var result = await CaptchaManager.CheckCaptcha(response);
+        await OnCaptchaChecked.InvokeAsync(result);
+    }
+}

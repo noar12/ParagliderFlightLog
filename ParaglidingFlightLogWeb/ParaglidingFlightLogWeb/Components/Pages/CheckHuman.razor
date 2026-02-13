@@ -1,0 +1,40 @@
+﻿@page "/CheckHuman"
+@using ParaglidingFlightLogWeb.Services
+@inject ICaptchaManager CaptchaManager
+@inject NotificationService NotificationService
+@inject NavigationManager NavigationManager
+
+@rendermode InteractiveServer
+
+<FriendlyCaptcha @ref="_friendlyCaptcha" OnCaptchaChecked="GoToTarget"/>
+
+<RadzenButton Text="Click if not automatically redirected" Click="@Check" />
+
+@code {
+    private FriendlyCaptcha? _friendlyCaptcha;
+    [SupplyParameterFromQuery]
+    [Parameter] public string? TargetPage { get; set; }
+    
+    private async Task Check()
+    {
+        if (_friendlyCaptcha is null) { return; }
+        string token = await _friendlyCaptcha.Check();
+        // Captcha solved successfully, navigate to the target page
+        await GoToTarget(token);
+    }
+
+    private async Task GoToTarget(string token)
+    {
+        string finalTargetPage;
+        if (string.IsNullOrEmpty(TargetPage))
+        {
+            finalTargetPage = "/";            
+        }
+        else
+        {
+            finalTargetPage = $"{TargetPage}?captchaToken={token}";
+        }
+        NavigationManager.NavigateTo(finalTargetPage);
+    }
+
+}
