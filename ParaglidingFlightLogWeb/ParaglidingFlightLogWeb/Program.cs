@@ -97,9 +97,9 @@ try
 
     app.UseHttpsRedirection();
 
-    app.UseStaticFiles();
     app.UseAntiforgery();
 
+    app.MapStaticAssets();
     app.MapRazorComponents<App>()
         .AddInteractiveServerRenderMode()
         .AddInteractiveWebAssemblyRenderMode()
