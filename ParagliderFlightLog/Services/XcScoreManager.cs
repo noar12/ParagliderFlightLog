@@ -3,7 +3,6 @@ using CliWrap.Buffered;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using ParagliderFlightLog.DataAccess;
 using ParagliderFlightLog.Models;
 
 namespace ParagliderFlightLog.Services;
@@ -34,12 +33,12 @@ public class XcScoreManager(ILogger<XcScoreManager> logger, IConfiguration confi
             }
             else
             {
-                await WaitAndCheckScoreEngine(stoppingToken);
+                await WaitAndCheckScoreEngineAsync(stoppingToken);
             }
         }
     }
 
-    private async Task WaitAndCheckScoreEngine(CancellationToken stoppingToken)
+    private async Task WaitAndCheckScoreEngineAsync(CancellationToken stoppingToken)
     {
         try
         {
