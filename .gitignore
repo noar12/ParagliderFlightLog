@@ -373,4 +373,5 @@ FodyWeavers.xsd
 /Data
 /.idea
 /dev-data
-/ParaglidingFlightLogWeb/ParaglidingFlightLogWeb/data/score
+**/data
+.env
