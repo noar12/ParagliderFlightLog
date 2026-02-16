@@ -6,7 +6,7 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UserSecretsId>aspnet-ParaglidingFlightLogWeb-62098263-39ac-420e-b684-45e67ba37259</UserSecretsId>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Version>1.4.0</Version>
+		<Version>1.5.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
