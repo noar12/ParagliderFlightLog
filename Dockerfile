@@ -51,7 +51,7 @@ RUN apt-get update && \
 COPY --from=publish /app/publish .
 
 # Create a non-root user for running the application
-RUN useradd -m -u 1000 appuser && \
+RUN useradd -m -u 1001 appuser && \
     chown -R appuser:appuser /app /var/log/ParagliderFlightLog
 USER appuser
 
