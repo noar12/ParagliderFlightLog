@@ -190,7 +190,7 @@ public class FlightLogDB
         string dbInfoTable = "DbInformations";
         string sql = "SELECT name FROM sqlite_master WHERE type='table' AND name=@dbInfoTable";
         bool dbInfoExists = _db.LoadData<string, dynamic>(sql, new { dbInfoTable }, LoadConnectionString()).Count == 1;
-        if (!dbInfoExists) return null;
+        if (!dbInfoExists) { return null; }
         sql = "SELECT VersionMajor,VersionMinor, VersionFix FROM DbInformations";
         return _db.LoadData<DbInformations, dynamic>(sql, new { }, LoadConnectionString())[0];
     }
@@ -266,7 +266,9 @@ public class FlightLogDB
         if (newItems != null)
         {
             string sqlWriteSite =
-                "INSERT INTO Sites (Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude) VALUES(@Site_ID, @Name, @Town, @Country, @WindOrientationBegin, @WindOrientationEnd, @Altitude, @Latitude, @Longitude)";
+                @"INSERT INTO Sites
+                (Site_ID, Name, Town, Country, WindOrientationBegin, WindOrientationEnd, Altitude, Latitude, Longitude)
+                VALUES(@Site_ID, @Name, @Town, @Country, @WindOrientationBegin, @WindOrientationEnd, @Altitude, @Latitude, @Longitude)";
             foreach (Site site in newItems)
             {
                 _db.SaveData(sqlWriteSite, site, LoadConnectionString());
@@ -329,7 +331,8 @@ public class FlightLogDB
         if (newItems != null)
         {
             string sqlWriteGlider =
-                "INSERT INTO Gliders (Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name) VALUES (@Glider_ID, @Manufacturer, @Model, @BuildYear, @LastCheckDateTime, @HomologationCategory, @IGC_Name)";
+                @"INSERT INTO Gliders (Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name)
+                VALUES (@Glider_ID, @Manufacturer, @Model, @BuildYear, @LastCheckDateTime, @HomologationCategory, @IGC_Name)";
 
             foreach (Glider glider in newItems)
             {
@@ -343,7 +346,7 @@ public class FlightLogDB
     /// </summary>
     /// <param name="IGC_FilePath"></param>
     /// <exception cref="NotImplementedException"></exception>
-    public FlightWithData ImportFlightFromIGC(string IGC_FilePath)
+    public FlightWithData ImportFlightFromIgc(string IGC_FilePath)
     {
         var newFlight = new FlightWithData();
 
@@ -417,9 +420,11 @@ public class FlightLogDB
 
         Site? output = sites.Find(s => takeOffPoint
                                            .DistanceFrom(new FlightPoint()
-                                               {
-                                                   Longitude = s.Longitude, Latitude = s.Latitude, Altitude = s.Altitude
-                                               }) <
+                                           {
+                                               Longitude = s.Longitude,
+                                               Latitude = s.Latitude,
+                                               Altitude = s.Altitude
+                                           }) <
                                        s.SiteRadius);
         if (output == null)
         {
@@ -470,7 +475,7 @@ public class FlightLogDB
         }
 
         string rawCs = _config.GetConnectionString(connectionStringName)!;
-        return rawCs.Replace("{UserId}", UserId);
+        return rawCs.Replace("{UserId}", UserId, StringComparison.InvariantCulture);
     }
 
     /// <summary>
@@ -482,7 +487,9 @@ public class FlightLogDB
         const string FLIGHT_DATE_REGEXP = @"HFDTE(DATE:)?(?<d>\d\d)(?<m>\d\d)(?<y>\d\d)";
         const int MILLENAR = 2000;
 
-        string l_igcAllInOneLine = igcContent.Replace("\r", "").Replace("\n", "");
+        string l_igcAllInOneLine = igcContent
+            .Replace("\r", "", StringComparison.InvariantCulture)
+            .Replace("\n", "", StringComparison.InvariantCulture);
         var matchTime = Regex.Match(l_igcAllInOneLine, FLIGHT_TIME_REGEXP);
         var matchDate = Regex.Match(l_igcAllInOneLine, FLIGHT_DATE_REGEXP);
 
@@ -503,12 +510,12 @@ public class FlightLogDB
         return DateTime.MinValue;
     }
 
-    private static TimeSpan? GetFlightDurationFromPointList(List<FlightPoint> flightPoints)
+    private static TimeSpan? GetFlightDurationFromPointList(ICollection<FlightPoint> flightPoints)
     {
         return flightPoints.Count > 0 ? new TimeSpan(0, 0, flightPoints.Count) : null;
     }
 
-    private static FlightPoint GetTakeOffPointFromPointList(List<FlightPoint> flightPoints)
+    private static FlightPoint GetTakeOffPointFromPointList(IList<FlightPoint> flightPoints)
     {
         return flightPoints.Count > 0
             ? flightPoints[0]
@@ -528,7 +535,7 @@ public class FlightLogDB
 
         return "";
     }
-    
+
     /// <summary>
     /// Get the glider referenced as used during the <paramref name="flight"/>
     /// </summary>
@@ -669,8 +676,8 @@ public class FlightLogDB
         string sql = "SELECT GeoJsonScore FROM Flights WHERE Flight_ID = @Flight_ID;";
         string? scoreJson = (await _db.LoadDataAsync<string, dynamic>(sql, flight, LoadConnectionString()))
             .FirstOrDefault();
-        if (scoreJson == null) return null;
-        else return XcScore.FromJson(scoreJson);
+        if (scoreJson == null) { return null; }
+        else { return XcScore.FromJson(scoreJson); }
     }
 
     /// <summary>
@@ -682,15 +689,15 @@ public class FlightLogDB
     {
         string sql = "SELECT GeoJsonScore FROM Flights WHERE Flight_ID = @Flight_ID;";
         string? scoreJson = _db.LoadData<string, dynamic>(sql, flight, LoadConnectionString()).FirstOrDefault();
-        if (scoreJson == null) return null;
-        else return XcScore.FromJson(scoreJson);
+        if (scoreJson == null) { return null; }
+        else { return XcScore.FromJson(scoreJson); }
     }
 
     /// <summary>
     /// Get all sites in the db
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Site>> GetAllSites()
+    public async Task<List<Site>> GetAllSitesAsync()
     {
         var sw = Stopwatch.StartNew();
 
@@ -706,7 +713,7 @@ public class FlightLogDB
     /// Get all the glider in the db
     /// </summary>
     /// <returns></returns>
-    public async Task<List<Glider>> GetAllGliders()
+    public async Task<List<Glider>> GetAllGlidersAsync()
     {
         var sw = Stopwatch.StartNew();
 
@@ -859,11 +866,11 @@ public class FlightLogDB
     /// Backup the db
     /// </summary>
     /// <returns></returns>
-    public async Task<string> BackupDb()
+    public async Task<string> BackupDbAsync()
     {
         string dbPath = GetDbPath();
         string backupPath = Path.Combine(new FileInfo(dbPath).Directory!.FullName,
-            $"FlightLogBackup{DateTime.Now:yyyyMMdd_HHmmss}.db");
+            $"FlightLogBackup{DateTime.UtcNow:yyyyMMdd_HHmmss}.db");
         await Task.Run(() => File.Copy(dbPath, backupPath));
         return backupPath;
     }
@@ -946,7 +953,7 @@ public class FlightLogDB
                      (Photo_ID, REF_Flight_ID)
                      VALUES (@Photo_ID, @REF_Flight_ID);
                      """;
-        _db.SaveData(sql, new{ flightPhoto.Photo_ID, flightPhoto.REF_Flight_ID}, LoadConnectionString());
+        _db.SaveData(sql, new { flightPhoto.Photo_ID, flightPhoto.REF_Flight_ID }, LoadConnectionString());
     }
     /// <summary>
     /// Add a new glider to the db. The glider is created with default values.
@@ -1007,6 +1014,10 @@ public class FlightLogDB
             else if (f.FlightDuration.TotalMinutes >= localDurationLimitMin.TotalMinutes)
             {
                 f.Objective = EFlightObjective.Local;
+            }
+            else
+            {
+                // if the flight is not local and not xc, we consider it as undefined.
             }
             await UpdateFlightAsync(f);
         }

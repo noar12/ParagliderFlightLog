@@ -44,8 +44,8 @@ public class CoreService
     {
         _flightLog.Init(userId);
         FlightListViewModel = (await _flightLog.GetAllFlightsAsync()).Select(f => f.ToVM(_flightLog)).ToList();
-        SiteListViewModel = (await _flightLog.GetAllSites()).Select(s => s.ToVM(_flightLog)).ToList();
-        GliderListViewModel = (await _flightLog.GetAllGliders()).Select(g => g.ToVM(_flightLog)).ToList();
+        SiteListViewModel = (await _flightLog.GetAllSitesAsync()).Select(s => s.ToVM(_flightLog)).ToList();
+        GliderListViewModel = (await _flightLog.GetAllGlidersAsync()).Select(g => g.ToVM(_flightLog)).ToList();
     }
 
     /// <summary>
@@ -88,7 +88,7 @@ public class CoreService
         foreach (string filePath in filePaths)
         {
             _logger.LogDebug("importing {FilePath}", filePath);
-            var flight = _flightLog.ImportFlightFromIGC(filePath);
+            var flight = _flightLog.ImportFlightFromIgc(filePath);
             var fvm = new FlightViewModel(flight.ToFlight(), _flightLog);
             FlightListViewModel.Add(fvm);
             EnqueueFlightForScore(fvm);
@@ -136,7 +136,7 @@ public class CoreService
     internal async Task<(int importedSitesCount, int improtedGlidersCount, int importedFlightCount)>
         ImportLogFlyDb(string path)
     {
-        await _flightLog.BackupDb();
+        await _flightLog.BackupDbAsync();
         await Task.Run(() => _logFlyDB.LoadLogFlyDB(path));
         (int importedSitesCount, int improtedGlidersCount, int importedFlightCount) =
             await Task.Run(_logFlyDB.ImportInFlightLogDB);
