@@ -111,7 +111,7 @@ namespace ParaglidingFlightLogWeb.Components.Account
                 var fileText = JsonSerializer.Serialize(personalData);
 
                 flightLogDb.Init(userId);
-                string backupDbPath = await flightLogDb.BackupDb();
+                string backupDbPath = await flightLogDb.BackupDbAsync();
                 string? backupPath = Path.GetDirectoryName(backupDbPath);
                 if (backupPath is null)
                 {
