@@ -186,7 +186,7 @@ public partial class FlightsList
             }
         }
 
-        Mvm.AddFlightsFromIGC([.. igcFilePaths]);
+        await Mvm.AddFlightsFromIGCAsync([.. igcFilePaths]);
         foreach (string filepath in igcFilePaths)
         {
             try

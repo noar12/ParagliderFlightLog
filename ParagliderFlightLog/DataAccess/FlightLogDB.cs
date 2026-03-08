@@ -326,18 +326,15 @@ public class FlightLogDB
         }
     }
 
-    internal void WriteGlidersInDB(IList? newItems)
+    internal void WriteGlidersInDB(IList<Glider> newItems)
     {
-        if (newItems != null)
-        {
-            string sqlWriteGlider =
-                @"INSERT INTO Gliders (Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name)
+        string sqlWriteGlider =
+            @"INSERT INTO Gliders (Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name)
                 VALUES (@Glider_ID, @Manufacturer, @Model, @BuildYear, @LastCheckDateTime, @HomologationCategory, @IGC_Name)";
 
-            foreach (Glider glider in newItems)
-            {
-                _db.SaveData(sqlWriteGlider, glider, LoadConnectionString());
-            }
+        foreach (Glider glider in newItems)
+        {
+            _db.SaveData(sqlWriteGlider, glider, LoadConnectionString());
         }
     }
 
@@ -346,7 +343,7 @@ public class FlightLogDB
     /// </summary>
     /// <param name="IGC_FilePath"></param>
     /// <exception cref="NotImplementedException"></exception>
-    public FlightWithData ImportFlightFromIgc(string IGC_FilePath)
+    public async Task<FlightWithData> ImportFlightFromIgcAsync(string IGC_FilePath)
     {
         var newFlight = new FlightWithData();
 
@@ -354,7 +351,7 @@ public class FlightLogDB
         {
             // to be done: check if it is a correct igc file before injecting
             _logger.LogDebug("Parsing {IGC_FilePath}", IGC_FilePath);
-            newFlight.IgcFileContent = sr.ReadToEnd();
+            newFlight.IgcFileContent = await sr.ReadToEndAsync();
         }
 
         AddFlightProperties(newFlight);
@@ -370,6 +367,11 @@ public class FlightLogDB
             {
                 newFlight.REF_Glider_ID = glider.Glider_ID;
             }
+            else
+            {
+                glider = await GetOrCreateUnknownGliderAsync();
+                newFlight.REF_Glider_ID = glider.Glider_ID;
+            }
         }
 
         // search for a take off site
@@ -381,6 +383,31 @@ public class FlightLogDB
         WriteFlightsInDB([newFlight]);
         return newFlight;
     }
+
+    private async Task<Glider> GetOrCreateUnknownGliderAsync(string igcGliderName = "Unknown glider")
+    {
+        string sql = @"SELECT Glider_ID, Manufacturer, Model, BuildYear, LastCheckDateTime, HomologationCategory, IGC_Name FROM Gliders WHERE IGC_Name = @IGC_Name;";
+        var glider = (await _db.LoadDataAsync<Glider, dynamic>(sql, new { IGC_Name = igcGliderName }, LoadConnectionString())).FirstOrDefault();
+
+        if (glider != null)
+        {
+            return glider;
+        }
+        else
+        {
+            var unknownGlider = new Glider()
+            {
+                Glider_ID = Guid.NewGuid().ToString(),
+                IGC_Name = igcGliderName,
+                Manufacturer = "Unknown",
+                Model = "Unknown",
+                BuildYear = 0,
+            };
+            WriteGlidersInDB([unknownGlider]);
+            return unknownGlider;
+        }
+    }
+
 
     /// <summary>
     /// Get the site referenced as where the <paramref name="flight"/> takes off.
