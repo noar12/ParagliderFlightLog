@@ -83,12 +83,12 @@ public class CoreService
     /// Import an IGC file in the data model and use the result to instanciate and add a new FlightViewModel in the FlightListViewModel to update the UI and do the same with the takeoff site if it doesn't exist yet.
     /// </summary>
     /// <param name="filePaths"></param>
-    public void AddFlightsFromIGC(string[] filePaths)
+    public async Task AddFlightsFromIGCAsync(string[] filePaths)
     {
         foreach (string filePath in filePaths)
         {
             _logger.LogDebug("importing {FilePath}", filePath);
-            var flight = _flightLog.ImportFlightFromIgc(filePath);
+            var flight = await _flightLog.ImportFlightFromIgcAsync(filePath);
             var fvm = new FlightViewModel(flight.ToFlight(), _flightLog);
             FlightListViewModel.Add(fvm);
             EnqueueFlightForScore(fvm);
