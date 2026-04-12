@@ -22,6 +22,7 @@ public partial class FlightsList
     private const int MAX_PHOTO_COUNT = 5;
     private const int MAX_PHOTO_SIZE = 7 * 1024 * 1024;
     private const string PHOTO_EXTENSION = ".jpg";
+    private bool _isLittleScreen = false;
 
     /// <summary>
     /// Flight Id reflecting what flight is currently selected or used to access a flight directly at page loading
@@ -207,7 +208,9 @@ public partial class FlightsList
     {
         NotificationService.Notify(new NotificationMessage
         {
-            Severity = severity, Duration = 4000, Summary = message,
+            Severity = severity,
+            Duration = 4000,
+            Summary = message,
         });
     }
 
@@ -255,7 +258,7 @@ public partial class FlightsList
     private async Task OpenShareFlight(FlightViewModel flight)
     {
         await DialogService.OpenAsync<ShareFlightForm>("Share Flight",
-            new Dictionary<string, object>() { { "Flight", flight } },
+            new() { { "Flight", flight } },
             new DialogOptions() { Resizable = true, Draggable = false });
     }
 
@@ -293,5 +296,17 @@ public partial class FlightsList
             {
                 { "ViewModel", Mvm }
             });
+    }
+    
+
+    private void OnMobileChange(bool matches)
+    {
+        _isLittleScreen = matches;
+        StateHasChanged();
+        _dataGrid.Reload();
+    }
+    void OnRowRender(RowRenderEventArgs<FlightViewModel> args)
+    {
+        args.Expandable = _isLittleScreen;
     }
 }
