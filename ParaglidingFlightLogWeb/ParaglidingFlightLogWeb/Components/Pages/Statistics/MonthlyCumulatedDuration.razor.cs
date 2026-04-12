@@ -4,6 +4,8 @@ public partial class MonthlyCumulatedDuration : StatisticPageBase
 {
     private YearMonthlyStatistic[] MonthlyCumulatedDurationAnalysisResult = [];
     private bool _analyzed;
+    private bool _isLittleScreen;
+    private string _chartSytle;
 
 
     /// <summary>

@@ -6,8 +6,13 @@ public partial class DurationDistribution : StatisticPageBase
 {
     private bool _allYearAnalysis;
     private int _yearToAnalyse;
-    
+
     private DurationItem[] DurationAnalysisResult = [];
+    private bool _isLittleScreen;
+    private string _chartSytle;
+
+
+
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
@@ -37,5 +42,10 @@ public partial class DurationDistribution : StatisticPageBase
         DurationAnalysisResult = HistDataToDurationItem(histData);
         return Task.CompletedTask;
     }
-    
+    private void OnMobileChange(bool matches)
+    {
+        _isLittleScreen = matches;
+        _chartSytle = _isLittleScreen ? "height: calc(100vh - 350px);min-width: 1200px;" : "height: calc(100vh - 180px);min-width: 1200px;";
+        StateHasChanged();
+    }
 }
