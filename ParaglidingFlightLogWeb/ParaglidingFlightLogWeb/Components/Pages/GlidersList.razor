@@ -7,39 +7,57 @@
 @attribute [Authorize]
 @page "/Gliderslist"
 @rendermode InteractiveServer
-
+<RadzenMediaQuery Query="(max-width: 768px)" Change=@OnMobileChange />
 <PageTitle>Gliders list</PageTitle>
 
 <RadzenRow>
     <RadzenColumn Size="12" SizeSM="8">
         <RadzenDataGrid @ref="_grid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        AllowPaging="true" PageSize="20"
-                        AllowSorting="true" Data="@Core.GliderListViewModel" TItem="GliderViewModel"
-                        SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedGliders>
+                        AllowPaging="true" PageSize="20" AllowSorting="true" Data="@Core.GliderListViewModel"
+                        TItem="GliderViewModel" SelectionMode="DataGridSelectionMode.Single" @bind-Value=@SelectedGliders
+                        RowRender="OnRowRender">
+            <Template>
+                @if (_isLittleScreen)
+                {
+                    <RadzenButton Click="() => OnEditGlider(context)" Icon="edit" />
+                    <RadzenButton Click="() => OnDeleteGlider(context)" Icon="delete" ButtonStyle="ButtonStyle.Danger" />
+                    <RadzenCard>
+                        <MyNumericIndicator Label="Total flight count" Value="@context.TotalFlightCount" Format="F0" />
+                        <MyTextIndicator Label="Total flight time" Text="@context.TotalFlightTime" />
+                        <MyTextIndicator Label="Flight time since last check" Text="@context.FlightTimeSinceLastCheck" />
+                        <MyDateIndicator Label="Last check" Value="context.LastCheckDateTime" Format="yyyy-MM-dd"/>
+                    </RadzenCard>
+                }
+  
+            </Template>
             <Columns>
-                <RadzenDataGridColumn TItem="GliderViewModel" Property="FullName" Title="Glider name"/>
-                <RadzenDataGridColumn TItem="GliderViewModel" Property="BuildYear" Title="Build year"/>
-                <RadzenDataGridColumn TItem="GliderViewModel" Property="LastCheckDateTime" Title="Last check date"
-                                      FormatString="{0:d}"/>
-                <RadzenDataGridColumn Title="Actions">
-                    <Template>
-                        <RadzenButton Click="() => OnEditGlider(context)" Icon="edit" />
-                        <RadzenButton Click="() => OnDeleteGlider(context)" Icon="delete" ButtonStyle="ButtonStyle.Danger"/>
-                    </Template>
-                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="GliderViewModel" Property="FullName" Title="Glider name" />
+                <RadzenDataGridColumn TItem="GliderViewModel" Property="BuildYear" Title="Build year" />
+                @if (!_isLittleScreen)
+                {
+                    <RadzenDataGridColumn TItem="GliderViewModel" Property="LastCheckDateTime" Title="Last check date"
+                                          FormatString="{0:d}" />
+                    <RadzenDataGridColumn Title="Actions">
+                        <Template>
+                            <RadzenButton Click="() => OnEditGlider(context)" Icon="edit" />
+                            <RadzenButton Click="() => OnDeleteGlider(context)" Icon="delete"
+                                          ButtonStyle="ButtonStyle.Danger" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                }
+
             </Columns>
         </RadzenDataGrid>
-        <RadzenButton Click=@OnAddGlider Text="Add Glider" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary"/>
+        <RadzenButton Click=@OnAddGlider Text="Add Glider" Icon="add_circle_outline"
+                      ButtonStyle="ButtonStyle.Primary" />
     </RadzenColumn>
-    @if (LastSelectedGlider != null)
+    @if (LastSelectedGlider != null && !_isLittleScreen)
     {
         <RadzenColumn Size="12" SizeSM="4">
             <RadzenCard>
-                <MyNumericIndicator Label="Total flight count" Value="@LastSelectedGlider.TotalFlightCount"
-                                    Format="F0"/>
-                <MyTextIndicator Label="Total flight time" Text="@LastSelectedGlider.TotalFlightTime"/>
-                <MyTextIndicator Label="Flight time since last check"
-                                 Text="@LastSelectedGlider.FlightTimeSinceLastCheck"/>
+                <MyNumericIndicator Label="Total flight count" Value="@LastSelectedGlider.TotalFlightCount" Format="F0" />
+                <MyTextIndicator Label="Total flight time" Text="@LastSelectedGlider.TotalFlightTime" />
+                <MyTextIndicator Label="Flight time since last check" Text="@LastSelectedGlider.FlightTimeSinceLastCheck" />
             </RadzenCard>
         </RadzenColumn>
     }
