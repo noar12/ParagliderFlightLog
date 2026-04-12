@@ -14,6 +14,9 @@ public partial class GlidersList
 {
     private IList<GliderViewModel> SelectedGliders = [];
     private RadzenDataGrid<GliderViewModel>? _grid;
+    private bool _isLittleScreen;
+
+
     GliderViewModel? LastSelectedGlider => SelectedGliders.Count > 0 ? SelectedGliders[^1] : null;
     [Inject] private ContextMenuService ContextMenuService { get; set; } = null!;
     [Inject] private DialogService DialogService { get; set; } = null!;
@@ -78,6 +81,16 @@ public partial class GlidersList
             await _grid.Reload();
         }
         await InvokeAsync(StateHasChanged);
-        
+
+    }
+    private void OnMobileChange(bool matches)
+    {
+        _isLittleScreen = matches;
+        StateHasChanged();
+        _grid?.Reload();
+    }
+    void OnRowRender(RowRenderEventArgs<GliderViewModel> args)
+    {
+        args.Expandable = _isLittleScreen;
     }
 }
