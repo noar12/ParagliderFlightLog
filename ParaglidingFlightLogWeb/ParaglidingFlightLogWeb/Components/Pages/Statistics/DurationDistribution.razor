@@ -2,7 +2,7 @@
 @inherits StatisticPageBase
 @attribute [Authorize]
 @rendermode InteractiveServer
-
+<RadzenMediaQuery Query="(max-width: 768px)" Change=@OnMobileChange />
 <PageTitle>Flights Duration Distribution</PageTitle>
 <RadzenRow>
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
@@ -32,7 +32,7 @@
 
 <RadzenRow style="overflow: auto;">
     <RadzenColumn>
-        <RadzenChart style="height: calc(100vh - 350px);min-width: 1200px;">
+        <RadzenChart style="@_chartSytle">
             <RadzenLegend Position="LegendPosition.Top"/>
 
 
