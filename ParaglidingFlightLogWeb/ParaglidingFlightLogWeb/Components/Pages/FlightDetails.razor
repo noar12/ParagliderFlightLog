@@ -9,82 +9,99 @@
         <RadzenColumn>
             <MyTextIndicator Label="Site" Text="@Flight.TakeOffSiteName" />
         </RadzenColumn>
-        <RadzenColumn>
-            <MyTextIndicator Label="Glider" Text="@Flight.GliderName" />
-        </RadzenColumn>
+        @if (!IsLittleScreen)
+        {
+            <RadzenColumn>
+                <MyTextIndicator Label="Glider" Text="@Flight.GliderName" />
+            </RadzenColumn>
+        }
     </RadzenRow>
+    @if (IsLittleScreen)
+    {
+        <RadzenRow>
+            <RadzenColumn>
+                <MyTextIndicator Label="Glider" Text="@Flight.GliderName" />
+            </RadzenColumn>
+        </RadzenRow>
+    }
+
     <RadzenRow>
-        @if(Flight.FlightPoints.Count > 0)
+        @if (Flight.FlightPoints.Count > 0)
         {
             <RadzenColumn>
-                <MyPhysicalValueIndicator Label="Max Height" Value="@Flight.MaxAltitude" UnitSymbol="m" Format="F0"/>
-                <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@Flight.MaxClimb" UnitSymbol="m/s" Format="F1"/>
-                <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@Flight.MaxSink" UnitSymbol="m/s" Format="F1"/>
+                <MyPhysicalValueIndicator Label="Max Height" Value="@Flight.MaxAltitude" UnitSymbol="m" Format="F0" />
+                <MyPhysicalValueIndicator Label="Max Climb (8s)" Value="@Flight.MaxClimb" UnitSymbol="m/s" Format="F1" />
+                <MyPhysicalValueIndicator Label="Max Sink (8s)" Value="@Flight.MaxSink" UnitSymbol="m/s" Format="F1" />
             </RadzenColumn>
         }
 
-
-        @if (Flight.XcScore is not null)
-        {
-            <RadzenColumn>
-                <MyNumericIndicator Label="Score" Value="@Flight.XcScore.Points"/>
-                <MyTextIndicator Label="Type of flight" Text="@Flight.XcScore.Type"/>
-
-            </RadzenColumn>
-            <RadzenColumn>
-                <MyPhysicalValueIndicator Label="Route length" UnitSymbol="km" Value="@Flight.XcScore.RouteLength"/>
-                <MyPhysicalValueIndicator Label="Average Speed" UnitSymbol="km/h" Value="@Flight.XcScore.AverageSpeed_kmh"/>
-
-            </RadzenColumn>
-        }
         <RadzenColumn>
-            <MyTextIndicator Label="Objective" Text="@Flight.Objective"/>
+            <MyTextIndicator Label="Objective" Text="@Flight.Objective" />
             <MyTextIndicator Label="Duration" Text="@Flight.FlightDuration.ToString(@"hh\:mm")" />
         </RadzenColumn>
+        @if (Flight.XcScore is not null && !IsLittleScreen)
+        {
+            <RadzenColumn>
+                <MyNumericIndicator Label="Score" Value="@Flight.XcScore.Points" />
+                <MyTextIndicator Label="Type of flight" Text="@Flight.XcScore.Type" />
+
+            </RadzenColumn>
+            <RadzenColumn>
+                <MyPhysicalValueIndicator Label="Route length" UnitSymbol="km" Value="@Flight.XcScore.RouteLength" />
+                <MyPhysicalValueIndicator Label="Average Speed" UnitSymbol="km/h" Value="@Flight.XcScore.AverageSpeed_kmh" />
+
+            </RadzenColumn>
+        }
+       
     </RadzenRow>
     <RadzenRow>
-    @if (!string.IsNullOrEmpty(Flight.Comment) || Flight.FlightPoints.Count > 0 || Flight.GetFlightPhotos().Count > 0)
-    {
-        <RadzenCarousel @key="Flight?.FlightID" 
-                        ButtonStyle="ButtonStyle.Dark"
-                        @bind-SelectedIndex="_selectedIndex"
-                        PagerOverlay="false"
-                        Auto="false" 
-                        class="rz-w-100 rz-h-auto">
-            <Items>
-                @if (Flight.FlightPoints.Count > 0)
-                {
-                    <RadzenCarouselItem>
-                        <ShowFlightOnMap FlightPoints="@Flight.FlightPoints"
-                                         TakeOffDateTime="@Flight.TakeOffDateTime"
-                                         FlightDuration="@Flight.FlightDuration"
-                                         XcScore="@Flight.XcScore"
-                                         Id="@Flight.FlightID"
-                                         Height="400" />
-                    </RadzenCarouselItem>
-                }
-                @if (!string.IsNullOrEmpty(Flight.Comment))
-                {
-                    <RadzenCarouselItem>
-                        <MyTextIndicator Style="max-height: 400px;" Class="rz-h-100 rz-overflow-auto"
-                                         Label="Comment"
-                                         Text="@Flight.Comment" Bold="false" />
-                    </RadzenCarouselItem>
-                }
-                @foreach (var photo in Flight.GetFlightPhotos())
-                {
-                    <RadzenCarouselItem>
-                        <RadzenImage Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
-                                     AlternateText="A photo of flight uploaded by the user"
-                                     Style="max-height: 400px; overflow-y:auto;" />
-                    </RadzenCarouselItem>
-                }
+                @if (Flight.XcScore is not null && IsLittleScreen)
+        {
+            <RadzenColumn>
+                <MyNumericIndicator Label="Score" Value="@Flight.XcScore.Points" />
+                <MyTextIndicator Label="Type of flight" Text="@Flight.XcScore.Type" />
 
-            </Items>
-        </RadzenCarousel>
-    }
-        
+            </RadzenColumn>
+            <RadzenColumn>
+                <MyPhysicalValueIndicator Label="Route length" UnitSymbol="km" Value="@Flight.XcScore.RouteLength" />
+                <MyPhysicalValueIndicator Label="Average Speed" UnitSymbol="km/h" Value="@Flight.XcScore.AverageSpeed_kmh" />
 
+            </RadzenColumn>
+        }
+    </RadzenRow>
+    <RadzenRow>
+        @if (!string.IsNullOrEmpty(Flight.Comment) || Flight.FlightPoints.Count > 0 || Flight.GetFlightPhotos().Count > 0)
+        {
+            <RadzenCarousel @key="Flight?.FlightID" ButtonStyle="ButtonStyle.Dark" @bind-SelectedIndex="_selectedIndex"
+                            PagerOverlay="false" Auto="false" class="rz-w-100 rz-h-auto">
+                <Items>
+                    @if (Flight.FlightPoints.Count > 0)
+                    {
+                        <RadzenCarouselItem>
+                            <ShowFlightOnMap FlightPoints="@Flight.FlightPoints" TakeOffDateTime="@Flight.TakeOffDateTime"
+                                             FlightDuration="@Flight.FlightDuration" XcScore="@Flight.XcScore" Id="@Flight.FlightID"
+                                             Height="400" />
+                        </RadzenCarouselItem>
+                    }
+                    @if (!string.IsNullOrEmpty(Flight.Comment))
+                    {
+                        <RadzenCarouselItem>
+                            <MyTextIndicator Style="max-height: 400px;" Class="rz-h-100 rz-overflow-auto" Label="Comment"
+                                             Text="@Flight.Comment" Bold="false" />
+                        </RadzenCarouselItem>
+                    }
+                    @foreach (var photo in Flight.GetFlightPhotos())
+                    {
+                        <RadzenCarouselItem>
+                            <RadzenImage Path="@($"data:image/jpeg;base64,{GetBase64StringPhotoData(photo)}")"
+                                         AlternateText="A photo of flight uploaded by the user"
+                                         Style="max-height: 400px; overflow-y:auto;" />
+                        </RadzenCarouselItem>
+                    }
+
+                </Items>
+            </RadzenCarousel>
+        }
     </RadzenRow>
 }
 else
@@ -102,6 +119,10 @@ else
     /// Service to access core functionality
     /// </summary>
     [Parameter] public CoreService? CoreService { get; set; }
+    /// <summary>
+    /// Tell the component to display its component for lttle screen
+    /// </summary>
+    [Parameter] public bool IsLittleScreen { get; set; }
     
     private int _selectedIndex;
     private string GetBase64StringPhotoData(FlightPhotoViewModel photo)

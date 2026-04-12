@@ -4,68 +4,81 @@
 @page "/FlightsList/{FlightId}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+<RadzenMediaQuery Query="(max-width: 768px)" Change=@OnMobileChange />
 <PageTitle>Flight list</PageTitle>
 <RadzenRow>
-    <RadzenColumn Size="12" SizeSM="8" Style="overflow: auto;">
+    <RadzenColumn Size="12" SizeMD="8" Style="overflow: auto;">
         <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
             <RadzenButton Text="Add Flight without IGC file" Icon="add_circle" Click="OnAddFlightWithoutIgcFile"
-                          ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Small" Style="margin: 1rem"/>
+                          ButtonStyle="ButtonStyle.Light" Size="ButtonSize.Small" Style="margin: 1rem" />
 
             <RadzenStack Orientation="Orientation.Horizontal">
-                <RadzenUpload Icon="publish"
-                              ChooseText="Add Flights with IGC files"
-                              Multiple="true"
-                              Accept="@ALLOWED_FILE_EXTENSION"
-                              Change="OnAddFlights"
-                              MaxFileCount="MAX_FILE_COUNT"/>
+                <RadzenUpload Icon="publish" ChooseText="Add Flights with IGC files" Multiple="true"
+                              Accept="@ALLOWED_FILE_EXTENSION" Change="OnAddFlights" MaxFileCount="MAX_FILE_COUNT" />
             </RadzenStack>
         </RadzenStack>
         <RadzenDataGrid @ref="_dataGrid" AllowFiltering="true"
-                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                        AllowPaging="false"
-                        AllowVirtualization="true"
-                        style="height: calc(100vh - 180px);"
-                        AllowSorting="true" Data="@Mvm.FlightListViewModel" TItem="FlightViewModel"
-                        SelectionMode="DataGridSelectionMode.Single"
-                        ValueChanged="OnSelectedFlightChanged"
-                        ContextMenu="@(args => ShowContextMenuWithItems(args))">
-            <Columns>
-                <RadzenDataGridColumn MinWidth="200px" TItem="FlightViewModel" Property="TakeOffDateTime"
-                                      Title="Date/Time" Width="150px" SortOrder="SortOrder.Descending"/>
-                <RadzenDataGridColumn MinWidth="200px" TItem="FlightViewModel" Property="TakeOffSiteName"
-                                      Title="Site" Width="200px"/>
-                <RadzenDataGridColumn MinWidth="150px" TItem="FlightViewModel" Property="FlightDuration"
-                                      Title="Duration" Width="150px"/>
-                <RadzenDataGridColumn Title="Action" Width="150px" Sortable="false" Filterable="false">
-                    <Template>
-                        <RadzenButton Icon="share" Click="@(_ => OpenShareFlight(context))" />
-                        <RadzenButton Icon="edit" Click="@(_ => OnEditFlightButton(context))"/>
-                        <RadzenUpload Icon="add_photo_alternate"
-                                      ChooseText=""
-                                      Multiple="true"
-                                      Accept="@PHOTO_EXTENSION"
-                                      Change="@(e => AddPhotos(e, context))"
-                                      MaxFileCount="MAX_FILE_COUNT"/>
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowPaging="false" AllowVirtualization="true"
+                        style="height: calc(100vh - 180px);" AllowSorting="true" Data="@Mvm.FlightListViewModel"
+                        TItem="FlightViewModel" SelectionMode="DataGridSelectionMode.Single" ValueChanged="OnSelectedFlightChanged"
+                        ContextMenu="@(args => ShowContextMenuWithItems(args))" RowRender="OnRowRender">
+            <Template Context="flight">
+                @if (_isLittleScreen)
+                {
+                    <div style="width: 320px;">
+                        <RadzenButton Icon="share" Click="@(_ => OpenShareFlight(flight))" />
+                        <RadzenButton Icon="edit" Click="@(_ => OnEditFlightButton(flight))" />
+                        <RadzenUpload Icon="add_photo_alternate" ChooseText="" Multiple="true" Accept="@PHOTO_EXTENSION"
+                                      Change="@(e => AddPhotos(e, flight))" MaxFileCount="MAX_FILE_COUNT" />
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete"
-                                      Click="@(_ => OnDeleteFlightButton(context))"/>
-                    </Template>
-                </RadzenDataGridColumn>
+                                      Click="@(_ => OnDeleteFlightButton(flight))" />
+                        <FlightDetails Flight="flight" CoreService="Mvm" IsLittleScreen="_isLittleScreen" />
+                    </div>
+                }
+            </Template>
+            <Columns>
+
+                <RadzenDataGridColumn MinWidth="180px" TItem="FlightViewModel" Property="TakeOffDateTime"
+                                      Title="Date/Time" SortOrder="SortOrder.Descending" />
+
+                <RadzenDataGridColumn MinWidth="200px" TItem="FlightViewModel" Property="TakeOffSiteName" Title="Site"
+                                      Width="200px" />
+
+                <RadzenDataGridColumn MinWidth="150px" TItem="FlightViewModel" Property="FlightDuration"
+                                      Title="Duration" Width="150px" />
+                @if (!_isLittleScreen)
+                {
+                    <RadzenDataGridColumn Title="Action" MinWidth="200px" Sortable="false" Filterable="false">
+                        <Template Context="flight">
+                            <RadzenButton Icon="share" Click="@(_ => OpenShareFlight(flight))" />
+                            <RadzenButton Icon="edit" Click="@(_ => OnEditFlightButton(flight))" />
+                            <RadzenUpload Icon="add_photo_alternate" ChooseText="" Multiple="true" Accept="@PHOTO_EXTENSION"
+                                          Change="@(e => AddPhotos(e, flight))" MaxFileCount="MAX_FILE_COUNT" />
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete"
+                                          Click="@(_ => OnDeleteFlightButton(flight))" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                }
+
             </Columns>
         </RadzenDataGrid>
 
     </RadzenColumn>
 
-    <RadzenColumn Size="12" SizeSM="4">
-        <RadzenCard class="rz-h-100">
-            @if (LastSelectedFlight != null)
-            {
-                <FlightDetails Flight="LastSelectedFlight" CoreService="Mvm"/>
-            }
-            else
-            {
-                <p>Please select a flight</p>
-            }
-        </RadzenCard>
+    <RadzenColumn Size="12" SizeMD="4">
+        @if (!_isLittleScreen)
+        {
+            <RadzenCard class="rz-h-100">
+                @if (LastSelectedFlight != null)
+                {
+                    <FlightDetails Flight="LastSelectedFlight" CoreService="Mvm" />
+                }
+                else
+                {
+                    <p>Please select a flight</p>
+                }
+            </RadzenCard>
+        }
     </RadzenColumn>
 </RadzenRow>
 
