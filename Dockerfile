@@ -9,6 +9,7 @@ COPY ["ParaglidingFlightLogWeb/ParaglidingFlightLogWeb/ParaglidingFlightLogWeb.c
 COPY ["ParaglidingFlightLogWeb/ParaglidingFlightLogWeb.Client/ParaglidingFlightLogWeb.Client.csproj", "ParaglidingFlightLogWeb/ParaglidingFlightLogWeb.Client/"]
 
 # Restore dependencies
+RUN dotnet nuget add source "https://nuget.pkg.github.com/noar12/index.json" --name github --username "github" --password "$GITHUB_TOKEN" --store-password-in-clear-text
 RUN dotnet restore "ParaglidingFlightLogWeb/ParaglidingFlightLogWeb/ParaglidingFlightLogWeb.csproj"
 
 # Copy everything else and build
