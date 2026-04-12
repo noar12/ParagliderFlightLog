@@ -1,6 +1,7 @@
 # Use the official .NET 8 SDK image for building
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
+ARG GITHUB_TOKEN
 
 # Copy solution and project files
 COPY ["ParagliderFlightLog/ParagliderFlightLog.csproj", "ParagliderFlightLog/"]
