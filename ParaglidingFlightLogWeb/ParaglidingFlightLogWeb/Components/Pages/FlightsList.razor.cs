@@ -297,7 +297,6 @@ public partial class FlightsList
                 { "ViewModel", Mvm }
             });
     }
-    
 
     private void OnMobileChange(bool matches)
     {

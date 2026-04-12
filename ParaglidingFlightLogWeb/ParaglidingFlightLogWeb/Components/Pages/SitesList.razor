@@ -3,41 +3,43 @@
 @page "/SitesList"
 @page "/SitesList/{SiteId}"
 @rendermode InteractiveServer
-
+<RadzenMediaQuery Query="(max-width: 768px)" Change=@OnMobileChange />
 <PageTitle>Sites list</PageTitle>
 
-<RadzenRow>
-    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+<RadzenRow Style="padding-bottom: 1rem;">
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Wrap="FlexWrap.Wrap">
         <MyDatePicker @bind-Value=_startDate Label="From" Class="w-auto"/>
         <MyDatePicker @bind-Value=_endDate Label="To" Class="w-auto"/>
-        <RadzenButton Text="Show sites" Click=OnShowSiteTimeRange Size="ButtonSize.Small" class="w-25"/>
-        <RadzenButton Text="Add new site" Icon="add_location" Click=OnAddNewSiteButton Size="ButtonSize.Small" class="w-25"/>
+        <RadzenButton Text="Show sites" Click=OnShowSiteTimeRange />
+        <RadzenButton Text="Add new site" Icon="add_location" Click=OnAddNewSiteButton />
     </RadzenStack>
 </RadzenRow>
-   <RadzenRow>
-    <RadzenColumn Size="12" SizeSM="6" Style="overflow: auto;">
-            <RadzenDataGrid @ref="_dataGrid" AllowFiltering="true" FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive"
-                            AllowSorting="true" Data="@Core.SiteListViewModel" TItem="SiteViewModel"
-                            style="height: calc(100vh - 200px)"
-                            SelectionMode="DataGridSelectionMode.Single"
-                            ContextMenu=@(args => ShowContextMenuWithItems(args))
-                            ValueChanged="OnSelectedSiteChanged">
-                <Columns>
-                    <RadzenDataGridColumn TItem="SiteViewModel" Property="Name" Title="Site name" Width="150px" />
+<RadzenRow>
+    <RadzenColumn Size="12" SizeMD="6" Style="overflow: auto;">
+        <RadzenDataGrid @ref="_dataGrid" AllowFiltering="true"
+                        FilterCaseSensitivity="FilterCaseSensitivity.CaseInsensitive" AllowSorting="true"
+                        Data="@Core.SiteListViewModel" TItem="SiteViewModel" style="@_tableHeight"
+                        SelectionMode="DataGridSelectionMode.Single" ContextMenu=@(args => ShowContextMenuWithItems(args))
+                        ValueChanged="OnSelectedSiteChanged">
+            <Columns>
+                <RadzenDataGridColumn TItem="SiteViewModel" Property="Name" Title="Site name" Width="150px" />
                 <RadzenDataGridColumn TItem="SiteViewModel" Property="Altitude" Title="Altitude" Width="150px" />
-                <RadzenDataGridColumn TItem="SiteViewModel" Property="WindOrientation" Title="Wind orientation" Width="200px" />
-                    <RadzenDataGridColumn TItem="SiteViewModel" Property="SiteUseCount" Title="# Used" Width="100px" MinWidth="200px" />
-                    <RadzenDataGridColumn  Title="Action" Width="150px" Sortable="false" Filterable="false">
-                        <Template>
-                            <RadzenButton Icon="edit" Click="@( _ => OnEditSiteButton(context))" />
-                            <RadzenButton Icon="delete" Click="@( _ => OnDeleteSiteButton(context))" ButtonStyle="ButtonStyle.Danger" />
-                        </Template>
-                    </RadzenDataGridColumn>
-                </Columns>
-            </RadzenDataGrid>
-        </RadzenColumn>
-        <RadzenColumn Size="12" SizeSM="6">
-            <RadzenCard Style="height: calc(100vh - 200px)">
+                <RadzenDataGridColumn TItem="SiteViewModel" Property="WindOrientation" Title="Wind orientation"
+                                      Width="200px" />
+                <RadzenDataGridColumn TItem="SiteViewModel" Property="SiteUseCount" Title="# Used" Width="100px"
+                                      MinWidth="200px" />
+                <RadzenDataGridColumn Title="Action" Width="150px" Sortable="false" Filterable="false">
+                    <Template>
+                        <RadzenButton Icon="edit" Click="@(_ => OnEditSiteButton(context))" />
+                        <RadzenButton Icon="delete" Click="@(_ => OnDeleteSiteButton(context))"
+                                      ButtonStyle="ButtonStyle.Danger" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+        </RadzenDataGrid>
+    </RadzenColumn>
+    <RadzenColumn Size="12" SizeMD="6">
+        <RadzenCard Style="height: calc(100vh - 200px)">
             <div class="row">
                 @if (LastSelectedSite is not null)
                 {
@@ -51,10 +53,10 @@
 
 
             <div class="row" id="map" style="height: calc(100vh - 300px)"></div>
-            </RadzenCard>
+        </RadzenCard>
 
-        </RadzenColumn>
-    </RadzenRow>
+    </RadzenColumn>
+</RadzenRow>
 
 
 
