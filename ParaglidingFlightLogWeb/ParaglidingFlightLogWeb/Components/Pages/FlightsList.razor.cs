@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using ParaglidingFlightLogWeb.Data;
 using ParaglidingFlightLogWeb.Services;
+using ParagliderFlightLog.Models;
+using Microsoft.JSInterop;
+using System.Text.Json;
 
 
 namespace ParaglidingFlightLogWeb.Components.Pages;
@@ -36,12 +39,16 @@ public partial class FlightsList
     [Inject] IWebHostEnvironment Environment { get; set; } = null!;
     [Inject] CoreService Mvm { get; set; } = null!;
     [Inject] ILogger<FlightsList> Logger { get; set; } = null!;
+    [Inject] IJSRuntime JSRuntime { get; set; } = null!;
     [CascadingParameter] private Task<AuthenticationState> AuthenticationStateTask { get; set; } = null!;
     [Inject] UserManager<ApplicationUser> UserManager { get; set; } = null!;
 
     private RadzenDataGrid<FlightViewModel> _dataGrid = new();
 
     IList<FlightViewModel> SelectedFlights = [];
+    private IJSObjectReference? _module;
+
+
     FlightViewModel? LastSelectedFlight => SelectedFlights.Count > 0 ? SelectedFlights[^1] : null;
 
     /// <summary>
@@ -67,6 +74,8 @@ public partial class FlightsList
     /// <param name="firstRender"></param>
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        _module ??= await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./helperV1_0_0.js");
+
         if (!firstRender || string.IsNullOrEmpty(FlightId))
         {
             return;
@@ -304,8 +313,48 @@ public partial class FlightsList
         StateHasChanged();
         _dataGrid.Reload();
     }
-    void OnRowRender(RowRenderEventArgs<FlightViewModel> args)
+    private void OnRowRender(RowRenderEventArgs<FlightViewModel> args)
     {
         args.Expandable = _isLittleScreen;
+    }
+    private async Task OnJsonCopyClick(FlightViewModel flight)
+    {
+        if (_module is null) { return; }
+        var flightExport = new FlightJsonExportModel()
+        {
+            Comment = flight.Comment,
+            FlightType = flight.XcScore?.Type,
+            GliderName = flight.GliderName,
+            Objective = flight.Objective,
+            TakeOffSiteName = flight.TakeOffSiteName,
+            FlightDuration = flight.FlightDuration,
+            MaxAltitude = flight.MaxAltitude,
+            MaxClimb = flight.MaxClimb,
+            MaxSink = flight.MaxSink,
+            TakeOffDateTime = flight.TakeOffDateTime,
+            TraceLength = flight.TraceLength,
+            XcScore = flight.XcScore?.Points,
+            AverageSpeed_kmh = flight.XcScore?.AverageSpeed_kmh
+        };
+        var options = new JsonSerializerOptions() { WriteIndented = true };
+        string flightJson = JsonSerializer.Serialize(flightExport, options);
+        await _module.InvokeAsync<IJSObjectReference>("copyToClipboard", flightJson);
+    }
+    private sealed class FlightJsonExportModel
+    {
+        public DateTime TakeOffDateTime { get; set; }
+        public TimeSpan FlightDuration { get; set; }
+        public double? XcScore { get; set; }
+        public string? FlightType { get; set; }
+        public required string TakeOffSiteName { get; set; }
+        public required string Objective { get; set; }
+        public required string GliderName { get; set; }
+        public double MaxAltitude { get; set; }
+        public required string Comment { get; set; }
+        public double TraceLength { get; set; }
+
+        public double MaxClimb { get; set; }
+        public double MaxSink { get; set; }
+        public double? AverageSpeed_kmh { get; set; }
     }
 }

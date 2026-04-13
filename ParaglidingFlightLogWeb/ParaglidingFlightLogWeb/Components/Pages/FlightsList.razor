@@ -2,6 +2,7 @@
 
 @page "/FlightsList"
 @page "/FlightsList/{FlightId}"
+
 @rendermode InteractiveServer
 @attribute [Authorize]
 <RadzenMediaQuery Query="(max-width: 768px)" Change=@OnMobileChange />
@@ -32,6 +33,7 @@
                                       Change="@(e => AddPhotos(e, flight))" MaxFileCount="MAX_FILE_COUNT" />
                         <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete"
                                       Click="@(_ => OnDeleteFlightButton(flight))" />
+                        <RadzenButton Icon="content_copy" Text="Json" Click="(_ => OnJsonCopyClick(flight))" />
                         <FlightDetails Flight="flight" CoreService="Mvm" IsLittleScreen="_isLittleScreen" />
                     </div>
                 }
@@ -48,7 +50,7 @@
                                       Title="Duration" Width="150px" />
                 @if (!_isLittleScreen)
                 {
-                    <RadzenDataGridColumn Title="Action" MinWidth="200px" Sortable="false" Filterable="false">
+                    <RadzenDataGridColumn Title="Action" MinWidth="220px" Sortable="false" Filterable="false">
                         <Template Context="flight">
                             <RadzenButton Icon="share" Click="@(_ => OpenShareFlight(flight))" />
                             <RadzenButton Icon="edit" Click="@(_ => OnEditFlightButton(flight))" />
@@ -56,6 +58,7 @@
                                           Change="@(e => AddPhotos(e, flight))" MaxFileCount="MAX_FILE_COUNT" />
                             <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete"
                                           Click="@(_ => OnDeleteFlightButton(flight))" />
+                            <RadzenButton Icon="content_copy" Text="Json" Click="(_ => OnJsonCopyClick(flight))" />
                         </Template>
                     </RadzenDataGridColumn>
                 }
