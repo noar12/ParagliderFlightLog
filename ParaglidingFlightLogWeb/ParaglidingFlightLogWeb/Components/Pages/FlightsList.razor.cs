@@ -332,7 +332,7 @@ public partial class FlightsList
             MaxClimb = flight.MaxClimb,
             MaxSink = flight.MaxSink,
             TakeOffDateTime = flight.TakeOffDateTime,
-            TraceLength = flight.TraceLength,
+            RouteLength = flight.XcScore?.RouteLength,
             XcScore = flight.XcScore?.Points,
             AverageSpeed_kmh = flight.XcScore?.AverageSpeed_kmh
         };
@@ -351,7 +351,7 @@ public partial class FlightsList
         public required string GliderName { get; set; }
         public double MaxAltitude { get; set; }
         public required string Comment { get; set; }
-        public double TraceLength { get; set; }
+        public double? RouteLength { get; set; }
 
         public double MaxClimb { get; set; }
         public double MaxSink { get; set; }
