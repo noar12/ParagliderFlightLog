@@ -19,27 +19,22 @@
         <RadzenButton Icon="content_copy" Text="Copy to Clipboard" Click="CopyTextToClipboard" />
     }
 </RadzenStack>
-
-<script>
-    function copyToClipboard(text) {
-        navigator.clipboard.writeText(text).then(function() {
-            console.log('Text copied to clipboard');
-        }).catch(function(error) {
-            console.error('Error copying text: ', error);
-        });
-    }
-</script>
 @code {
     private double _validity; 
-    private string _comment;
+    private string _comment = "";
     private Uri? _shareUri;
-    
+    private IJSObjectReference? _module;
     [Parameter] public FlightViewModel? Flight { get; set; }
-    
+
     protected override void OnInitialized()
     {
         _validity = 2;
-        _comment = Flight.Comment;
+        _comment = Flight?.Comment ?? "";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        _module ??= await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./helperV1_0_0.js");
     }
 
     private async Task ShareFlight()
@@ -52,8 +47,7 @@
 
     private async Task CopyTextToClipboard()
     {
-        if (_shareUri is null) { return; }
-        await JSRuntime.InvokeVoidAsync("copyToClipboard", _shareUri.ToString());
+        if (_shareUri is null || _module is null) { return; }
+        await _module.InvokeAsync<IJSObjectReference>("copyToClipboard", _shareUri.ToString());
     }
-
 }
